@@ -1,9 +1,10 @@
 import {DATA} from './data.js';
 import {Engine} from './engine/index.js';
 import * as S from './save/index.js';
-import {readLocal,writeLocal,clearLocal,PREFS_KEY,checkJournal,appendAdvance} from './storage.js';
+import {readLocal,writeLocal,clearLocal,PREFS_KEY,RECOVERY_KEY,checkJournal,appendAdvance} from './storage.js';
 import {el,button,copyText} from './ui/dom.js';
 import {Terminal} from './ui/terminal.js';
+import {sanitizePreferences,resolvePreferences,styleDescription} from './ui/preferences.js';
 
 const cfg=DATA.yaml['demo/demo.yaml'];
 const runMode=['kiosk','host'].includes(new URLSearchParams(location.search).get('mode'))?new URLSearchParams(location.search).get('mode'):'self';
@@ -20,7 +21,7 @@ viewportHeight();
 let engine=null, terminal=null, journal=[], baseSave=null, baseBroken=false, restoring=false;
 let history=[],historyIndex=0,historyDraft='', serial=Promise.resolve(),tickPending=false;
 let lastWall=performance.now(),lastActivity=performance.now(),endedShown=false,clearKiosk=true;
-let saved=readLocal(),prefs=readLocal(PREFS_KEY)||{};
+let saved=readLocal(),prefs=sanitizePreferences(readLocal(PREFS_KEY));
 let input,log,prompt,taskTitle,taskPrompt,hintState,clock,saveStatus,findCount,game,welcome,welcomeError;
 
 function enqueue(fn) {
@@ -38,20 +39,24 @@ document.addEventListener('keydown',()=>terminal?.finish(),{capture:true});
 document.addEventListener('click',()=>terminal?.finish(),{capture:true});
 
 function applyPreferences() {
-  const theme=['dark','contrast'].includes(prefs.theme)?prefs.theme:matchMedia('(prefers-color-scheme: light)').matches?'contrast':'dark';
-  const font=['small','medium','large'].includes(prefs.font)?prefs.font:runMode==='host'?'large':'medium';
+  const {theme,font,style}=resolvePreferences(prefs,{prefersLight:matchMedia('(prefers-color-scheme: light)').matches,hostMode:runMode==='host'});
   document.documentElement.dataset.theme=theme;
   document.documentElement.dataset.font=font;
-  return {theme,font};
+  document.documentElement.dataset.style=style;
+  const description=document.querySelector('#style-description');
+  if(description)description.textContent=styleDescription(style);
+  return {theme,font,style};
 }
 function settings() {
   const current=applyPreferences();
+  const style=el('select',{id:'visual-style','aria-label':'介面風格','aria-describedby':'style-description'},el('option',{value:'islands'},'群島介面'),el('option',{value:'server'},'Server 終端'));
   const theme=el('select',{id:'theme','aria-label':'顯示主題'},el('option',{value:'dark'},'深色'),el('option',{value:'contrast'},'高對比'));
   const font=el('select',{id:'font-size','aria-label':'終端機字級'},...['small','medium','large'].map((size,i)=>el('option',{value:size},['小','中','大'][i])));
-  theme.value=current.theme; font.value=current.font;
+  style.value=current.style; theme.value=current.theme; font.value=current.font;
+  style.addEventListener('change',()=>{prefs.style=style.value;applyPreferences();writeLocal(prefs,PREFS_KEY);});
   theme.addEventListener('change',()=>{prefs.theme=theme.value;applyPreferences();writeLocal(prefs,PREFS_KEY);});
   font.addEventListener('change',()=>{prefs.font=font.value;applyPreferences();writeLocal(prefs,PREFS_KEY);});
-  return el('div',{class:'settings'},el('label',{},'主題 ',theme),el('label',{},'字級 ',font));
+  return el('div',{class:'settings'},el('label',{},'風格 ',style),el('label',{},'主題 ',theme),el('label',{},'字級 ',font));
 }
 function shell() {
   app.replaceChildren();
@@ -65,7 +70,7 @@ function shell() {
     await importSave(await selected.text());
   }).catch(()=>{}));
   welcome=el('main',{id:'welcome',class:'welcome'},
-    el('section',{class:'welcome-story'},el('p',{class:'eyebrow'},'ROOT ARCHIPELAGO / DEMO 01'),el('h1',{},'根目錄群島',el('span',{},'第一夜')),el('p',{class:'pitch'},cfg.pitch),el('div',{class:'start-actions'},button('開始值班 →',()=>enqueue(()=>startNew()).catch(()=>{}),{id:'new-game',class:'primary'}),saved?button('繼續上次的存檔',()=>enqueue(()=>resumeLocal()).catch(()=>{}),{id:'continue-game'}):null),el('p',{class:'quiet'},'約 15 分鐘　／　原生 JavaScript　／　所有指令都在模擬世界執行')),
+    el('section',{class:'welcome-story'},el('p',{class:'eyebrow'},'ROOT ARCHIPELAGO / DEMO 01'),el('h1',{},'根目錄群島',el('span',{},'第一夜')),el('p',{class:'pitch'},cfg.pitch),el('div',{class:'start-actions'},button('開始值班 →',()=>enqueue(()=>startNew()).catch(()=>{}),{id:'new-game',class:'primary'}),saved?button('繼續上次的存檔',()=>enqueue(()=>resumeLocal()).catch(()=>{}),{id:'continue-game'}):null),el('p',{class:'quiet'},'約 15 分鐘　／　原生 JavaScript　／　所有指令都在模擬世界執行'),el('p',{id:'style-description',class:'quiet'},styleDescription(document.documentElement.dataset.style))),
     el('section',{class:'welcome-import'},el('p',{class:'eyebrow'},'CONTINUE YOUR SHIFT'),el('h2',{},'帶著存檔回來'),el('label',{for:'import-code'},'貼上自己的存檔代碼'),code,button('匯入並繼續',()=>enqueue(()=>importSave(code.value)).catch(()=>{}),{id:'import-submit'}),el('details',{},el('summary',{},'或選擇 .rasave.json 檔案'),file),el('p',{class:'quiet'},'代碼只含暱稱、種子、事件與時間；不含真實姓名、IP 或裝置資訊。'),welcomeError),
     el('footer',{class:'welcome-footer'},el('span',{},'29 個指令。一座燈塔。'),el('span',{},runMode==='self'?'SELF-SERVE':runMode.toUpperCase())));
   game=el('main',{id:'game',class:'game',hidden:true});
@@ -96,7 +101,7 @@ function createGame() {
   hintState=el('p',{id:'hint-state',class:'hint-state'},'提示 ○ ○ ○');
   findCount=el('strong',{id:'discoveries'},'0 / 12');
   saveStatus=el('p',{id:'save-status',class:'save-status','data-head':''},'尚未開始');
-  const panel=el('details',{class:'task-panel',open:!compact.matches},el('summary',{id:'panel-summary'},'值班面板'),el('div',{class:'panel-content'},el('p',{class:'eyebrow'},'CURRENT TASK'),taskTitle,taskPrompt,hintState,button('下一階提示',()=>quickCommand('hint'),{class:'hint-button'}),el('div',{class:'panel-stats'},el('span',{},'發現'),findCount),el('div',{class:'panel-save'},el('span',{},'本機存檔'),saveStatus),el('p',{class:'quiet'},'Tab 補全 · ↑↓ 歷史',el('br'), 'hint 提示 · skip 兩次跳題'),runMode==='host'?el('p',{class:'mode-notice'},'主持人共享模式：點燈後直接投票。此紀錄不供正式版個人匯入。'):null));
+  const panel=el('details',{class:'task-panel',open:!compact.matches},el('summary',{id:'panel-summary'},'值班面板'),el('div',{class:'panel-content'},el('p',{class:'eyebrow'},'CURRENT TASK'),taskTitle,taskPrompt,hintState,button('下一階提示',()=>quickCommand('hint'),{class:'hint-button'}),el('div',{class:'panel-stats'},el('span',{},'發現'),findCount),el('div',{class:'panel-save'},el('span',{},'本機存檔'),saveStatus),el('p',{class:'quiet'},'Tab 補全 · ↑↓ 歷史',el('br'), 'hint 提示 · skip 兩次跳題'),el('p',{id:'session-mode-notice',class:'mode-notice',hidden:true})));
   const chips=el('nav',{class:'chips','aria-label':'指令快捷按鈕'},...cfg.ui.command_chips.map(command=>button(command,()=>{
     if(command==='hint'||command==='save')quickCommand(command);
     else {input.value=command+' ';input.focus();}
@@ -116,8 +121,11 @@ async function startNew() {
 async function importSave(text) {
   const save=text.trimStart().startsWith('{')?await S.importFile(text):await S.importCode(text);
   const [level]=await S.level(save);
+  // Admission can reject a shape-valid older save that has no continuation
+  // budget. Do not replace the visible session/journal before this succeeds.
+  const candidate=await Engine.fromSave(save,{...options(),mode:save.event==='host-led'?'host':'self',seed:save.seed,event:save.event,onOutput:()=>{}});
   createGame();journal=[];baseSave=JSON.parse(JSON.stringify(save));baseBroken=level==='broken';
-  engine=await Engine.fromSave(save,{...options(),seed:save.seed,event:save.event});
+  engine=candidate;engine.onOutput=output;
   output(`[系統] 存檔完整性：${{intact:'完整',suspicious:'可疑',broken:'損毀'}[level]}。\n`,'system');
   output('[系統] 代碼保留事件進度，不包含任意 Shell 檔案修改、工作目錄與未記錄的輸入。\n','system');
   lastWall=performance.now();activity();persist();refresh();input.disabled=false;
@@ -127,15 +135,16 @@ async function resumeLocal() {
   const envelope=readLocal();
   if(!envelope)throw new Error('找不到可繼續的本機存檔。請貼上存檔代碼。');
   if(!envelope.save) {await importSave(JSON.stringify(envelope));return;}
-  S.checkShape(envelope.save);
-  if(envelope.version!==1||!checkJournal(envelope.journal))throw new Error('本機操作紀錄格式錯誤，請改用存檔代碼。');
-  if(envelope.baseSave)S.checkShape(envelope.baseSave);
-  createGame();restoring=true;
   try {
+    S.checkShape(envelope.save);
+    if(envelope.version!==1||!checkJournal(envelope.journal))throw new Error('本機操作紀錄格式錯誤，請保留原始紀錄後還原事件進度。');
+    if(envelope.baseSave)S.checkShape(envelope.baseSave);
+    createGame();restoring=true;
     journal=JSON.parse(JSON.stringify(envelope.journal));baseSave=envelope.baseSave||null;
     baseBroken=baseSave?(await S.level(baseSave))[0]==='broken':false;
-    const mode=envelope.runMode==='host'?'host':runMode;
-    engine=baseSave?await Engine.fromSave(baseSave,{...options(),mode}):new Engine({...options(),mode});
+    const mode=['self','kiosk','host','host_led'].includes(envelope.runMode)?envelope.runMode:envelope.save.event==='host-led'?'host':'self';
+    const replayOptions={...options(),mode,seed:envelope.save.seed,event:envelope.save.event};
+    engine=baseSave?await Engine.fromSave(baseSave,replayOptions):new Engine(replayOptions);
     if(!baseSave)await engine.start();
     for(const step of journal) {
       if(step.type==='advance')await engine.advance(step.dt);
@@ -146,6 +155,7 @@ async function resumeLocal() {
     output('[系統] 已從本機操作紀錄還原。\n','system');
   } catch(error) {
     await resetWelcome(false);
+    showRecovery(envelope);
     throw error;
   } finally {restoring=false;lastWall=performance.now();activity();if(engine){input.disabled=false;refresh();}}
   if(engine.ended)await showExport(true);else input.focus();
@@ -174,6 +184,7 @@ async function feedInput(raw) {
 }
 function quickCommand(raw) {
   if(!input||input.disabled)return;
+  if(engine?.inputMode==='input'&&engine.mode[2].expect_input.store==='player.nick')return;
   input.value=raw;
   input.form.requestSubmit();
 }
@@ -184,7 +195,14 @@ async function syncClock() {
 function persist() {
   if(!engine?.save)return;
   if(!baseBroken)S.seal(engine.save);
-  if(runMode==='kiosk'&&engine.ended&&clearKiosk){clearLocal();saveStatus.textContent='已清除本機存檔';return;}
+  try {
+    S.checkShape(engine.save);
+    if(!checkJournal(journal))throw new Error('操作紀錄超出本機儲存範圍');
+  } catch {
+    saveStatus.textContent='目前紀錄未自動存入；請使用 save 保留進度';
+    return;
+  }
+  if(runMode==='kiosk'&&engine.ended&&clearKiosk){clearLocal();clearLocal(RECOVERY_KEY);saveStatus.textContent='已清除本機存檔';return;}
   const ok=writeLocal({version:1,runMode:engine.runMode,save:engine.save,baseSave,journal});
   saved=ok?readLocal():saved;
   saveStatus.textContent=ok?'● 已自動存檔':'未能自動存檔，請保留代碼';
@@ -197,8 +215,13 @@ function refresh() {
   clock.textContent=`${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}${seconds>=840?' · 即將收尾':''}`;
   clock.classList.toggle('warning',seconds>=840);
   document.querySelector('#host-label').textContent=`${engine.world==='ch1'?'logport':'lighthouse'} / ${engine.branch}`;
+  const modeNotice=document.querySelector('#session-mode-notice');
+  modeNotice.hidden=!engine.hostMode&&runMode!=='host';
+  modeNotice.textContent=engine.hostMode?'主持人共享模式：點燈後直接投票。此紀錄不供正式版個人匯入。':'已沿用原存檔的自助流程；網址的主持人模式只適用於新遊戲。';
   const guide=engine.currentLadder();
   const quest=engine.quests[engine.active];
+  const enteringNick=engine.inputMode==='input'&&engine.mode[2].expect_input.store==='player.nick';
+  for(const control of game.querySelectorAll('.hint-button,[aria-label="執行 hint"],[aria-label="執行 save"]'))control.disabled=enteringNick;
   const guideKey=guide?.ladder==='quest_ladder'?`q.${engine.active}`:guide?.id;
   const n=engine.ladders[guideKey]||0;
   hintState.textContent='提示 '+Array.from({length:3},(_,i)=>i<n?'●':'○').join(' ');
@@ -232,10 +255,30 @@ function inputKey(event) {
   } else if(event.key==='c'&&event.ctrlKey&&engine.inputMode==='input'&&engine.mode[2].expect_input.secret){event.preventDefault();input.value='';input.form.requestSubmit();}
 }
 function downloadSave() {
-  const json=JSON.stringify(engine.save,null,2);
-  const url=URL.createObjectURL(new Blob([json],{type:'application/json'}));
-  const anchor=el('a',{href:url,download:`${engine.nick}.rasave.json`});
+  downloadJSON(engine.save,`${engine.nick}.rasave.json`);
+}
+function downloadJSON(value,name) {
+  const url=URL.createObjectURL(new Blob([JSON.stringify(value,null,2)],{type:'application/json'}));
+  const anchor=el('a',{href:url,download:name});
   document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function showRecovery(envelope) {
+  document.querySelector('#local-recovery')?.remove();
+  let valid=true;
+  try{S.checkShape(envelope.save);}catch{valid=false;}
+  const original=el('textarea',{id:'recovery-journal',readonly:true,rows:5,'aria-label':'本機原始操作紀錄'});original.value=JSON.stringify(envelope);
+  const status=el('p',{role:'status',class:'quiet'});
+  const panel=el('section',{id:'local-recovery',class:'recovery-panel'},el('h3',{},'保留本機紀錄'),
+    el('p',{class:'quiet'},'原始紀錄尚未覆寫或刪除。備份包含當時輸入的指令與文字，不會上傳。「只還原事件」不會還原未記錄的任意檔案修改與工作目錄。'),
+    runMode==='kiosk'?null:button('下載原始操作紀錄',()=>downloadJSON(envelope,'root-archipelago.rajournal.json'),{id:'download-journal'}),
+    runMode==='kiosk'||!valid?null:button('下載已保存的 JSON',()=>downloadJSON(envelope.save,`${envelope.save.nick}.rasave.json`),{id:'download-recovery-save'}),
+    el('details',{},el('summary',{},'或複製原始操作紀錄'),original,button('複製原始紀錄',()=>copyText(original.value,original,status)),status),
+    button('只還原已保存事件（不含檔案改動）',()=>enqueue(async()=>{
+      const backup=writeLocal(envelope,RECOVERY_KEY);
+      if(!backup)throw new Error('無法保留救援備份；請先下載或複製原始紀錄，再從 JSON 匯入。');
+      await importSave(JSON.stringify(envelope.save));
+    }).catch(()=>{}),{id:'restore-events',disabled:!valid}));
+  document.querySelector('.welcome-import').append(panel);
 }
 async function showExport(ended) {
   if(!engine?.save)return;
@@ -254,7 +297,7 @@ async function showExport(ended) {
   const cardArea=el('textarea',{readonly:true,rows:8,class:'card-text','aria-label':'值班證純文字',hidden:true});cardArea.value=cardText;
   const rawArea=el('textarea',{id:'raw-save',readonly:true,rows:6,'aria-label':'原始 JSON 存檔'});rawArea.value=JSON.stringify(engine.save,null,2);
   const dialog=el('dialog',{'aria-label':ended?'值班結束與存檔':'儲存值班紀錄'});
-  const tools=el('div',{class:'export-tools'},el('p',{class:'eyebrow'},ended?'SHIFT COMPLETE':'SAVE YOUR SHIFT'),el('h2',{},ended?'把這一夜留著。':'保存你的進度'),el('details',{open:true},el('summary',{},'這份代碼包含什麼'),el('p',{class:'quiet'},cfg.save.privacy+'不含裝置資訊；不會上傳。')),warning?el('p',{role:'alert',class:'error-message'},warning):null,runMode==='host'||engine.event==='host-led'?el('p',{class:'mode-notice'},'主持人共享紀錄，不供正式版個人匯入。'):null,el('label',{for:'save-code'},'存檔代碼'),textarea,
+  const tools=el('div',{class:'export-tools'},el('p',{class:'eyebrow'},ended?'SHIFT COMPLETE':'SAVE YOUR SHIFT'),el('h2',{},ended?'把這一夜留著。':'保存你的進度'),el('details',{open:true},el('summary',{},'這份代碼包含什麼'),el('p',{class:'quiet'},cfg.save.privacy+'不含裝置資訊；不會上傳。')),warning?el('p',{role:'alert',class:'error-message'},warning):null,engine.hostMode||engine.event==='host-led'?el('p',{class:'mode-notice'},'主持人共享紀錄，不供正式版個人匯入。'):null,el('label',{for:'save-code'},'存檔代碼'),textarea,
     el('div',{class:'export-actions'},button('複製代碼',()=>copyText(code,textarea,status),{id:'copy-code',disabled:!code}),button('複製值班證',async()=>{cardArea.hidden=false;await copyText(cardText,cardArea,status);},{id:'copy-card'}),runMode==='kiosk'?null:button('下載 JSON',downloadSave,{id:'download-save'})),cardArea,status,
     warning?el('details',{open:true},el('summary',{},'保留原始 JSON（代碼無法匯出）'),rawArea,button('複製原始 JSON',()=>copyText(rawArea.value,rawArea,status))):null,
     el('p',{class:'quiet'},'「完整」僅表示資料未損毀，不代表真實遊玩的證明。'),
@@ -267,7 +310,7 @@ async function showExport(ended) {
 }
 async function resetWelcome(clear=true) {
   document.querySelector('dialog')?.remove();terminal?.destroy();terminal=null;engine=null;
-  if(clear)clearLocal();saved=readLocal();journal=[];baseSave=null;history=[];
+  if(clear){clearLocal();if(runMode==='kiosk')clearLocal(RECOVERY_KEY);}saved=readLocal();journal=[];baseSave=null;history=[];
   shell();lastWall=performance.now();activity();document.querySelector('#new-game').focus();
 }
 

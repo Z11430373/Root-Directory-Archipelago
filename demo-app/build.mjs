@@ -72,7 +72,7 @@ export async function main() {
   const hasEntry = !!await stat(entry).catch(() => null);
   const js = hasEntry ? (await build({ entryPoints: [entry], bundle: true, write: false, format: 'iife', target: 'es2020', minify: true, legalComments: 'inline' })).outputFiles[0].text : '"use strict";';
   if (/<\/script/i.test(js)) throw new Error('Bundle contains unsafe closing script tag.');
-  const css = await readFile(path.join(here, 'src/ui/theme.css'), 'utf8').catch(() => 'html{color-scheme:dark;background:#101716;color:#e8efec}');
+  const css = (await Promise.all(['theme.css','server.css'].map(file=>readFile(path.join(here,'src/ui',file),'utf8')))).join('\n');
   const hash = text => createHash('sha256').update(text).digest('base64');
   const csp = `default-src 'none'; script-src 'sha256-${hash(js)}'; style-src 'sha256-${hash(css)}'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'`;
   const html = `<!doctype html>\n<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content"><meta http-equiv="Content-Security-Policy" content="${csp}"><meta name="color-scheme" content="dark light"><title>根目錄群島 · 第一夜</title><style>${css}</style></head><body><div id="app"></div><script>${js}</script></body></html>\n`;

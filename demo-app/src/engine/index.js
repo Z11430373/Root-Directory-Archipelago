@@ -17,6 +17,14 @@ function distance(a, b) {
   return d[a.length][b.length];
 }
 
+function eventKey(kind, data) {
+  if (kind === 'task' || kind === 'skip') return `quest:${data.id}`;
+  if (kind === 'flag') return `flag:${data.name}`;
+  if (['item', 'card', 'find', 'checkpoint', 'choice'].includes(kind)) return `${kind}:${data.id}`;
+  if (kind === 'end') return 'end';
+  return null;
+}
+
 /** Data-driven, virtual-clock runtime. Callers must await operations in order. */
 export class Engine {
   constructor({ seed = 5, event = 'demo-event-1', mode = 'self', onOutput } = {}) {
@@ -77,6 +85,32 @@ export class Engine {
     this.manifest = generateLogs({ seed, linesPerDay: override.lines_per_day, days: override.days, npc: true }).manifest;
     this.man = this.manifest;
     this.commandCount = 0;
+    this.commitLimit = DATA.yaml['demo/integrity.yaml'].limits.max_commits;
+    this.pendingEvents = new Set(['choice:vote', 'end']);
+    const reserve = (kind, data) => this.pendingEvents.add(eventKey(kind, data));
+    const effects = node => {
+      for (const name of node.sets || []) reserve('flag', { name });
+      if (node.checkpoint) reserve('checkpoint', { id: node.checkpoint });
+      for (const id of node.gives || []) reserve('item', { id });
+      for (const id of node.triggers || []) if (id.startsWith('ckpt/')) reserve('checkpoint', { id });
+      for (const child of [...(node.variants || []), ...(node.choices || [])]) effects(child);
+    };
+    // Conservative: even mounted dialogue nodes not reached in this demo retain
+    // their one-off slots. task/skip share a slot; both vote flags are reserved.
+    for (const node of new Set(this.nodes.values())) effects(node);
+    for (const quest of Object.values(this.quests)) {
+      reserve('task', { id: quest.id });
+      effects(quest.on_done || {});
+    }
+    for (const rule of this.flow.rules) for (const action of rule.do || []) {
+      for (const [kind, value] of Object.entries(action)) {
+        if (kind === 'set') reserve('flag', { name: value });
+        else if (['give', 'card', 'find', 'checkpoint'].includes(kind)) reserve(kind === 'give' ? 'item' : kind, { id: value });
+      }
+    }
+    this.ladderIds = this.flow.guidance.flatMap(guide => guide.ladder === 'quest_ladder'
+      ? Object.keys(this.quests).map(id => `q.${id}`) : [guide.id]);
+    this.budgetNotices = new Set();
   }
 
   get inBranch() { return this.branch !== 'main'; }
@@ -120,9 +154,34 @@ export class Engine {
   }
   async commit(kind, data) {
     if (!this.save || this.ended) return;
+    // Repeated checkpoints carry no new state. All first occurrences, including
+    // flags/tasks/end, have a reserved slot and are never discarded here.
+    const key = eventKey(kind, data);
+    if (kind === 'checkpoint' && !this.pendingEvents.has(key) && !this.canSpendCommits(1)) {
+      this.budgetNotice('checkpoint');
+      return;
+    }
     const chapter = this.world === 'ch1' ? 'ch1' : 'ch0';
     await S.addCommit(this.save, kind, data, this.rMs(), this.world_t, chapter, this.branch);
+    this.pendingEvents.delete(key);
     this.T('commit', kind, data, this.branch, chapter, this.rMs());
+  }
+  reservedCommits() {
+    if (this.ended) return 0;
+    const hints = this.ladderIds.reduce((sum, id) => sum + Math.max(0, 3 - (this.ladders[id] || 0)), 0);
+    // Keep the first story branch available even after unlimited repeated hints.
+    // Every admitted branch also owns its worst-case merge + exit slots.
+    const branch = this.inBranch ? 2 : this.flags.has('flag.b0.done') ? 0 : 3;
+    return this.pendingEvents.size + hints + branch;
+  }
+  canSpendCommits(count) {
+    return !!this.save && this.save.commits.length + this.reservedCommits() + count <= this.commitLimit;
+  }
+  budgetNotice(kind) {
+    this.T('budget', kind);
+    if (this.budgetNotices.has(kind)) return;
+    this.budgetNotices.add(kind);
+    this.output('[init] 已保留任務、投票與結尾的存檔空間。提示仍可查看，但不再新增重複紀錄。\n', 'system');
   }
   async setFlag(name) {
     if (this.flags.has(name)) return;
@@ -161,6 +220,14 @@ export class Engine {
       this.vfs.writeFile(value.path, content);
       this.T('create_file', value.path);
     } else if (kind === 'branch_enter') {
+      // Admission happens before cloning or changing branch state. Once admitted,
+      // neither hints nor another optional event can consume the exit liability.
+      const extra = this.flags.has('flag.b0.done') ? 3 : 0;
+      if (!this.canSpendCommits(extra)) {
+        this.T('budget', 'branch.enter');
+        this.output('[init] 存檔空間已保留給任務、投票與結尾，不能再開重複分支。\n', 'system');
+        return false;
+      }
       this.main_snapshot = this.vfs;
       this.vfs = this.vfs.clone();
       this.branch = value.name;
@@ -248,7 +315,7 @@ export class Engine {
         this.once.add(rule.id);
       }
       this.T('rule', rule.id);
-      for (const action of rule.do || []) await this.action(action, payload);
+      for (const action of rule.do || []) if (await this.action(action, payload) === false) break;
       if (rule.stop && event === 'cmd') break;
     }
     if (this.hostMode && event === 'flag.set' && payload.name === 'flag.lamp_lit' && !this.flags.has('flag.demo.in_vote')) {
@@ -298,6 +365,7 @@ export class Engine {
       const id = sequence[this.quest_idx[group]];
       if (!id || this.ended || (this.hostMode && this.flags.has('flag.lamp_lit'))) return;
       this.active = id;
+      this.skip_pending = null;
       this.T('quest.active', id);
       const prior = this.history.slice(-20).find(h => this.questCheck(this.quests[id], h));
       if (!prior) return;
@@ -309,6 +377,7 @@ export class Engine {
   }
   async finishQuest(id, skipped = false) {
     const quest = this.quests[id];
+    this.skip_pending = null;
     this.active = null;
     this.quest_idx[id.startsWith('Q1') ? 'ch1' : 'ch0']++;
     if (skipped) {
@@ -331,7 +400,11 @@ export class Engine {
     if (!guide || (guide.id === 'g.none' && via === 'idle')) return;
     let id = guide.id, ref, full, vars = {};
     if (guide.ladder === 'quest_ladder') id = `q.${this.active}`;
-    const n = Math.min((this.ladders[id] || 0) + 1, 3);
+    const prior = this.ladders[id] || 0;
+    const n = Math.min(prior + 1, 3);
+    // First three rungs own reserved slots. Preserve reference repeat commits
+    // (including fourth hints) whenever there is genuinely spare capacity.
+    const record = prior < 3 || this.canSpendCommits(1);
     this.ladders[id] = n;
     if (guide.ladder === 'quest_ladder') {
       const quest = this.quests[this.active];
@@ -349,7 +422,8 @@ export class Engine {
     }
     this.T('ladder', id, n, via);
     await this.say(ref, vars);
-    await this.commit('hint', { n, full });
+    if (record) await this.commit('hint', { n, full });
+    else this.budgetNotice('hint');
     await this.drain();
   }
 
@@ -480,12 +554,12 @@ export class Engine {
     const empty = { stdout: '', stderr: '', rc: 0, reads: [] };
     if (first === 'hint') { await this.showRung('hint'); return empty; }
     if (first === 'skip') {
-      if (!this.active) await this.say('init.demo_skip_nothing');
-      else if (this.skip_pending !== null && this.now - this.skip_pending <= 10) {
+      if (!this.active) { this.skip_pending = null; await this.say('init.demo_skip_nothing'); }
+      else if (this.skip_pending?.questId === this.active && this.now - this.skip_pending.at <= 10) {
         this.skip_pending = null;
         await this.finishQuest(this.active, true);
       } else {
-        this.skip_pending = this.now;
+        this.skip_pending = { questId: this.active, at: this.now };
         await this.say('init.demo_skip_confirm');
       }
       return empty;
@@ -548,6 +622,7 @@ export class Engine {
     // Replay only durable state, never dialogue effects or commits.
     for (const commit of save.commits) {
       const { kind, data } = commit;
+      restored.pendingEvents.delete(eventKey(kind, data));
       if (kind === 'flag') restored.flags.add(data.name);
       else if (kind === 'task') restored.done.push(data.id);
       else if (kind === 'skip') restored.skipped.push(data.id);
@@ -593,6 +668,10 @@ export class Engine {
       'r.notes_emptied': 'flag.b0.lost0_created', 'r.ch0_done': 'flag.ch0_done', 'r.vote_open': 'flag.demo.in_vote',
     })) if (restored.flags.has(flag)) restored.once.add(rule);
     if (restored.finds.has('cat')) restored.once.add('r.cat_find');
+    // Shape-valid old saves may already have spent the reserve. Reject before
+    // publishing any restored state, rather than failing after a future command
+    // has changed flags/VFS or trimming the caller's existing hash chain.
+    if (!restored.canSpendCommits(0)) throw new S.CodeError('存檔剩餘事件空間不足，無法安全續玩；請保留原始存檔，紀錄未被修改。');
     Object.assign(this, restored);
     return this;
   }

@@ -1,0 +1,83 @@
+/* Server console: layout and color only. No simulated boot messages or new story. */
+:root[data-style=server]{--mono:"Ubuntu Mono",ui-monospace,SFMono-Regular,Consolas,"Liberation Mono","Noto Sans Mono CJK TC","Microsoft JhengHei","PingFang TC",monospace;font-family:var(--mono)}
+:root[data-style=server][data-theme=dark]{color-scheme:dark;--bg:#080808;--surface:#080808;--raised:#151515;--ink:#e6e6e6;--muted:#b8b8b8;--line:#555555;--accent:#a9df83;--amber:#ffd787}
+:root[data-style=server] button,
+:root[data-style=server] input,
+:root[data-style=server] textarea,
+:root[data-style=server] select{border-radius:0;font-family:var(--mono)}
+:root[data-style=server] .masthead{height:56px;padding:0 16px;gap:16px;border-bottom-style:dashed}
+:root[data-style=server] .wordmark{font-weight:400;letter-spacing:0}
+:root[data-style=server] .edition{display:none}
+:root[data-style=server] .settings{gap:12px}
+:root[data-style=server] .settings label{white-space:nowrap}
+:root[data-style=server] .settings select{border:0;border-bottom:1px solid var(--line);padding:3px 5px}
+:root[data-style=server] .welcome{display:block;align-content:start;max-width:none;min-height:calc(100dvh - 56px);padding:28px 20px 0;margin:0}
+:root[data-style=server] .welcome-story,
+:root[data-style=server] .welcome-import{max-width:82ch}
+:root[data-style=server] .eyebrow{letter-spacing:0;margin-bottom:12px}
+:root[data-style=server] .welcome h1{font:400 24px/1.6 var(--mono);letter-spacing:0;margin:0 0 14px}
+:root[data-style=server] .welcome h1 span{display:inline;font-size:1em;letter-spacing:0;color:var(--ink);margin:0 0 0 1ch}
+:root[data-style=server] .pitch{font-size:var(--font);line-height:1.7;max-width:80ch;margin:10px 0}
+:root[data-style=server] .start-actions{margin:14px 0;gap:8px}
+:root[data-style=server] button{min-height:36px;border:0;border-radius:0;padding:6px 8px;background:transparent;text-align:left;font-size:13px;font-weight:400}
+:root[data-style=server] button::before{content:"[ "}
+:root[data-style=server] button::after{content:" ]"}
+:root[data-style=server] button:hover{background:var(--raised);text-decoration:underline}
+:root[data-style=server] button.primary{background:transparent;color:var(--accent);padding:6px 8px;border:0}
+:root[data-style=server] .welcome-import{border:0;border-top:1px dashed var(--line);margin-top:22px;padding:20px 0 0}
+:root[data-style=server] .welcome-import h2{font-size:16px;font-weight:400;margin:0 0 14px}
+:root[data-style=server] .welcome-import button{margin:6px 0 10px}
+:root[data-style=server] .welcome-import textarea{max-height:100px}
+:root[data-style=server] .welcome-footer{max-width:82ch;margin-top:24px;padding:16px 0;border-top-style:dashed}
+:root[data-style=server] .game{height:calc(var(--viewport-height,100dvh) - 56px);max-width:none;padding:10px 16px;margin:0}
+:root[data-style=server] .workspace{border:0;border-radius:0;background:var(--bg);grid-template-columns:minmax(0,1fr) 250px}
+:root[data-style=server] .terminal-bar{height:30px;padding:0;border-bottom-style:dashed;font-size:12px}
+:root[data-style=server] .window-dots{display:none}
+:root[data-style=server] .terminal{flex:0 1 auto;padding:12px 0;font-family:var(--mono);line-height:1.6}
+:root[data-style=server] .terminal-line{margin-bottom:0}
+:root[data-style=server] .terminal-line.command{margin-top:8px}
+:root[data-style=server] .terminal-line.stderr{border-left:0;padding-left:0}
+:root[data-style=server] .command-form{flex-shrink:0;background:var(--bg);padding:8px 0;border-top-style:dashed;font-family:var(--mono)}
+:root[data-style=server] .execute{min-height:32px;padding:3px 6px}
+:root[data-style=server] .task-panel{border-left-style:dashed;margin-left:20px}
+:root[data-style=server] .task-panel>summary{padding:10px 16px;border-bottom-style:dashed}
+:root[data-style=server] .panel-content{padding:18px 16px}
+:root[data-style=server] .panel-content h2{font-family:var(--mono);font-size:15px;font-weight:400}
+:root[data-style=server] .panel-content .eyebrow{letter-spacing:0}
+:root[data-style=server] .hint-state{letter-spacing:0}
+:root[data-style=server] .hint-button{width:auto}
+:root[data-style=server] .panel-stats,
+:root[data-style=server] .panel-save{border-top-style:dashed}
+:root[data-style=server] .chips{gap:4px;padding:8px 0 4px;border-top:1px dashed var(--line)}
+:root[data-style=server] .chips button{padding:4px 7px;min-height:32px}
+:root[data-style=server] dialog{border-radius:0;max-width:860px;background:var(--bg)}
+:root[data-style=server] .export-layout{display:block;padding:24px}
+:root[data-style=server] .duty-card{border:0;padding:0 0 16px;background:transparent;max-width:66ch}
+:root[data-style=server] .duty-card h2{font:400 22px/1.5 var(--mono);letter-spacing:0;margin:10px 0}
+:root[data-style=server] .duty-card dl{max-width:58ch;grid-template-columns:17ch minmax(0,1fr);gap:7px 12px}
+:root[data-style=server] .card-edition{padding-bottom:12px;border-bottom-style:dashed}
+:root[data-style=server] .card-signoff{font:var(--font)/1.6 var(--mono);letter-spacing:0;border-top-style:dashed;margin-top:16px;padding-top:14px}
+:root[data-style=server] .export-tools{border-top:1px dashed var(--line);padding-top:18px}
+:root[data-style=server] .export-tools h2{font-size:19px;font-weight:400}
+:root[data-style=server] .export-tools label{margin-top:14px}
+@media(max-width:760px){
+  .settings{gap:8px}
+  .settings label{white-space:nowrap}
+  .settings select{margin-left:1px}
+  :root[data-style=server] .masthead{height:78px;padding:6px 12px;gap:4px 10px}
+  :root[data-style=server] .wordmark{font-size:11px}
+  :root[data-style=server] .settings{gap:8px;margin-top:0}
+  :root[data-style=server] .settings select{font-size:10px}
+  :root[data-style=server] .welcome{min-height:calc(100dvh - 78px);padding:22px 12px 0}
+  :root[data-style=server] .welcome h1{font-size:20px}
+  :root[data-style=server] .pitch{font-size:14px}
+  :root[data-style=server] .game{height:calc(var(--viewport-height,100dvh) - 78px);padding:8px 10px;min-height:220px}
+  :root[data-style=server] .task-panel{margin-left:0;border-left:0;border-bottom-style:dashed}
+  :root[data-style=server] .task-panel>summary{padding:8px 0}
+  :root[data-style=server] .panel-content{padding:8px 0 12px}
+  :root[data-style=server] .terminal-bar{font-size:11px}
+  :root[data-style=server] .terminal{padding:10px 0}
+  :root[data-style=server] .chips button{min-height:40px}
+  :root[data-style=server] .export-layout{padding:16px}
+  :root[data-style=server] .duty-card dl{grid-template-columns:15ch minmax(0,1fr);gap:7px}
+}
