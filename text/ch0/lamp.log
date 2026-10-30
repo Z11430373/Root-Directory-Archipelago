@@ -1,0 +1,13 @@
+2031-10-13 18:03:11 lamp.service started by uid=lin
+2031-10-13 18:03:12 lamp.service active (running)
+2031-10-14 09:12:44 cat.service blink calibrated (150 ms)
+2031-10-15 18:00:02 lamp.service brightness 80%
+2031-10-17 18:00:02 lamp.service brightness 80%
+2031-10-19 11:30:19 cat.service backup cat: not registered
+2031-10-20 18:00:02 lamp.service brightness 80%
+2031-10-22 23:41:08 relay.service click (moth was here)
+2031-10-23 18:00:02 lamp.service brightness 80%
+2031-10-25 18:00:03 lamp.service brightness 80%
+2031-10-26 23:58:30 lamp.service flicker x2 (operator tired)
+2031-10-27 02:00:00 lamp.service stopped by uid=lin
+2031-10-27 02:00:03 cat.service on strike (no operator on duty)

@@ -1,0 +1,3827 @@
+{
+ "expr": {
+  "cases": [
+   {
+    "expect": true,
+    "expr": "flag.a and not flag.c"
+   },
+   {
+    "expect": true,
+    "expr": "flag.b0.done or flag.zzz"
+   },
+   {
+    "expect": true,
+    "expr": "tries == 2"
+   },
+   {
+    "expect": false,
+    "expr": "tries >= 3"
+   },
+   {
+    "expect": true,
+    "expr": "tries < 3"
+   },
+   {
+    "expect": true,
+    "expr": "quest_active != ''"
+   },
+   {
+    "expect": true,
+    "expr": "quest_active == 'Q0-1'"
+   },
+   {
+    "expect": true,
+    "expr": "not (flag.a and flag.c)"
+   },
+   {
+    "expect": true,
+    "expr": "done('Q0-5') and empty('~/notes')"
+   },
+   {
+    "expect": false,
+    "expr": "done('Q0-1')"
+   },
+   {
+    "expect": true,
+    "expr": "exists('~/notes')"
+   },
+   {
+    "expect": true,
+    "expr": "in_branch and (empty('~/notes') or empty('~'))"
+   },
+   {
+    "expect": true,
+    "expr": "true"
+   },
+   {
+    "expect": false,
+    "expr": "false"
+   },
+   {
+    "expect": false,
+    "expr": "1 == 'a'"
+   },
+   {
+    "expect": true,
+    "expr": "1 != 'a'"
+   },
+   {
+    "expect": true,
+    "expr": "tries"
+   },
+   {
+    "expect": false,
+    "expr": "nothing"
+   },
+   {
+    "expect": true,
+    "expr": "not not flag.a"
+   },
+   {
+    "expect": true,
+    "expr": "branch == 'alt/sandbox'"
+   },
+   {
+    "expect": true,
+    "expr": "flag.a and flag.b0.done and in_branch and tries == 2"
+   },
+   {
+    "expect": false,
+    "expr": "not flag.a or flag.b0.done and not in_branch"
+   },
+   {
+    "expect": true,
+    "expr": "(flag.a or flag.c) and (flag.b0.done or flag.d)"
+   },
+   {
+    "expect": true,
+    "expr": "tries <= 2 and tries >= 2"
+   },
+   {
+    "expect": true,
+    "expr": "quest_active == \"Q0-1\""
+   }
+  ],
+  "env": {
+   "done": [
+    "Q0-5"
+   ],
+   "empty": [
+    "~/notes"
+   ],
+   "exists": [
+    "~/notes"
+   ],
+   "flags": [
+    "flag.a",
+    "flag.b0.done"
+   ],
+   "vars": {
+    "branch": "alt/sandbox",
+    "in_branch": true,
+    "quest_active": "Q0-1",
+    "tries": 2
+   }
+  },
+  "errors": [
+   "flag.a and",
+   "(flag.a",
+   "foo(1)",
+   "flag.a flag.b",
+   "1 +",
+   "'unterminated"
+  ]
+ },
+ "note": "由 demo/tools/flow_sim.py make 產生，請勿手改。前端 headless 模式用同樣的步驟（dt 為虛擬秒）必須得到同樣的 commit 序列。",
+ "schema": 1,
+ "walkthroughs": [
+  {
+   "code": "RA1-eNqNVU1z2jAQ_S86A7EJUMKpp156aq-ZjEbIa1u1LbmyCEkz_PeuJGP8IZMMF2w97Xu7b3f9QTg5PD-TtGQZWZAEKrVqDNMGErKI_O9l0Z1XTJRUA8PDx2gRr6PohhAS334QkZADyUVjlH4nFwvb91CGNUWH-hUtYw-JozuYdYvZ9Nm8npzJ5KhU0WqaCua5zUXT5lRVTL9PcWOyR0-23k7JEs1SQ1N1kvdDbNoQ-2mIUkiKlalrSGjJqjok2dOEizym2iLVNEIaD-IKA1V36UccvOKM58zQhGlk2KH8pzlz_zDtM_w2hzCCF2BC3rZ0zSlR9My0BJ_kfi6SBY4ED47R_7PguWfqKx4k_TtqpWzneDSUggcrY22ipTBO53o3zcVW7ax0IWQWHpmaNgBycMZz4EWthDSdAnw2DzyPlq4vZj1ycpCuTCj2tszCc9rZ6YTv7o0qou4UWFcUZ15OB_momeT5CiROl0WnWlWTLBZEsgrwNSvNQ-Nm9a11wukZvA-ze56ev6E7PuljtCpVYyLKcXi6BXYXb6eMuku-SpsZBs70TdXP6LMcfPwi-oKCREmYhVWgM7C8jt8xY0OpxJa0kOpcQoLnl7nrV4_ehGuz9qIPevlEGnpIb9q-0LaAvoW6tgJDcQkfFbbJrrcOMFhMJo6D1kqjI9lw54fB-JCBHvTmDdh-IAArR22P9xZEOJoXSfvz0AGHeze-frbWY9Yx7vo1icLq_sb0cVDlMSDj1E4QdWlMQPN2xEspsjyQSH8_4LfoVRkIhFWCQxfSY8grK0-2fY6l4oULfN0pweD2FvXYexrQAdHkMM0NvDNGYPanmhxSVjYwTOcFm4scPlwgcjD6BD4odbLtv2UqdGPaWiwIvOK6uh65BzQSi-x3lFbKLJnmuagBFSrfPa7P9k-bp12c2n2GXzZ880_YhU5q5p7GN5c4D_H3aBWv7Lw2aFPFyCHGv4CZHraXy3_177ol-3ce8fea2",
+   "commits": [
+    [
+     "flag",
+     {
+      "name": "flag.demo.started"
+     },
+     "main",
+     "ch0",
+     0,
+     0,
+     "e10de7e4"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.mail_read"
+     },
+     "main",
+     "ch0",
+     30,
+     12000,
+     "53cf5b6e"
+    ],
+    [
+     "find",
+     {
+      "id": "history"
+     },
+     "main",
+     "ch0",
+     60,
+     20000,
+     "5c4e6a5e"
+    ],
+    [
+     "task",
+     {
+      "id": "Q0-1"
+     },
+     "main",
+     "ch0",
+     90,
+     30000,
+     "717aa5d3"
+    ],
+    [
+     "task",
+     {
+      "id": "Q0-2"
+     },
+     "main",
+     "ch0",
+     120,
+     44000,
+     "b0c691d4"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.handbook_read"
+     },
+     "main",
+     "ch0",
+     120,
+     44000,
+     "d6340fea"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.charter_summary_read"
+     },
+     "main",
+     "ch0",
+     120,
+     44000,
+     "36cb70ca"
+    ],
+    [
+     "task",
+     {
+      "id": "Q0-3"
+     },
+     "main",
+     "ch0",
+     150,
+     69000,
+     "f49a45da"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.draft_found"
+     },
+     "main",
+     "ch0",
+     150,
+     69000,
+     "77a98123"
+    ],
+    [
+     "task",
+     {
+      "id": "Q0-4"
+     },
+     "main",
+     "ch0",
+     180,
+     97000,
+     "4cbf9815"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.lin_stopped_lamp"
+     },
+     "main",
+     "ch0",
+     180,
+     97000,
+     "f3bf051f"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.draft_read"
+     },
+     "main",
+     "ch0",
+     210,
+     109000,
+     "565281d5"
+    ],
+    [
+     "task",
+     {
+      "id": "Q0-5"
+     },
+     "main",
+     "ch0",
+     210,
+     109000,
+     "797684e6"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.f1"
+     },
+     "main",
+     "ch0",
+     210,
+     109000,
+     "42adff8c"
+    ],
+    [
+     "item",
+     {
+      "id": "F1"
+     },
+     "main",
+     "ch0",
+     210,
+     109000,
+     "31c17b04"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.cat_dark"
+     },
+     "main",
+     "ch0",
+     270,
+     138000,
+     "aed6b07a"
+    ],
+    [
+     "find",
+     {
+      "id": "jar"
+     },
+     "main",
+     "ch0",
+     300,
+     145000,
+     "6c756fab"
+    ],
+    [
+     "find",
+     {
+      "id": "ticket1"
+     },
+     "main",
+     "ch0",
+     330,
+     155000,
+     "912b1046"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.sudo_warned"
+     },
+     "main",
+     "ch0",
+     360,
+     163000,
+     "078c14ba"
+    ],
+    [
+     "find",
+     {
+      "id": "sudo"
+     },
+     "main",
+     "ch0",
+     360,
+     163000,
+     "bd74f0a9"
+    ],
+    [
+     "find",
+     {
+      "id": "sandwich"
+     },
+     "main",
+     "ch0",
+     390,
+     172000,
+     "fe6bba3b"
+    ],
+    [
+     "item",
+     {
+      "id": "R0"
+     },
+     "main",
+     "ch0",
+     420,
+     187000,
+     "f2a3845b"
+    ],
+    [
+     "find",
+     {
+      "id": "relic"
+     },
+     "main",
+     "ch0",
+     420,
+     187000,
+     "07bf4a97"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.lamp_lit"
+     },
+     "main",
+     "ch0",
+     450,
+     213000,
+     "24865e61"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.cat_working"
+     },
+     "main",
+     "ch0",
+     450,
+     213000,
+     "6df63098"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.map_seen"
+     },
+     "main",
+     "ch0",
+     450,
+     213000,
+     "dc4db553"
+    ],
+    [
+     "checkpoint",
+     {
+      "id": "ckpt/ch0-lamp"
+     },
+     "main",
+     "ch0",
+     450,
+     213000,
+     "80667158"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.lamp_world_changed"
+     },
+     "main",
+     "ch0",
+     450,
+     213000,
+     "40f691a7"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.cat_lit"
+     },
+     "main",
+     "ch0",
+     510,
+     225000,
+     "2f901220"
+    ],
+    [
+     "find",
+     {
+      "id": "cat"
+     },
+     "main",
+     "ch0",
+     510,
+     225000,
+     "3b518084"
+    ],
+    [
+     "find",
+     {
+      "id": "rm_main"
+     },
+     "main",
+     "ch0",
+     540,
+     233000,
+     "b3e1a6f2"
+    ],
+    [
+     "branch.enter",
+     {
+      "from": "ckpt/ch0-lamp",
+      "name": "alt/sandbox"
+     },
+     "alt/sandbox",
+     "ch0",
+     570,
+     245000,
+     "3d78b2e8"
+    ],
+    [
+     "find",
+     {
+      "id": "rm_branch"
+     },
+     "alt/sandbox",
+     "ch0",
+     600,
+     254000,
+     "5176788d"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.b0.lost0_created"
+     },
+     "alt/sandbox",
+     "ch0",
+     600,
+     254000,
+     "7325d0d5"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.b0.read_lost0"
+     },
+     "alt/sandbox",
+     "ch0",
+     660,
+     268000,
+     "866d8bb5"
+    ],
+    [
+     "card",
+     {
+      "id": "K0"
+     },
+     "alt/sandbox",
+     "ch0",
+     690,
+     280000,
+     "40c3247f"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.k0"
+     },
+     "alt/sandbox",
+     "ch0",
+     690,
+     280000,
+     "ec0e1848"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.b0.done"
+     },
+     "alt/sandbox",
+     "ch0",
+     690,
+     280000,
+     "ad5547bd"
+    ],
+    [
+     "merge",
+     {
+      "card": "K0",
+      "mode": "knowledge"
+     },
+     "alt/sandbox",
+     "ch0",
+     690,
+     280000,
+     "87e4c2cd"
+    ],
+    [
+     "branch.exit",
+     {
+      "mode": "merge"
+     },
+     "alt/sandbox",
+     "ch0",
+     690,
+     280000,
+     "8aba1e47"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.ch0_done"
+     },
+     "main",
+     "ch0",
+     690,
+     280000,
+     "dfc1eb44"
+    ],
+    [
+     "checkpoint",
+     {
+      "id": "ckpt/ch0-end"
+     },
+     "main",
+     "ch0",
+     690,
+     280000,
+     "e56821d5"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.met_harbor"
+     },
+     "main",
+     "ch1",
+     1320,
+     290000,
+     "5018f878"
+    ],
+    [
+     "find",
+     {
+      "id": "error_log"
+     },
+     "main",
+     "ch1",
+     1350,
+     304000,
+     "2763d954"
+    ],
+    [
+     "find",
+     {
+      "id": "finger"
+     },
+     "main",
+     "ch1",
+     1380,
+     312000,
+     "eeffd01c"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.heard_cat"
+     },
+     "main",
+     "ch1",
+     1410,
+     321000,
+     "481b1ff7"
+    ],
+    [
+     "find",
+     {
+      "id": "harbor_cat"
+     },
+     "main",
+     "ch1",
+     1410,
+     321000,
+     "824a0367"
+    ],
+    [
+     "task",
+     {
+      "id": "Q1-1"
+     },
+     "main",
+     "ch1",
+     1440,
+     349000,
+     "6caf61a4"
+    ],
+    [
+     "task",
+     {
+      "id": "Q1-3"
+     },
+     "main",
+     "ch1",
+     1470,
+     369000,
+     "4e45be88"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.q1_3_done"
+     },
+     "main",
+     "ch1",
+     1470,
+     369000,
+     "01c3387e"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.gc_name_heard"
+     },
+     "main",
+     "ch1",
+     1470,
+     369000,
+     "640b7884"
+    ],
+    [
+     "checkpoint",
+     {
+      "id": "ckpt/ch1-night"
+     },
+     "main",
+     "ch1",
+     1470,
+     369000,
+     "10bc10e6"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.in_vote"
+     },
+     "main",
+     "ch1",
+     1470,
+     369000,
+     "d037ecd1"
+    ],
+    [
+     "choice",
+     {
+      "id": "vote",
+      "value": "block"
+     },
+     "main",
+     "ch1",
+     1470,
+     381000,
+     "9a80c524"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.vote_block"
+     },
+     "main",
+     "ch1",
+     1470,
+     381000,
+     "0f8541fc"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.finished"
+     },
+     "main",
+     "ch1",
+     1470,
+     381000,
+     "ad1d4fdd"
+    ],
+    [
+     "end",
+     {
+      "time_up": false
+     },
+     "main",
+     "ch1",
+     1470,
+     381000,
+     "f894961f"
+    ]
+   ],
+   "name": "digger",
+   "says": [
+    "init.demo_welcome",
+    "init.demo_nick_ok",
+    "init.pager",
+    "init.login",
+    "lin.mail_first",
+    "init.q0_1_done",
+    "init.q0_2_done",
+    "init.q0_3_done",
+    "init.q0_4_done",
+    "lin.draft",
+    "init.q0_5_done",
+    "init.sudo_denied",
+    "init.sudo_sandwich",
+    "init.lamp_prompt",
+    "init.lamp_wrong_pass",
+    "init.lamp_success",
+    "init.map_lit",
+    "init.branch_offer",
+    "init.demo_lamp_already",
+    "init.rm_main",
+    "init.branch_welcome_back",
+    "init.ch0_done",
+    "init.ferry",
+    "init.ch1_arrive",
+    "harbor-master.intro",
+    "harbor-master.finger_plan",
+    "harbor-master.topic_cat",
+    "harbor.q1_1_done",
+    "harbor.q1_3_done",
+    "init.gc_name_heard",
+    "init.demo_vote",
+    "init.demo_vote_block",
+    "init.demo_end_card"
+   ],
+   "steps": [
+    {
+     "dt": 6,
+     "in": "zien"
+    },
+    {
+     "dt": 12,
+     "in": "mail"
+    },
+    {
+     "dt": 8,
+     "in": "cat .bash_history"
+    },
+    {
+     "dt": 10,
+     "in": "ls"
+    },
+    {
+     "dt": 14,
+     "in": "cat handbook.md"
+    },
+    {
+     "dt": 25,
+     "in": "ls -a notes"
+    },
+    {
+     "dt": 28,
+     "in": "grep lamp logs/lamp.log"
+    },
+    {
+     "dt": 12,
+     "in": "cat notes/.draft.txt"
+    },
+    {
+     "dt": 20,
+     "in": "grep -r KEY-FRAG ~"
+    },
+    {
+     "dt": 9,
+     "in": "cat shelf/cat.txt"
+    },
+    {
+     "dt": 7,
+     "in": "cat shelf/jar.txt"
+    },
+    {
+     "dt": 10,
+     "in": "cat incidents/TICKET-0001.md"
+    },
+    {
+     "dt": 8,
+     "in": "sudo ls"
+    },
+    {
+     "dt": 9,
+     "in": "sudo make me a sandwich"
+    },
+    {
+     "dt": 15,
+     "in": "ln notes/01-first-night.txt keep/"
+    },
+    {
+     "dt": 12,
+     "in": "systemctl start lamp"
+    },
+    {
+     "dt": 6,
+     "in": "wrong-pass"
+    },
+    {
+     "dt": 8,
+     "in": "lamp-before-sudo"
+    },
+    {
+     "dt": 5,
+     "in": "systemctl start lamp"
+    },
+    {
+     "dt": 7,
+     "in": "cat shelf/cat.txt"
+    },
+    {
+     "dt": 8,
+     "in": "rm -rf ~"
+    },
+    {
+     "dt": 12,
+     "in": "git checkout -b alt/sandbox"
+    },
+    {
+     "dt": 9,
+     "in": "rm -rf ~"
+    },
+    {
+     "dt": 6,
+     "in": "ls /lost+found"
+    },
+    {
+     "dt": 8,
+     "in": "cat /lost+found/#0"
+    },
+    {
+     "dt": 12,
+     "in": "git merge --knowledge"
+    },
+    {
+     "dt": 10,
+     "in": "ssh logport"
+    },
+    {
+     "dt": 14,
+     "in": "cat error.log"
+    },
+    {
+     "dt": 8,
+     "in": "finger harbor-master"
+    },
+    {
+     "dt": 9,
+     "in": "ask harbor-master cat"
+    },
+    {
+     "dt": 28,
+     "in": "grep -c ' 404 ' access.log"
+    },
+    {
+     "dt": 20,
+     "in": "grep '02:00:00' access.log"
+    },
+    {
+     "dt": 12,
+     "in": "block"
+    }
+   ],
+   "summary": {
+    "cards": [
+     "K0"
+    ],
+    "ended": true,
+    "finds": [
+     "history",
+     "jar",
+     "ticket1",
+     "sudo",
+     "sandwich",
+     "relic",
+     "cat",
+     "rm_main",
+     "rm_branch",
+     "error_log",
+     "finger",
+     "harbor_cat"
+    ],
+    "flags": [
+     "flag.b0.done",
+     "flag.b0.lost0_created",
+     "flag.b0.read_lost0",
+     "flag.cat_working",
+     "flag.ch0_done",
+     "flag.charter_summary_read",
+     "flag.demo.cat_dark",
+     "flag.demo.cat_lit",
+     "flag.demo.finished",
+     "flag.demo.in_vote",
+     "flag.demo.lamp_world_changed",
+     "flag.demo.started",
+     "flag.demo.vote_block",
+     "flag.draft_found",
+     "flag.draft_read",
+     "flag.f1",
+     "flag.gc_name_heard",
+     "flag.handbook_read",
+     "flag.heard_cat",
+     "flag.k0",
+     "flag.lamp_lit",
+     "flag.lin_stopped_lamp",
+     "flag.mail_read",
+     "flag.map_seen",
+     "flag.met_harbor",
+     "flag.q1_3_done",
+     "flag.sudo_warned"
+    ],
+    "fullgame_checkpoints": [
+     "ckpt/ch0-lamp",
+     "ckpt/ch0-end",
+     "ckpt/ch1-night",
+     "ckpt/ch1-start"
+    ],
+    "head": "f894961f",
+    "items": [
+     "F1",
+     "R0"
+    ],
+    "level": "intact",
+    "n_commits": 57,
+    "nick": "zien",
+    "reasons": [],
+    "score": 200,
+    "seconds": 381,
+    "skipped": [],
+    "tasks": [
+     "Q0-1",
+     "Q0-2",
+     "Q0-3",
+     "Q0-4",
+     "Q0-5",
+     "Q1-1",
+     "Q1-3"
+    ],
+    "time_up": false,
+    "title_id": "breaker",
+    "vote": "block"
+   }
+  },
+  {
+   "code": "RA1-eNrFVk1zmzAQ_S86Y0cYO5NyyqmXnnrOZDSyEEYDSFQSTtoM_70rgbHB4JBMOh0ufLzdfW8_tLwhhuKnJ5QW9IAClPBSrY2l2vIEBbi9noMnlAlpUfCG0rooUJzSwvAASRSHTRDhINph3EMtNbmDigTF6CdehchjQnyBueEOvC1Bbq6Q47ibc9wTpFOZUZnslcqJ5nQoswOwzGVAE1OXJdW_r3G307Fbxn-EvCxBbXhCnAlp7V2OH2a9Wl23TqPmkuQ4IVGXkKmgmqaWpKqWi3V-uk4mF9UlrS3Qugda0TWtQkhirKoqyEZBy-qT3AYi21qOcj9O1Q41E22RhgMCwvKyN_oeDk0-zM7pI4Voix1OABi15EXpXMjDVM-WtCKGczn4xjLO8kp1XDxReLZ3LMMrn9Apmb4DPR0IVyQEpkEe-Nc0Rt-qm6XA6Aq411SybM0ljKg30Kq8Ega2tOTwmhb2zviBf0XnmRu8XizpA1abD1hNaZ0w6sqzx-tCGYsJg1b253TfMF-m6hzKjQvx8fo4_zt5jOqkb-cfuK3q5raSHLfte1NroiSfhZVcH7gL68P7wDB0KnE9lkv1UvAEvjdz5qemfRVecWfYOm3eoQZNTc7cFow2h2O8-dfn-OJ5PR1Q3BLYq3sFQ3t_XswgJESLd-q76AHPGfQ018-Bh5sjPP3tvON0pgKzXqPhP1SP61L7KyTRoEPGgAMj7jgkGfezMwLNt1K4kuKQ2b6Zxn79qoAlfVSWT7hVgvHeZYtBR1rUrvUraoz3G-2mRXnfzoh46C0GqZDCZPxamRsEiG8FaK-rLu9DMc_QmSh-845O1Xb3xJN2d6tUaGO7TASIH2HznD75Byg6pLhdN1opu6KaZaLiwFC53033xxGje8yT7beHrVtNguXw5o9w6xoy4Z_GliuY5PARr8O1O2kMFKmk0C9wy0FpvGuav1A7Y_s-7da76bdb",
+   "commits": [
+    [
+     "flag",
+     {
+      "name": "flag.demo.started"
+     },
+     "main",
+     "ch0",
+     0,
+     0,
+     "e10de7e4"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch0",
+     30,
+     35000,
+     "a659c655"
+    ],
+    [
+     "task",
+     {
+      "id": "Q0-1"
+     },
+     "main",
+     "ch0",
+     60,
+     45000,
+     "6a8c3713"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch0",
+     60,
+     75000,
+     "ee8b1942"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 2
+     },
+     "main",
+     "ch0",
+     60,
+     105000,
+     "dcbecf84"
+    ],
+    [
+     "task",
+     {
+      "id": "Q0-2"
+     },
+     "main",
+     "ch0",
+     90,
+     106000,
+     "72b5666c"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.handbook_read"
+     },
+     "main",
+     "ch0",
+     90,
+     106000,
+     "ec67baba"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.charter_summary_read"
+     },
+     "main",
+     "ch0",
+     90,
+     106000,
+     "d91ff5dc"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch0",
+     120,
+     111000,
+     "323cdc53"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 2
+     },
+     "main",
+     "ch0",
+     150,
+     116000,
+     "a2e8de9a"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.used_full_hint"
+     },
+     "main",
+     "ch0",
+     180,
+     154000,
+     "fb62766d"
+    ],
+    [
+     "hint",
+     {
+      "full": true,
+      "n": 3
+     },
+     "main",
+     "ch0",
+     180,
+     154000,
+     "cd80dd2c"
+    ],
+    [
+     "task",
+     {
+      "id": "Q0-3"
+     },
+     "main",
+     "ch0",
+     210,
+     169000,
+     "d0ace0c4"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.draft_found"
+     },
+     "main",
+     "ch0",
+     210,
+     169000,
+     "fea2f549"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch0",
+     210,
+     199000,
+     "25550314"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 2
+     },
+     "main",
+     "ch0",
+     210,
+     229000,
+     "ccab9299"
+    ],
+    [
+     "skip",
+     {
+      "id": "Q0-4"
+     },
+     "main",
+     "ch0",
+     270,
+     242000,
+     "d6bf0c87"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.lin_stopped_lamp"
+     },
+     "main",
+     "ch0",
+     270,
+     242000,
+     "ddadae3a"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch0",
+     270,
+     272000,
+     "72692e26"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.draft_read"
+     },
+     "main",
+     "ch0",
+     300,
+     277000,
+     "15563b9c"
+    ],
+    [
+     "task",
+     {
+      "id": "Q0-5"
+     },
+     "main",
+     "ch0",
+     300,
+     277000,
+     "07d3e468"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.f1"
+     },
+     "main",
+     "ch0",
+     300,
+     277000,
+     "bb61ab2a"
+    ],
+    [
+     "item",
+     {
+      "id": "F1"
+     },
+     "main",
+     "ch0",
+     300,
+     277000,
+     "438ccb1c"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch0",
+     300,
+     307000,
+     "83ebfa09"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.lamp_lit"
+     },
+     "main",
+     "ch0",
+     330,
+     317000,
+     "cecc2cdd"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.cat_working"
+     },
+     "main",
+     "ch0",
+     330,
+     317000,
+     "16f6d82d"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.map_seen"
+     },
+     "main",
+     "ch0",
+     330,
+     317000,
+     "de2cb2ec"
+    ],
+    [
+     "checkpoint",
+     {
+      "id": "ckpt/ch0-lamp"
+     },
+     "main",
+     "ch0",
+     330,
+     317000,
+     "412f226b"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.lamp_world_changed"
+     },
+     "main",
+     "ch0",
+     330,
+     317000,
+     "4f13c788"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch0",
+     330,
+     347000,
+     "0a0a0141"
+    ],
+    [
+     "hint",
+     {
+      "full": true,
+      "n": 2
+     },
+     "main",
+     "ch0",
+     330,
+     377000,
+     "8eb1eed6"
+    ],
+    [
+     "hint",
+     {
+      "full": true,
+      "n": 3
+     },
+     "main",
+     "ch0",
+     330,
+     407000,
+     "12885489"
+    ],
+    [
+     "branch.enter",
+     {
+      "from": "ckpt/ch0-lamp",
+      "name": "alt/sandbox"
+     },
+     "alt/sandbox",
+     "ch0",
+     360,
+     412000,
+     "1e59a32b"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "alt/sandbox",
+     "ch0",
+     360,
+     442000,
+     "845146b0"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 2
+     },
+     "alt/sandbox",
+     "ch0",
+     360,
+     472000,
+     "af9a8de6"
+    ],
+    [
+     "hint",
+     {
+      "full": true,
+      "n": 3
+     },
+     "alt/sandbox",
+     "ch0",
+     360,
+     502000,
+     "6a7ca3b5"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.b0.lost0_created"
+     },
+     "alt/sandbox",
+     "ch0",
+     390,
+     512000,
+     "5381a7ee"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "alt/sandbox",
+     "ch0",
+     390,
+     542000,
+     "d59a05b8"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.b0.read_lost0"
+     },
+     "alt/sandbox",
+     "ch0",
+     420,
+     543000,
+     "aae9be8e"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "alt/sandbox",
+     "ch0",
+     420,
+     573000,
+     "3842e936"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 2
+     },
+     "alt/sandbox",
+     "ch0",
+     420,
+     603000,
+     "904733ff"
+    ],
+    [
+     "card",
+     {
+      "id": "K0"
+     },
+     "alt/sandbox",
+     "ch0",
+     450,
+     605000,
+     "dadf40f2"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.k0"
+     },
+     "alt/sandbox",
+     "ch0",
+     450,
+     605000,
+     "64e9fd03"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.b0.done"
+     },
+     "alt/sandbox",
+     "ch0",
+     450,
+     605000,
+     "a467f244"
+    ],
+    [
+     "merge",
+     {
+      "card": "K0",
+      "mode": "knowledge"
+     },
+     "alt/sandbox",
+     "ch0",
+     450,
+     605000,
+     "32c55b53"
+    ],
+    [
+     "branch.exit",
+     {
+      "mode": "merge"
+     },
+     "alt/sandbox",
+     "ch0",
+     450,
+     605000,
+     "43e474b4"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.ch0_done"
+     },
+     "main",
+     "ch0",
+     450,
+     605000,
+     "9ca899f4"
+    ],
+    [
+     "checkpoint",
+     {
+      "id": "ckpt/ch0-end"
+     },
+     "main",
+     "ch0",
+     450,
+     605000,
+     "13b0f51c"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch0",
+     450,
+     635000,
+     "b213e2e4"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 2
+     },
+     "main",
+     "ch0",
+     450,
+     665000,
+     "e36e0a33"
+    ],
+    [
+     "hint",
+     {
+      "full": true,
+      "n": 3
+     },
+     "main",
+     "ch0",
+     450,
+     695000,
+     "ea04dd6e"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.met_harbor"
+     },
+     "main",
+     "ch1",
+     1080,
+     696000,
+     "c0e7fda0"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch1",
+     1110,
+     701000,
+     "4016f622"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 2
+     },
+     "main",
+     "ch1",
+     1110,
+     731000,
+     "fb1d9cbd"
+    ],
+    [
+     "hint",
+     {
+      "full": true,
+      "n": 3
+     },
+     "main",
+     "ch1",
+     1110,
+     761000,
+     "3989332b"
+    ],
+    [
+     "hint",
+     {
+      "full": true,
+      "n": 3
+     },
+     "main",
+     "ch1",
+     1110,
+     791000,
+     "a998a902"
+    ],
+    [
+     "task",
+     {
+      "id": "Q1-1"
+     },
+     "main",
+     "ch1",
+     1140,
+     821000,
+     "aa9cd764"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch1",
+     1140,
+     851000,
+     "18f23029"
+    ],
+    [
+     "task",
+     {
+      "id": "Q1-3"
+     },
+     "main",
+     "ch1",
+     1170,
+     861000,
+     "438d0641"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.q1_3_done"
+     },
+     "main",
+     "ch1",
+     1170,
+     861000,
+     "9986d9a5"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.gc_name_heard"
+     },
+     "main",
+     "ch1",
+     1170,
+     861000,
+     "c7b78c85"
+    ],
+    [
+     "checkpoint",
+     {
+      "id": "ckpt/ch1-night"
+     },
+     "main",
+     "ch1",
+     1170,
+     861000,
+     "4a3d9f66"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.in_vote"
+     },
+     "main",
+     "ch1",
+     1170,
+     861000,
+     "77538aa3"
+    ],
+    [
+     "choice",
+     {
+      "id": "vote",
+      "value": "pass"
+     },
+     "main",
+     "ch1",
+     1170,
+     896000,
+     "66fe482f"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.vote_pass"
+     },
+     "main",
+     "ch1",
+     1170,
+     896000,
+     "b151f9ad"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.finished"
+     },
+     "main",
+     "ch1",
+     1170,
+     896000,
+     "e68f1b50"
+    ],
+    [
+     "end",
+     {
+      "time_up": false
+     },
+     "main",
+     "ch1",
+     1170,
+     896000,
+     "60ed4984"
+    ]
+   ],
+   "name": "newbie",
+   "says": [
+    "init.demo_welcome",
+    "init.demo_nick_ok",
+    "init.pager",
+    "init.login",
+    "init.demo_typo",
+    "init.demo_idle_1",
+    "init.q0_1_done",
+    "init.demo_idle_1",
+    "init.demo_idle_2",
+    "init.q0_2_done",
+    "init.demo_idle_1",
+    "init.demo_idle_2",
+    "init.demo_idle_3",
+    "init.q0_3_done",
+    "init.demo_idle_1",
+    "init.demo_idle_2",
+    "init.demo_skip_confirm",
+    "init.demo_skipped",
+    "init.demo_idle_1",
+    "lin.draft",
+    "init.q0_5_done",
+    "init.demo_g_lamp_1",
+    "init.lamp_prompt",
+    "init.lamp_success",
+    "init.map_lit",
+    "init.branch_offer",
+    "init.demo_g_branch_1",
+    "init.demo_g_branch_2",
+    "init.demo_g_branch_2",
+    "init.demo_g_sandbox_1",
+    "init.demo_g_sandbox_2",
+    "init.demo_g_sandbox_3",
+    "init.demo_g_lost0_1",
+    "init.demo_g_merge_1",
+    "init.demo_g_merge_2",
+    "init.branch_welcome_back",
+    "init.ch0_done",
+    "init.demo_g_ferry_1",
+    "init.demo_g_ferry_2",
+    "init.demo_g_ferry_3",
+    "init.ferry",
+    "init.ch1_arrive",
+    "harbor-master.intro",
+    "init.demo_idle_1",
+    "init.demo_idle_2",
+    "init.demo_idle_3",
+    "init.demo_idle_3",
+    "harbor.q1_1_done",
+    "init.demo_time_warning",
+    "init.demo_idle_1",
+    "harbor.q1_3_done",
+    "init.gc_name_heard",
+    "init.demo_vote",
+    "init.demo_g_vote_1",
+    "init.demo_vote_pass",
+    "init.demo_end_card"
+   ],
+   "steps": [
+    {
+     "dt": 15,
+     "in": "zien"
+    },
+    {
+     "dt": 5,
+     "in": "sl"
+    },
+    {
+     "dt": 40,
+     "in": "ls"
+    },
+    {
+     "dt": 61,
+     "in": "cat handbook.md"
+    },
+    {
+     "dt": 5,
+     "in": "hint"
+    },
+    {
+     "dt": 5,
+     "in": "hint"
+    },
+    {
+     "dt": 8,
+     "in": "ls"
+    },
+    {
+     "dt": 45,
+     "in": "ls -a notes"
+    },
+    {
+     "dt": 70,
+     "in": "skip"
+    },
+    {
+     "dt": 3,
+     "in": "skip"
+    },
+    {
+     "dt": 35,
+     "in": "grep -r KEY-FRAG ~"
+    },
+    {
+     "dt": 30,
+     "in": "systemctl start lamp"
+    },
+    {
+     "dt": 10,
+     "in": "lamp-before-sudo"
+    },
+    {
+     "dt": 95,
+     "in": "git checkout -b alt/sandbox"
+    },
+    {
+     "dt": 100,
+     "in": "rm -rf ~/notes"
+    },
+    {
+     "dt": 31,
+     "in": "cat /lost+found/#0"
+    },
+    {
+     "dt": 62,
+     "in": "git merge --knowledge"
+    },
+    {
+     "dt": 91,
+     "in": "ssh logport"
+    },
+    {
+     "dt": 5,
+     "in": "hint"
+    },
+    {
+     "dt": 120,
+     "in": "grep -c ' 404 ' access.log"
+    },
+    {
+     "dt": 40,
+     "in": "grep '02:00:00' access.log"
+    },
+    {
+     "dt": 20,
+     "in": "nonsense"
+    },
+    {
+     "dt": 15,
+     "in": "pass"
+    }
+   ],
+   "summary": {
+    "cards": [
+     "K0"
+    ],
+    "ended": true,
+    "finds": [],
+    "flags": [
+     "flag.b0.done",
+     "flag.b0.lost0_created",
+     "flag.b0.read_lost0",
+     "flag.cat_working",
+     "flag.ch0_done",
+     "flag.charter_summary_read",
+     "flag.demo.finished",
+     "flag.demo.in_vote",
+     "flag.demo.lamp_world_changed",
+     "flag.demo.started",
+     "flag.demo.used_full_hint",
+     "flag.demo.vote_pass",
+     "flag.draft_found",
+     "flag.draft_read",
+     "flag.f1",
+     "flag.gc_name_heard",
+     "flag.handbook_read",
+     "flag.k0",
+     "flag.lamp_lit",
+     "flag.lin_stopped_lamp",
+     "flag.map_seen",
+     "flag.met_harbor",
+     "flag.q1_3_done"
+    ],
+    "fullgame_checkpoints": [
+     "ckpt/ch0-lamp",
+     "ckpt/ch0-end",
+     "ckpt/ch1-night",
+     "ckpt/ch1-start"
+    ],
+    "head": "60ed4984",
+    "items": [
+     "F1"
+    ],
+    "level": "intact",
+    "n_commits": 67,
+    "nick": "zien",
+    "reasons": [],
+    "score": 60,
+    "seconds": 896,
+    "skipped": [
+     "Q0-4"
+    ],
+    "tasks": [
+     "Q0-1",
+     "Q0-2",
+     "Q0-3",
+     "Q0-5",
+     "Q1-1",
+     "Q1-3"
+    ],
+    "time_up": false,
+    "title_id": "watcher",
+    "vote": "pass"
+   }
+  },
+  {
+   "code": "RA1-eNrVVk1zmzAQ_S86g4P82XLqqfeeMxmNEDJoDBKVhJvW4__e1WJjAzaTHDO5GPR29-3bpyUnIkj6-kr2FS9IRHJZm4Xz3HqZkyjp_t4iOFcaXpyIyklKvBIH6Sk5R9-TiC6TpId57g497FcSB8wKjjfJDGiJIMT05To6Jdd5ZsyBWclHfDqAKANVy1xb19z-neLGtVZPa-WW7z3bm1bPZ1g_zVApzZw3TSNzVvG6eUS4q9LRHGUZF9pAoWmCPR2kVV7WfdBPOgwplfbhcN9WFUn3vHIyIpqk9Bxtk2h9V_sZcom9Lh-oFYzSOug0hLAufgQdJvW27XKuHralrPNMq6K8qjNieNUYdGWVgrzgu2j5bYoQ3LM_xh6ULh4NoOYNc1LqwZkopTg05sIXtYRn_yLKJMZJPqKMEiAfKFflDLyoi9G1ySzXolxIDSZFKaypJ8lBFV5LeM0r_-LQ8u9QERvEezM4GHDIkkVlnE-YANHwztINRG2eRM0Y4jq7T0QtPxF1P_2ZoFtbwQQMe7tdlK_dUW60nO3lapZ3hWVqk6MpMgAZfbHg8wpgJ9aV-KCxJSy6R76upWewVjMDjt3CLaSX3Q3JKJl8C-ChAG_jRpkghyuN4ufgI7jhlr4V7gj-pmw1aHUMKAQLN4qVktt8AnquCY1xAfWqjPPijYclfzR-WnvGidNORGmUkH39LiE58qoNI2-4c0hiKv0dkRDEEDpHF-ajXCmnMshuiF6BUG1zYTzs_A3MQNITJroaPvxmSDr8inFvX2SLiDzCprse4QOMHObRrTdrjI-5FaVqJDA04QMfVn1KduvdNs92IqxC-N8C3vxTYUWDEvg0jozBv_RHsqAL2A7EwURrDkrDTwmdppvz-T-df5PP-370df814",
+   "commits": [
+    [
+     "flag",
+     {
+      "name": "flag.demo.started"
+     },
+     "main",
+     "ch0",
+     0,
+     0,
+     "e10de7e4"
+    ],
+    [
+     "find",
+     {
+      "id": "ticket1"
+     },
+     "main",
+     "ch0",
+     90,
+     12000,
+     "f6970528"
+    ],
+    [
+     "task",
+     {
+      "id": "Q0-1"
+     },
+     "main",
+     "ch0",
+     390,
+     62000,
+     "3394b159"
+    ],
+    [
+     "task",
+     {
+      "id": "Q0-2"
+     },
+     "main",
+     "ch0",
+     420,
+     67000,
+     "4885a420"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.handbook_read"
+     },
+     "main",
+     "ch0",
+     420,
+     67000,
+     "eb9bf799"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.charter_summary_read"
+     },
+     "main",
+     "ch0",
+     420,
+     67000,
+     "90736a71"
+    ],
+    [
+     "task",
+     {
+      "id": "Q0-3"
+     },
+     "main",
+     "ch0",
+     450,
+     72000,
+     "8841b047"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.draft_found"
+     },
+     "main",
+     "ch0",
+     450,
+     72000,
+     "e33183e1"
+    ],
+    [
+     "task",
+     {
+      "id": "Q0-4"
+     },
+     "main",
+     "ch0",
+     480,
+     77000,
+     "69b45d42"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.lin_stopped_lamp"
+     },
+     "main",
+     "ch0",
+     480,
+     77000,
+     "827788be"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.draft_read"
+     },
+     "main",
+     "ch0",
+     510,
+     82000,
+     "33ba10ee"
+    ],
+    [
+     "task",
+     {
+      "id": "Q0-5"
+     },
+     "main",
+     "ch0",
+     510,
+     82000,
+     "f59643b3"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.f1"
+     },
+     "main",
+     "ch0",
+     510,
+     82000,
+     "ece6337d"
+    ],
+    [
+     "item",
+     {
+      "id": "F1"
+     },
+     "main",
+     "ch0",
+     510,
+     82000,
+     "319e4672"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch0",
+     570,
+     86000,
+     "c2ddd25e"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 2
+     },
+     "main",
+     "ch0",
+     600,
+     88000,
+     "20814ae8"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.used_full_hint"
+     },
+     "main",
+     "ch0",
+     630,
+     90000,
+     "58ff5ff7"
+    ],
+    [
+     "hint",
+     {
+      "full": true,
+      "n": 3
+     },
+     "main",
+     "ch0",
+     630,
+     90000,
+     "e6093d67"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.first_night_read"
+     },
+     "main",
+     "ch0",
+     690,
+     94000,
+     "8a8c374d"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.lamp_lit"
+     },
+     "main",
+     "ch0",
+     810,
+     122000,
+     "8bd6930f"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.cat_working"
+     },
+     "main",
+     "ch0",
+     810,
+     122000,
+     "99c25ad1"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.map_seen"
+     },
+     "main",
+     "ch0",
+     810,
+     122000,
+     "665120ca"
+    ],
+    [
+     "checkpoint",
+     {
+      "id": "ckpt/ch0-lamp"
+     },
+     "main",
+     "ch0",
+     810,
+     122000,
+     "a90fd8c6"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.lamp_world_changed"
+     },
+     "main",
+     "ch0",
+     810,
+     122000,
+     "19f3d4ef"
+    ],
+    [
+     "branch.enter",
+     {
+      "from": "ckpt/ch0-lamp",
+      "name": "alt/sandbox"
+     },
+     "alt/sandbox",
+     "ch0",
+     930,
+     142000,
+     "8ba1a460"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.b0.lost0_created"
+     },
+     "alt/sandbox",
+     "ch0",
+     1080,
+     167000,
+     "4e16b785"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "alt/sandbox",
+     "ch0",
+     1110,
+     169000,
+     "507df28b"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 2
+     },
+     "alt/sandbox",
+     "ch0",
+     1140,
+     171000,
+     "9ce12866"
+    ],
+    [
+     "hint",
+     {
+      "full": true,
+      "n": 3
+     },
+     "alt/sandbox",
+     "ch0",
+     1170,
+     173000,
+     "9d376983"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.b0.read_lost0"
+     },
+     "alt/sandbox",
+     "ch0",
+     1200,
+     178000,
+     "19b53a27"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "alt/sandbox",
+     "ch0",
+     1230,
+     180000,
+     "945650eb"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 2
+     },
+     "alt/sandbox",
+     "ch0",
+     1260,
+     182000,
+     "b509a2dc"
+    ],
+    [
+     "hint",
+     {
+      "full": true,
+      "n": 3
+     },
+     "alt/sandbox",
+     "ch0",
+     1290,
+     184000,
+     "5d473ab8"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.b0.done"
+     },
+     "alt/sandbox",
+     "ch0",
+     1320,
+     189000,
+     "be633648"
+    ],
+    [
+     "branch.exit",
+     {
+      "mode": "abandon"
+     },
+     "alt/sandbox",
+     "ch0",
+     1320,
+     189000,
+     "50e68b19"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.ch0_done"
+     },
+     "main",
+     "ch0",
+     1320,
+     189000,
+     "ea2d2d0e"
+    ],
+    [
+     "checkpoint",
+     {
+      "id": "ckpt/ch0-end"
+     },
+     "main",
+     "ch0",
+     1320,
+     189000,
+     "dd48be1f"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.met_harbor"
+     },
+     "main",
+     "ch1",
+     1980,
+     199000,
+     "73b38002"
+    ],
+    [
+     "find",
+     {
+      "id": "finger"
+     },
+     "main",
+     "ch1",
+     2040,
+     209000,
+     "c04a726f"
+    ],
+    [
+     "task",
+     {
+      "id": "Q1-1"
+     },
+     "main",
+     "ch1",
+     2100,
+     219000,
+     "010a603c"
+    ],
+    [
+     "task",
+     {
+      "id": "Q1-3"
+     },
+     "main",
+     "ch1",
+     2130,
+     224000,
+     "6e136fe4"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.q1_3_done"
+     },
+     "main",
+     "ch1",
+     2130,
+     224000,
+     "7f22b05b"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.gc_name_heard"
+     },
+     "main",
+     "ch1",
+     2130,
+     224000,
+     "bad58f64"
+    ],
+    [
+     "checkpoint",
+     {
+      "id": "ckpt/ch1-night"
+     },
+     "main",
+     "ch1",
+     2130,
+     224000,
+     "c29a35bf"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.in_vote"
+     },
+     "main",
+     "ch1",
+     2130,
+     224000,
+     "907b9066"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch1",
+     2130,
+     229000,
+     "60e7bddc"
+    ],
+    [
+     "choice",
+     {
+      "id": "vote",
+      "value": "pass"
+     },
+     "main",
+     "ch1",
+     2130,
+     239000,
+     "55161878"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.vote_pass"
+     },
+     "main",
+     "ch1",
+     2130,
+     239000,
+     "a0e5c2dc"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.finished"
+     },
+     "main",
+     "ch1",
+     2130,
+     239000,
+     "f17512dc"
+    ],
+    [
+     "end",
+     {
+      "time_up": false
+     },
+     "main",
+     "ch1",
+     2130,
+     239000,
+     "7476db7c"
+    ]
+   ],
+   "name": "edge",
+   "says": [
+    "init.demo_welcome",
+    "init.demo_nick_bad",
+    "init.demo_nick_ok",
+    "init.pager",
+    "init.login",
+    "init.demo_export_help",
+    "init.demo_ask_nobody",
+    "init.man_ticket1",
+    "init.close_ticket1",
+    "init.demo_not_in_branch",
+    "init.demo_git_unsupported",
+    "init.demo_branch_not_yet",
+    "init.demo_ferry_not_yet",
+    "init.demo_typo",
+    "init.q0_1_done",
+    "init.q0_2_done",
+    "init.q0_3_done",
+    "init.q0_4_done",
+    "lin.draft",
+    "init.q0_5_done",
+    "init.demo_skip_nothing",
+    "init.demo_g_lamp_1",
+    "init.demo_g_lamp_2",
+    "init.demo_g_lamp_3",
+    "init.demo_help",
+    "lin.first_night",
+    "init.lamp_prompt",
+    "init.lamp_prompt",
+    "init.lamp_prompt",
+    "init.lamp_success",
+    "init.map_lit",
+    "init.branch_offer",
+    "init.demo_lamp_already",
+    "init.branch_generic_unknown",
+    "init.demo_ssh_in_branch",
+    "init.demo_g_lost0_1",
+    "init.demo_g_lost0_2",
+    "init.demo_g_lost0_3",
+    "init.demo_g_merge_1",
+    "init.demo_g_merge_2",
+    "init.demo_g_merge_3",
+    "init.branch_welcome_back",
+    "init.ch0_done",
+    "init.demo_ask_nobody",
+    "init.ferry",
+    "init.ch1_arrive",
+    "harbor-master.intro",
+    "harbor-master.topic_default",
+    "harbor-master.finger_plan",
+    "harbor.q1_1_done",
+    "harbor.q1_3_done",
+    "init.gc_name_heard",
+    "init.demo_vote",
+    "init.demo_g_vote_1",
+    "init.demo_g_vote_1",
+    "init.demo_vote_pass",
+    "init.demo_end_card"
+   ],
+   "steps": [
+    {
+     "dt": 2,
+     "in": "bad nick!"
+    },
+    {
+     "dt": 5,
+     "in": "zien"
+    },
+    {
+     "dt": 2,
+     "in": "save"
+    },
+    {
+     "dt": 5,
+     "in": "ask lin"
+    },
+    {
+     "dt": 5,
+     "in": "man ticket-0001"
+    },
+    {
+     "dt": 5,
+     "in": "close TICKET-0001"
+    },
+    {
+     "dt": 5,
+     "in": "systemctl status lamp"
+    },
+    {
+     "dt": 5,
+     "in": "block"
+    },
+    {
+     "dt": 5,
+     "in": "git merge --knowledge"
+    },
+    {
+     "dt": 5,
+     "in": "git status"
+    },
+    {
+     "dt": 5,
+     "in": "git checkout -b x"
+    },
+    {
+     "dt": 5,
+     "in": "ssh logport"
+    },
+    {
+     "dt": 5,
+     "in": "catt handbook.md"
+    },
+    {
+     "dt": 5,
+     "in": "xyzzy"
+    },
+    {
+     "dt": 5,
+     "in": "ls"
+    },
+    {
+     "dt": 5,
+     "in": "cat handbook.md"
+    },
+    {
+     "dt": 5,
+     "in": "ls -a notes"
+    },
+    {
+     "dt": 5,
+     "in": "grep lamp logs/lamp.log"
+    },
+    {
+     "dt": 5,
+     "in": "grep -r KEY-FRAG ~"
+    },
+    {
+     "dt": 2,
+     "in": "skip"
+    },
+    {
+     "dt": 2,
+     "in": "hint"
+    },
+    {
+     "dt": 2,
+     "in": "hint"
+    },
+    {
+     "dt": 2,
+     "in": "hint"
+    },
+    {
+     "dt": 2,
+     "in": "help"
+    },
+    {
+     "dt": 2,
+     "in": "cat notes/01-first-night.txt"
+    },
+    {
+     "dt": 5,
+     "in": "systemctl start lamp"
+    },
+    {
+     "dt": 3,
+     "in": ""
+    },
+    {
+     "dt": 5,
+     "in": "systemctl start lamp"
+    },
+    {
+     "dt": 5,
+     "in": "cat handbook.md"
+    },
+    {
+     "dt": 5,
+     "in": "systemctl start lamp"
+    },
+    {
+     "dt": 5,
+     "in": "lamp-before-sudo"
+    },
+    {
+     "dt": 5,
+     "in": "systemctl start lamp"
+    },
+    {
+     "dt": 5,
+     "in": "systemctl status lamp"
+    },
+    {
+     "dt": 5,
+     "in": "git checkout -b foo"
+    },
+    {
+     "dt": 5,
+     "in": "git checkout -b alt/sandbox"
+    },
+    {
+     "dt": 5,
+     "in": "ssh logport"
+    },
+    {
+     "dt": 5,
+     "in": "git merge --knowledge"
+    },
+    {
+     "dt": 5,
+     "in": "git tag mark1"
+    },
+    {
+     "dt": 5,
+     "in": "rm notes/01-first-night.txt"
+    },
+    {
+     "dt": 5,
+     "in": "rm -rf ~/notes"
+    },
+    {
+     "dt": 2,
+     "in": "hint"
+    },
+    {
+     "dt": 2,
+     "in": "hint"
+    },
+    {
+     "dt": 2,
+     "in": "hint"
+    },
+    {
+     "dt": 5,
+     "in": "cat /lost+found/#0"
+    },
+    {
+     "dt": 2,
+     "in": "hint"
+    },
+    {
+     "dt": 2,
+     "in": "hint"
+    },
+    {
+     "dt": 2,
+     "in": "hint"
+    },
+    {
+     "dt": 5,
+     "in": "git abandon"
+    },
+    {
+     "dt": 5,
+     "in": "ask harbor-master tea"
+    },
+    {
+     "dt": 5,
+     "in": "ssh logport"
+    },
+    {
+     "dt": 5,
+     "in": "ask harbor-master tea"
+    },
+    {
+     "dt": 5,
+     "in": "finger harbor-master"
+    },
+    {
+     "dt": 5,
+     "in": "grep -c 404 access.log"
+    },
+    {
+     "dt": 5,
+     "in": "grep -c ' 404 ' access.log"
+    },
+    {
+     "dt": 5,
+     "in": "grep '02:00:00' access.log"
+    },
+    {
+     "dt": 5,
+     "in": "hint"
+    },
+    {
+     "dt": 5,
+     "in": "maybe"
+    },
+    {
+     "dt": 5,
+     "in": "pass"
+    }
+   ],
+   "summary": {
+    "cards": [],
+    "ended": true,
+    "finds": [
+     "ticket1",
+     "finger"
+    ],
+    "flags": [
+     "flag.b0.done",
+     "flag.b0.lost0_created",
+     "flag.b0.read_lost0",
+     "flag.cat_working",
+     "flag.ch0_done",
+     "flag.charter_summary_read",
+     "flag.demo.finished",
+     "flag.demo.in_vote",
+     "flag.demo.lamp_world_changed",
+     "flag.demo.started",
+     "flag.demo.used_full_hint",
+     "flag.demo.vote_pass",
+     "flag.draft_found",
+     "flag.draft_read",
+     "flag.f1",
+     "flag.first_night_read",
+     "flag.gc_name_heard",
+     "flag.handbook_read",
+     "flag.lamp_lit",
+     "flag.lin_stopped_lamp",
+     "flag.map_seen",
+     "flag.met_harbor",
+     "flag.q1_3_done"
+    ],
+    "fullgame_checkpoints": [
+     "ckpt/ch0-lamp",
+     "ckpt/ch0-end",
+     "ckpt/ch1-night",
+     "ckpt/ch1-start"
+    ],
+    "head": "7476db7c",
+    "items": [
+     "F1"
+    ],
+    "level": "intact",
+    "n_commits": 50,
+    "nick": "zien",
+    "reasons": [],
+    "score": 115,
+    "seconds": 239,
+    "skipped": [],
+    "tasks": [
+     "Q0-1",
+     "Q0-2",
+     "Q0-3",
+     "Q0-4",
+     "Q0-5",
+     "Q1-1",
+     "Q1-3"
+    ],
+    "time_up": false,
+    "title_id": "watcher",
+    "vote": "pass"
+   }
+  },
+  {
+   "code": "RA1-eNq9VsGSmzAM_RedIQuk2XY49dR7z5kdjwETPME2Y5vtthn-vbIhWUhINttpSC7YPFlPsvTEAXJIt1soa7qDAAom1MpYqi0rIIj6_0uwhYpLC8EByrauIS1pbVgAEtK4Q8Q6wt9HyOQCaanZOyQvIIWfURhDh4BlfSa9z3iMGXJRUVlkSu2JZnSajAGQVy5PmphWCKp_X-KWCGDdB5DMBFBoWlpSqlYuT-vLdVo1l8RY1TSsIDUVzcO5TdLRX9I5tXP6G-hmLryMJ1y5ZeJk9COemjwwEJc0UnPrw4g3l4CcWvJL6T2Xu7m6FbQhhjE5eZdXLN83auDiQ8K1fcqrKPS3NJcQLxeeDrqrC4IdIXf_rBzjQ1uD1eFMSG9_M2dWt6OUnUCZpjKvVkxik3qwVuIiLLSjguE2re2T8S3_dtShyd7d0XzCKrlpNeQji1a1MjYiOdau1-X_S-7djesN4n3Buyg-wE-hJLsexfHa3rh3IlThrydDkJJDGV4_Hi-W9OffWdwM1XGpzhXMEhwamcJ6fB5GHZKL4W6_H6KTWfRU3-LxqF3E_5V-XX8SPJrU96E3jwHPkB6Ll-WCkdYPts0NGM7BV2VPlTqLKbnkpuol9fncpytd5Hd05yl2k9NesOYgPfizjiG4Z-ILwT2FJdfGhpLvKgwW2CvK5fGVX2CtBLDrNVIrZUOq84o3DEkq95Xk5mkKGfv2NWMJc3rK8z3u_OFuwkBD_ercMsTWi79Hq3iFWgMGG1RQLDV8ZBhsuum6v6ckDn8-1c3153a6",
+   "commits": [
+    [
+     "flag",
+     {
+      "name": "flag.demo.started"
+     },
+     "main",
+     "ch0",
+     0,
+     0,
+     "e10de7e4"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch0",
+     0,
+     30000,
+     "5bc164f4"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 2
+     },
+     "main",
+     "ch0",
+     0,
+     60000,
+     "c835cbb7"
+    ],
+    [
+     "task",
+     {
+      "id": "Q0-1"
+     },
+     "main",
+     "ch0",
+     30,
+     60000,
+     "de7d282e"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch0",
+     30,
+     90000,
+     "4e16929d"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 2
+     },
+     "main",
+     "ch0",
+     30,
+     120000,
+     "a287cdf9"
+    ],
+    [
+     "task",
+     {
+      "id": "Q0-2"
+     },
+     "main",
+     "ch0",
+     60,
+     130000,
+     "f0d0675b"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.handbook_read"
+     },
+     "main",
+     "ch0",
+     60,
+     130000,
+     "07969c3f"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.charter_summary_read"
+     },
+     "main",
+     "ch0",
+     60,
+     130000,
+     "cef952e8"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch0",
+     60,
+     160000,
+     "a6f70c1a"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 2
+     },
+     "main",
+     "ch0",
+     60,
+     190000,
+     "10fa65b4"
+    ],
+    [
+     "task",
+     {
+      "id": "Q0-3"
+     },
+     "main",
+     "ch0",
+     90,
+     210000,
+     "5e47c68d"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.draft_found"
+     },
+     "main",
+     "ch0",
+     90,
+     210000,
+     "fc06d210"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch0",
+     90,
+     240000,
+     "d27b6d7d"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 2
+     },
+     "main",
+     "ch0",
+     90,
+     270000,
+     "866a816f"
+    ],
+    [
+     "task",
+     {
+      "id": "Q0-4"
+     },
+     "main",
+     "ch0",
+     120,
+     290000,
+     "85eb5f15"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.lin_stopped_lamp"
+     },
+     "main",
+     "ch0",
+     120,
+     290000,
+     "ae13faa9"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch0",
+     120,
+     320000,
+     "c50453c2"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 2
+     },
+     "main",
+     "ch0",
+     120,
+     350000,
+     "9cc0938f"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.draft_read"
+     },
+     "main",
+     "ch0",
+     150,
+     370000,
+     "b9549b48"
+    ],
+    [
+     "task",
+     {
+      "id": "Q0-5"
+     },
+     "main",
+     "ch0",
+     150,
+     370000,
+     "c571c7db"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.f1"
+     },
+     "main",
+     "ch0",
+     150,
+     370000,
+     "ea551003"
+    ],
+    [
+     "item",
+     {
+      "id": "F1"
+     },
+     "main",
+     "ch0",
+     150,
+     370000,
+     "d8ef1b9b"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch0",
+     150,
+     400000,
+     "727b807d"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 2
+     },
+     "main",
+     "ch0",
+     150,
+     430000,
+     "e643fe11"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.lamp_lit"
+     },
+     "main",
+     "ch0",
+     180,
+     445000,
+     "023cb242"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.cat_working"
+     },
+     "main",
+     "ch0",
+     180,
+     445000,
+     "6e6738ca"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.map_seen"
+     },
+     "main",
+     "ch0",
+     180,
+     445000,
+     "075e9b0f"
+    ],
+    [
+     "checkpoint",
+     {
+      "id": "ckpt/ch0-lamp"
+     },
+     "main",
+     "ch0",
+     180,
+     445000,
+     "d222f2b8"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.lamp_world_changed"
+     },
+     "main",
+     "ch0",
+     180,
+     445000,
+     "055a0fbb"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch0",
+     180,
+     475000,
+     "a6605a22"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.used_full_hint"
+     },
+     "main",
+     "ch0",
+     180,
+     505000,
+     "47fffc0c"
+    ],
+    [
+     "hint",
+     {
+      "full": true,
+      "n": 2
+     },
+     "main",
+     "ch0",
+     180,
+     505000,
+     "5ad81f96"
+    ],
+    [
+     "branch.enter",
+     {
+      "from": "ckpt/ch0-lamp",
+      "name": "alt/sandbox"
+     },
+     "alt/sandbox",
+     "ch0",
+     210,
+     505000,
+     "fb0ffb30"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "alt/sandbox",
+     "ch0",
+     210,
+     535000,
+     "53ad214e"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 2
+     },
+     "alt/sandbox",
+     "ch0",
+     210,
+     565000,
+     "696d734c"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.b0.lost0_created"
+     },
+     "alt/sandbox",
+     "ch0",
+     240,
+     565000,
+     "1948abbe"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "alt/sandbox",
+     "ch0",
+     240,
+     595000,
+     "ca8695a2"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.b0.read_lost0"
+     },
+     "alt/sandbox",
+     "ch0",
+     270,
+     605000,
+     "eb09a460"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "alt/sandbox",
+     "ch0",
+     270,
+     635000,
+     "cffad4c3"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.b0.done"
+     },
+     "alt/sandbox",
+     "ch0",
+     300,
+     635000,
+     "443dd13d"
+    ],
+    [
+     "branch.exit",
+     {
+      "mode": "abandon"
+     },
+     "alt/sandbox",
+     "ch0",
+     300,
+     635000,
+     "d1f6f345"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.ch0_done"
+     },
+     "main",
+     "ch0",
+     300,
+     635000,
+     "abaea863"
+    ],
+    [
+     "checkpoint",
+     {
+      "id": "ckpt/ch0-end"
+     },
+     "main",
+     "ch0",
+     300,
+     635000,
+     "a524f83f"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch0",
+     300,
+     665000,
+     "b4955890"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 2
+     },
+     "main",
+     "ch0",
+     300,
+     695000,
+     "2f9a690b"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.met_harbor"
+     },
+     "main",
+     "ch1",
+     930,
+     695000,
+     "1cc818f1"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch1",
+     930,
+     725000,
+     "d24c2ec5"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 2
+     },
+     "main",
+     "ch1",
+     930,
+     755000,
+     "814c471c"
+    ],
+    [
+     "task",
+     {
+      "id": "Q1-1"
+     },
+     "main",
+     "ch1",
+     960,
+     755000,
+     "a111ee4f"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 1
+     },
+     "main",
+     "ch1",
+     960,
+     785000,
+     "13c02a41"
+    ],
+    [
+     "hint",
+     {
+      "full": false,
+      "n": 2
+     },
+     "main",
+     "ch1",
+     960,
+     815000,
+     "76625535"
+    ],
+    [
+     "hint",
+     {
+      "full": true,
+      "n": 3
+     },
+     "main",
+     "ch1",
+     960,
+     845000,
+     "f9e4498c"
+    ],
+    [
+     "hint",
+     {
+      "full": true,
+      "n": 3
+     },
+     "main",
+     "ch1",
+     990,
+     855000,
+     "b7e977ae"
+    ],
+    [
+     "hint",
+     {
+      "full": true,
+      "n": 3
+     },
+     "main",
+     "ch1",
+     1020,
+     860000,
+     "e0625786"
+    ],
+    [
+     "hint",
+     {
+      "full": true,
+      "n": 3
+     },
+     "main",
+     "ch1",
+     1050,
+     865000,
+     "de741e4f"
+    ],
+    [
+     "hint",
+     {
+      "full": true,
+      "n": 3
+     },
+     "main",
+     "ch1",
+     1050,
+     895000,
+     "32fe65e2"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.time_up"
+     },
+     "main",
+     "ch1",
+     1050,
+     900000,
+     "f6708604"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.in_vote"
+     },
+     "main",
+     "ch1",
+     1050,
+     900000,
+     "c997279e"
+    ],
+    [
+     "flag",
+     {
+      "name": "flag.demo.finished"
+     },
+     "main",
+     "ch1",
+     1050,
+     960000,
+     "cf051e17"
+    ],
+    [
+     "end",
+     {
+      "time_up": true
+     },
+     "main",
+     "ch1",
+     1050,
+     960000,
+     "be87be2e"
+    ]
+   ],
+   "name": "timeup",
+   "says": [
+    "init.demo_welcome",
+    "init.demo_nick_ok",
+    "init.pager",
+    "init.login",
+    "init.demo_idle_1",
+    "init.demo_idle_2",
+    "init.q0_1_done",
+    "init.demo_idle_1",
+    "init.demo_idle_2",
+    "init.q0_2_done",
+    "init.demo_idle_1",
+    "init.demo_idle_2",
+    "init.q0_3_done",
+    "init.demo_idle_1",
+    "init.demo_idle_2",
+    "init.q0_4_done",
+    "init.demo_idle_1",
+    "init.demo_idle_2",
+    "lin.draft",
+    "init.q0_5_done",
+    "init.demo_g_lamp_1",
+    "init.demo_g_lamp_2",
+    "init.lamp_prompt",
+    "init.lamp_success",
+    "init.map_lit",
+    "init.branch_offer",
+    "init.demo_g_branch_1",
+    "init.demo_g_branch_2",
+    "init.demo_g_sandbox_1",
+    "init.demo_g_sandbox_2",
+    "init.demo_g_lost0_1",
+    "init.demo_g_merge_1",
+    "init.branch_welcome_back",
+    "init.ch0_done",
+    "init.demo_g_ferry_1",
+    "init.demo_g_ferry_2",
+    "init.ferry",
+    "init.ch1_arrive",
+    "harbor-master.intro",
+    "init.demo_idle_1",
+    "init.demo_idle_2",
+    "harbor.q1_1_done",
+    "init.demo_idle_1",
+    "init.demo_idle_2",
+    "init.demo_time_warning",
+    "init.demo_idle_3",
+    "init.demo_idle_3",
+    "init.demo_idle_3",
+    "init.demo_idle_3",
+    "init.demo_idle_3",
+    "init.demo_time_up",
+    "init.demo_vote",
+    "init.demo_end_card"
+   ],
+   "steps": [
+    {
+     "dt": 10,
+     "in": "zien"
+    },
+    {
+     "dt": 60,
+     "in": "ls"
+    },
+    {
+     "dt": 70,
+     "in": "cat handbook.md"
+    },
+    {
+     "dt": 80,
+     "in": "ls -a notes"
+    },
+    {
+     "dt": 80,
+     "in": "grep lamp logs/lamp.log"
+    },
+    {
+     "dt": 80,
+     "in": "grep -r KEY-FRAG ~"
+    },
+    {
+     "dt": 60,
+     "in": "systemctl start lamp"
+    },
+    {
+     "dt": 15,
+     "in": "lamp-before-sudo"
+    },
+    {
+     "dt": 60,
+     "in": "git checkout -b alt/sandbox"
+    },
+    {
+     "dt": 60,
+     "in": "rm -rf ~/notes"
+    },
+    {
+     "dt": 40,
+     "in": "cat /lost+found/#0"
+    },
+    {
+     "dt": 30,
+     "in": "git abandon"
+    },
+    {
+     "dt": 60,
+     "in": "ssh logport"
+    },
+    {
+     "dt": 60,
+     "in": "grep -c ' 404 ' access.log"
+    },
+    {
+     "dt": 100,
+     "in": "hint"
+    },
+    {
+     "dt": 5,
+     "in": "hint"
+    },
+    {
+     "dt": 5,
+     "in": "hint"
+    },
+    {
+     "dt": 120,
+     "in": "wait"
+    },
+    {
+     "dt": 5,
+     "in": "block"
+    }
+   ],
+   "summary": {
+    "cards": [],
+    "ended": true,
+    "finds": [],
+    "flags": [
+     "flag.b0.done",
+     "flag.b0.lost0_created",
+     "flag.b0.read_lost0",
+     "flag.cat_working",
+     "flag.ch0_done",
+     "flag.charter_summary_read",
+     "flag.demo.finished",
+     "flag.demo.in_vote",
+     "flag.demo.lamp_world_changed",
+     "flag.demo.started",
+     "flag.demo.time_up",
+     "flag.demo.used_full_hint",
+     "flag.draft_found",
+     "flag.draft_read",
+     "flag.f1",
+     "flag.handbook_read",
+     "flag.lamp_lit",
+     "flag.lin_stopped_lamp",
+     "flag.map_seen",
+     "flag.met_harbor"
+    ],
+    "fullgame_checkpoints": [
+     "ckpt/ch0-lamp",
+     "ckpt/ch0-end",
+     "ckpt/ch1-start"
+    ],
+    "head": "be87be2e",
+    "items": [
+     "F1"
+    ],
+    "level": "intact",
+    "n_commits": 61,
+    "nick": "zien",
+    "reasons": [],
+    "score": 60,
+    "seconds": 960,
+    "skipped": [],
+    "tasks": [
+     "Q0-1",
+     "Q0-2",
+     "Q0-3",
+     "Q0-4",
+     "Q0-5",
+     "Q1-1"
+    ],
+    "time_up": true,
+    "title_id": "default",
+    "vote": null
+   }
+  }
+ ]
+}

@@ -1,0 +1,77 @@
+type: world
+id: world
+title: 根目錄群島 Root Archipelago
+engine_min_version: "0.1.0"
+language: zh-TW          # 劇情與介面繁體中文；指令、路徑、旗標名稱維持英文
+
+# 世界曆。賽季 = 一次 release；世界時間不等於現實時間。
+season:
+  number: 5
+  motd_version: "5.0"
+  start: "2031-12-07"        # 星期日
+  end: "2032-02-29"          # 閏日：GC 的大掃除（cron: 0 0 29 2 *）
+  weeks: 12
+  start_weekday: Sun
+  login_time: "07:30:00"     # 玩家第一次登入燈塔的世界時間
+  lin_left: "2031-10-27 02:00:00"   # lamp.log 最後一行；到登入時剛好 41 天
+
+# 鐘塔時間為準（憲章第八條）。所有日誌、檔案時間戳都用鐘塔時間，時區一律 +0000。
+clock:
+  authority: tower
+  tz: "+0000"
+  advance:
+    solo: by_commit          # 世界時鐘隨存檔的 commit 數推進
+    multi_offline: by_commit
+    online: realtime
+
+# GC：世界的免疫系統，表面上的威脅。
+gc:
+  nightly_time: "02:00:00"
+  source_ip: "10.7.0.2"
+  probe_path: "/gc/probe"
+  user_agent: "gc/1.0 (sweep)"
+  full_sweep_cron: "0 0 29 2 *"
+  convoy_ip: "10.7.0.23"     # 渡輪車隊；每晚 02:00:12 經過，用來測「前綴比對」陷阱
+  convoy_time: "02:00:12"
+
+# 憲章第六條：一次眨眼 = 150 毫秒，以值班室的標準眨眼貓為準。
+standard_blink_ms: 150
+
+# 訊息前綴約定（見 world/voice_guide.md）
+tags:
+  init: "[init]"
+  gc: "[gc]"
+  sim: "[sim]"
+  page: "[PAGE]"
+  branch_prefix_format: "[init@{branch}]"   # 在分支內 INIT 會加上分支名並聲明這是模擬
+
+# 登入歡迎詞（MOTD）：基本三行 + 條件行
+motd:
+  base_ref: text/ch0/motd.txt
+  conditional:
+    - if: "world.weekday == 'Fri' and world.time >= '12:00'"
+      line: " * 提醒：憲章第九條，週五下午不修憲。"
+    - if: "flag.lamp_lit"
+      line: " * 燈：亮    本季已亮燈島嶼：{season.lit_islands}"   # online 才有真實計數
+    - if: "flag.ch1_done and not flag.gc_known_public"
+      line: " * 港口註記：02:00 的訪客今晚也會來。"
+    - if: "player.finished_season"
+      line: " * 名人堂：{hall_of_fame}"
+
+# 資源（數字為起始值，需要試玩調整）
+resources:
+  sectors: {start: 0, note: "區塊，搶島用；Ch0–Ch1 只發獎勵，不消耗"}
+  keys:    {start: 0, note: "鑰匙碎片幣，換提示（man）；不是 F1–F8 金鑰碎片"}
+  hint_cost_keys: [1, 2, 3]   # man 一級 / 二級 / 三級
+  time_fuel: {online_daily: 3, note: "連線回溯消耗；離線不限"}
+  branches_max: {solo: 5, multi_offline: 5, online: "受時間燃料限制"}
+  reflog_ttl_days: 3          # 被丟棄分支的懸空 commit，期限一過就被 GC 回收
+
+# 此資料包覆蓋的章節
+pack:
+  id: root-archipelago-ch01
+  version: "0.1.0"
+  chapters: [ch0, ch1]
+  knowledge_cards: [K0, K1]
+  fragments: [F1, F2]
+  tickets: [T0100, T0427]

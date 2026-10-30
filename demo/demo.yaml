@@ -1,0 +1,211 @@
+type: demo
+id: demo-first-night
+title: 根目錄群島　試玩版〈第一夜〉
+version: 0.1.0
+requires_pack: root-archipelago-ch01@0.1.0
+target_minutes: 15
+hard_cap_minutes: 15           # 到點自動進尾聲（存檔照樣保存）
+
+pitch: "一座沒有人值班的燈塔。一封沒寄出的信。一位每晚 02:00 準時敲門的訪客。十五分鐘，用最老的方式玩一個伺服器。"
+
+audience:
+  - "完全沒碰過 Linux 的人（活動主力）：有指令按鈕、自動提示、不會卡死。"
+  - "會一點 Linux 的人：同樣的快題，更快過；有隱藏發現可以挖。"
+  - "兩人一台電腦：雙人輪流輸入也成立（Ch0 本來就是輪流值班的島）。"
+
+# ---------------------------------------------------------------------------
+# 三種辦法跑這個試玩版（同一份資料，不同殼）
+# ---------------------------------------------------------------------------
+run_modes:
+  self_serve: "網頁連結／QR。玩家自己的瀏覽器，存檔在本機。"
+  kiosk: "活動攤位的一台筆電。閒置 120 秒自動重置成歡迎畫面；結束時顯示代碼＋值班證，並詢問是否清除本機存檔。"
+  host_led: "主持人投影，全場一起讀螢幕、舉手決定下一條指令；適合 20 人以上的講座暖場，時間縮成 10 分鐘（只走 seg1–seg4 + seg7）。"
+
+# ---------------------------------------------------------------------------
+# 介面（給完全新手）
+# ---------------------------------------------------------------------------
+ui:
+  command_chips: [ls, "ls -a", cat, "grep", "grep -r", cd, "git", hint, save]     # 點一下把文字填進輸入列
+  tab_complete: true
+  show_task_panel: true          # 右側顯示目前任務文字（來自 quests/*.yaml 的 prompt）
+  autohint:
+    idle_seconds: [30, 60, 90]
+    cost: none                   # 試玩版不用鑰匙幣
+  typing_forgiveness:
+    - "指令前後多餘空白忽略"
+    - "常見打錯：sl → 提示『你是指 ls 嗎』；cat 後面漏空白也提示"
+  no_dead_ends: "任何時候輸入 hint 都會給下一步；輸入 skip 可跳過目前快題（不扣分，只少拿該題的發現點）"
+  accessibility: ["字級可放大", "高對比主題", "不依賴顏色表達狀態"]
+  languages: [zh-TW]
+
+command_whitelist:                # 試玩版只開放這些；其他回 command not found（保持 15 分鐘的範圍）
+  - ls
+  - cd
+  - pwd
+  - cat
+  - grep
+  - head
+  - tail
+  - sort
+  - uniq
+  - cut
+  - wc
+  - echo
+  - mail
+  - man
+  - finger
+  - systemctl
+  - ssh
+  - ln
+  - rm
+  - sudo
+  - close
+  - git
+  - ask
+  - block
+  - pass
+  - hint
+  - skip
+  - save
+  - help
+
+# ---------------------------------------------------------------------------
+# 內容：沿用正式版的檔案、對話、快題、分支（ID 不改，存檔才能直接匯入）
+# ---------------------------------------------------------------------------
+content:
+  chapters:
+    ch0:
+      use: chapters/ch0_lighthouse.yaml
+      remove_files: []                    # 不刪任何檔案：隱藏發現都在裡面
+      skip_tickets: [T0100]               # 試玩版不放 OJ 工單
+    ch1_teaser:
+      use: chapters/ch1_logport.yaml
+      generate_override: {lines_per_day: 100, days: 30}     # 約 3 千行，瀏覽器瞬間算完
+      include_files:
+        - /var/log/harbor/access.log
+        - /var/log/harbor/error.log
+      drop_files: [/srv/harbor/tickets/TICKET-0427.md, "/srv/harbor/lost+found/#3141", /srv/harbor/lin-ticket.md, /var/log/harbor/rotated/access.log.1.gz]
+      prune_empty_dirs: true              # 丟掉的檔案不留空資料夾（例如 rotated/）；家目錄除外
+      quick_tasks: [Q1-1, Q1-3]           # 只做這兩題：數 404、看 02:00:00
+      harbor_nodes: [intro, q1_1_done, q1_3_done, topic_cat, topic_default, finger_plan]   # intro 的 next（topics_menu）在試玩版視為 null
+  quick_tasks: [Q0-1, Q0-2, Q0-3, Q0-4, Q0-5, Q1-1, Q1-3]
+  branches: [B0]
+  cards: [K0]
+  fragments: [F1]
+
+# ---------------------------------------------------------------------------
+# 時間預算（秒）：fast = 會 Linux；median = 完全新手；slow = 新手 + 全程用提示
+# ---------------------------------------------------------------------------
+segments:
+  - id: seg1
+    title: 呼叫與登入
+    beats:
+      - {id: s1a, kind: say,  ref: init.demo_welcome,  est: [20, 40, 60]}
+      - {id: s1b, kind: say,  ref: init.pager,         est: [5, 8, 12]}
+      - {id: s1c, kind: say,  ref: init.login,         est: [5, 7, 13]}
+      - {id: s1d, kind: say,  ref: lin.mail_first,     est: [15, 30, 45]}
+  - id: seg2
+    title: 手冊與窗外
+    beats:
+      - {id: s2a, kind: task, ref: Q0-1, est: [15, 30, 50]}
+      - {id: s2b, kind: task, ref: Q0-2, est: [20, 40, 70]}
+      - {id: s2c, kind: task, ref: Q0-3, est: [20, 45, 80]}
+      - {id: s2d, kind: task, ref: Q0-4, est: [20, 40, 70]}
+  - id: seg3
+    title: 沒寄出的信
+    beats:
+      - {id: s3a, kind: task, ref: Q0-5,         est: [25, 60, 100]}
+      - {id: s3b, kind: say,  ref: lin.draft,    est: [20, 40, 60]}
+  - id: seg4
+    title: 點燈
+    beats:
+      - {id: s4a, kind: say, ref: init.lamp_prompt,   est: [15, 30, 60]}
+      - {id: s4b, kind: say, ref: init.lamp_success,  est: [8, 15, 20]}
+      - {id: s4c, kind: say, ref: init.map_lit,       est: [8, 15, 25]}
+  - id: seg5
+    title: 第一夜的試誤（分支）
+    beats:
+      - {id: s5a, kind: say,    ref: init.branch_offer, est: [10, 20, 30]}
+      - {id: s5b, kind: branch, ref: B0,                est: [50, 130, 210]}
+  - id: seg6
+    title: 日誌港預告
+    beats:
+      - {id: s6a, kind: say,  ref: init.ferry,            est: [8, 12, 18]}
+      - {id: s6b, kind: say,  ref: harbor-master.intro,   est: [12, 25, 40]}
+      - {id: s6c, kind: task, ref: Q1-1,                  est: [25, 60, 100]}
+      - {id: s6d, kind: task, ref: Q1-3,                  est: [25, 55, 90]}
+      - {id: s6e, kind: say,  ref: init.gc_name_heard,    est: [8, 15, 25]}
+  - id: seg7
+    title: 懸念與存檔
+    beats:
+      - {id: s7a, kind: say,  ref: init.demo_vote,     est: [15, 30, 45]}
+      - {id: s7b, kind: say,  ref: init.demo_end_card, est: [20, 40, 60]}
+
+budget:
+  median_seconds_max: 840        # 14 分鐘：留 1 分鐘給隱藏發現與雜項
+  fast_seconds_max: 480
+  slow_seconds_max: 1300         # 未設上限時慢玩家的估計；實際上 15 分鐘硬上限（900 秒）會自動收尾，進度照存，投票照問
+  exploration_allowance_seconds: 90
+
+# ---------------------------------------------------------------------------
+# 隱藏發現（活動的加分點）：觸發條件都是「玩家自己去翻」，沒有提示
+# ---------------------------------------------------------------------------
+finds:
+  - {id: jar,          points: 1, when: "cat shelf/jar.txt（moth 的標本罐）"}
+  - {id: cat,          points: 2, when: "cat shelf/cat.txt（燈亮前、燈亮後各看一次；貓從罷工變復工）"}
+  - {id: ticket1,      points: 2, when: "cat incidents/TICKET-0001.md 或 man ticket-0001"}
+  - {id: history,      points: 1, when: "cat .bash_history（看到 amend/art-10 那三行）"}
+  - {id: sudo,         points: 1, when: "輸入 sudo：INIT 回『lin 說過了。』"}
+  - {id: relic,        points: 2, when: "ln ~/notes/01-first-night.txt ~/keep/（遺物引用，沒有提示、沒有獎勵）"}
+  - {id: sandwich,     points: 1, when: "sudo make me a sandwich"}
+  - {id: finger,       points: 1, when: "finger harbor-master（.plan：今天也在喝茶。）"}
+  - {id: harbor_cat,   points: 1, when: "ask harbor-master cat（標準眨眼貓）"}
+  - {id: error_log,    points: 1, when: "cat /var/log/harbor/error.log（拖鞋與布丁）"}
+  - {id: rm_main,      points: 1, when: "在 main 打 rm -rf ~ 被 INIT 攔下"}
+  - {id: rm_branch,    points: 2, when: "在 alt/sandbox 裡打 rm -rf ~"}
+max_find_points: 16
+
+scoring:
+  # 活動用，不影響正式版進度
+  formula: "score = tasks*10 + finds_points*5 + (no_full_hint ? 20 : 0) + speed_bonus"
+  speed_bonus: {under_seconds_600: 30, under_seconds_780: 15, otherwise: 0}
+  tie_break: "較早完成者在前"
+  note: "活動排行榜只靠玩家回報代碼（見 EVENT_KIT.md），沒有伺服器也能辦。"
+
+titles:                     # 依行為給稱號（值班證上的一行字）
+  - {id: breaker,   text: "拆門者",   when: "rm_branch 且 K0 已合併"}
+  - {id: watcher,   text: "守夜人",   when: "vote_pass"}
+  - {id: blocker,   text: "擋門人",   when: "vote_block"}
+  - {id: reader,    text: "讀信人",   when: "finds ≥ 6"}
+  - {id: sprinter,  text: "快手值班員", when: "耗時 < 10 分鐘 且 沒用完整提示"}
+  - {id: default,   text: "值班員",   when: "其他"}
+title_priority: [breaker, reader, sprinter, watcher, blocker, default]
+
+badge:
+  id: badge.demo_first_night
+  text: "試玩版值班員"
+  granted_when: "flag.demo.finished 或 flag.demo.time_up，且存檔完整性為「完整」（integrity.yaml）"
+
+# ---------------------------------------------------------------------------
+# 存檔（三種出口，內容相同）
+# ---------------------------------------------------------------------------
+save:
+  schema: 1
+  autosave: {where: "localStorage（try/catch 包起來；私密視窗可能是空的）", every: "每個 commit"}
+  export:
+    - {kind: file, name: "{nick}.rasave.json", note: "完整存檔，可匯入正式版"}
+    - {kind: code, prefix: "RA1-", format: "RA1-<base64url(zlib(規範化 JSON))>-<CRC32 8 碼>", approx_chars: "900–1200", note: "沒網路的活動用這個：複製貼上、拍照、QR 都行"}
+    - {kind: card, note: "值班證，純文字（可截圖分享）；不含存檔本體"}
+  qr: "代碼超過 1200 字元時分兩個 QR（RA1-1/2、RA1-2/2）；本試玩版預期一個就夠"
+  privacy: "只含暱稱、種子、事件與時間；不含真實姓名、不含 IP。匯出前顯示一次『這份代碼包含什麼』。"
+  commit_kinds: [task, skip, flag, item, card, find, branch.enter, branch.exit, merge, choice, hint, checkpoint, end]
+  metrics: "每個 commit 帶 r（距開始的毫秒），活動後可用 aggregate 工具算每一段的中位數時間"
+
+# ---------------------------------------------------------------------------
+# 黃金路徑：自動測試用的「假玩家」（驗證存檔、匯入、統計，不需要真人試玩）
+# ---------------------------------------------------------------------------
+golden_paths:
+  fast:   {seconds: 420, vote: block, finds: [jar, history, sudo],                        hints: 0}
+  median: {seconds: 790, vote: pass,  finds: [jar, cat, ticket1, harbor_cat],             hints: 1}
+  slow:   {seconds: 900, vote: pass,  finds: [],                                          hints: 3, time_up: true}   # 時間到仍會被問一次投票
+  digger: {seconds: 860, vote: block, finds: [jar, cat, ticket1, history, sudo, relic, sandwich, finger, harbor_cat, error_log, rm_main, rm_branch], hints: 0}

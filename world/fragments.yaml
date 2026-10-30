@@ -1,0 +1,36 @@
+type: fragments
+id: fragments
+note: >
+  金鑰碎片。碎片本身不會說話；藏匿方式就是各島的謎題。硬連結（ln）讓 GC 無法回收：被引用的東西不會被回收。
+  Ch7 拼金鑰時，順序藏在硬連結的建立時間（ls -ltr 由舊到新，再 cat 串接成 root.key）。
+  此資料包只定義 F1、F2；F3–F8 見後續章節。Ch0–1 的文字不得透露總數。
+
+fragments:
+  - id: F1
+    island: lighthouse
+    value: "7c1f-9a3e-0b44-e2d8"
+    marker: "KEY-FRAG[1]"
+    path: /home/op/notes/.draft.txt
+    link_time: "2031-10-26 21:10:00"
+    how: "grep -r KEY-FRAG ~"
+    quest: Q0-5
+  - id: F2
+    island: logport
+    value: "51d0-ae27-93bc-4f06"
+    marker: "KEY-FRAG[2]"
+    path: "/srv/harbor/lost+found/#3141 → /srv/harbor/for-harbor-master.txt"
+    link_time: "2031-10-26 21:40:00"
+    how: "fsck -y /srv/harbor，然後 cat 復原後的信"
+    quest: Q1-5
+
+future:   # 登記代號，避免之後撞號（值與藏法在各章節資料包定義）
+  - {id: F3, island: permfort,    path_hint: "/etc/charter.d/.seal"}
+  - {id: F4, island: mailisle,    path_hint: "lin 未寄信件的附件"}
+  - {id: F5, island: cronmine,    path_hint: "閏日排程的註解"}
+  - {id: F6, island: routereef,   path_hint: "唯一仍可連通的一跳"}
+  - {id: F7, island: heapswamp,   path_hint: "GC 本人保管"}
+  - {id: F8, island: coldstorage, path_hint: "v4-final.tar.gz 的唯一差異檔"}
+
+rules:
+  - "KEY-FRAG[n] 的 n 是碎片編號（F1 = 1）；Ch7 的組合順序以 link_time 為準，不是以 n 為準。"
+  - "七片即可開 / 的門，但只能選 rebase 或 revert；merge 與 fork 需要八片。"

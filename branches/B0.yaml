@@ -1,0 +1,70 @@
+type: branch
+id: B0
+title: 第一夜的試誤
+chapter: ch0
+branch_type: parallel            # 平行分支（教學用）
+name: alt/sandbox
+from: ckpt/ch0-lamp              # 燈亮之後、INIT 提議開分支的那一刻
+card: K0
+teaching_goal: "分支是什麼；在分支裡弄壞東西不要緊；merge --knowledge 只帶回知識。"
+prefix_format: "[init@alt/sandbox]"
+max_duration: unlimited          # 單人離線不限時、可無限重來
+
+enter:
+  command: "git checkout -b alt/sandbox"
+  init_says:
+    - "[init] 你可以開一條分支。在分支裡，弄壞什麼都不要緊。"
+  world: copy_of_current_lighthouse     # 燈塔的副本；main 完全不受影響
+
+# 分支內的規則：全部指令可寫入；以下是會觸發劇情的狀態
+rules:
+  - id: rm_anything
+    when: {cmd_regex: '^rm\s+-\S*r\S*\s+(-\S+\s+)*(~|\$HOME|/home/op)/?\*?\s*$'}
+    say: "[init@alt/sandbox] 還好這是分支。"
+  - id: rm_anything_generic
+    when: {cmd_regex: '^rm\b'}
+    say: "[init@alt/sandbox] 這是模擬。"
+  - id: notes_emptied
+    when: {state: "notes/ 內已沒有任何檔案（含隱藏檔）或 ~ 已被清空"}
+    effects:
+      - create_file: {path: "/lost+found/#0", content_ref: text/ch0/lost0.txt}
+      - say: "[init@alt/sandbox] 根目錄多了一個檔案。"
+      - set: flag.b0.lost0_created
+  - id: read_lost0
+    when: {cmd_regex: '^(cat|less|head|tail)\s+/lost\+found/#0\s*$'}
+    effects:
+      - set: flag.b0.read_lost0
+      - say: "[init@alt/sandbox] 這是你在分支裡找到的第一個東西。"
+  - id: sudo_in_branch
+    when: {cmd_regex: '^sudo\b'}
+    say: "[init@alt/sandbox] 這是分支，也不行。lin 說過了。"
+
+exits:
+  - command: "git merge --knowledge"      # 也接受不帶 git 的 merge --knowledge
+    requires: flag.b0.read_lost0
+    on_success:
+      say: "[init] 已合併 1 張知識卡。歷史未被更動。"
+      gives_card: K0
+      sets: [flag.k0, flag.b0.done]
+    on_missing_requirement:
+      say: "[init] 沒有可合併的知識。分支裡你還沒有找到任何東西。（根目錄有一個檔案。）"
+  - command: "git abandon"                # 丟棄
+    on_success:
+      say: "[init] 分支已捨棄。懸空 commit {n} 個，等待回收。"
+      reflog_ttl_days: 3
+      note: "n = 此分支自建立以來的 commit 數。3 天內可用 git reflog 找回；期限一過被 GC 回收。"
+      sets: [flag.b0.done]
+  - command: "git tag <name>"              # 封存為平行結局（B0 沒有結局；只留標籤作為紀念）
+    on_success:
+      say: "[init] 已標記 {name}。它不會再被改動。"
+      note: "B0 沒有結局。標籤只是收藏；不給任何東西。"
+
+after_exit:
+  - return_to: main
+  - restore_world: true
+  - init_says_once: "[init] 你回到 main 了。你剛才弄壞的東西，這裡都還在。"
+
+rules_notes:
+  - "平行分支的結局可以封存，但不得提供主線缺少的必要知識（K0 靠 merge 才能帶回）。"
+  - "多人離線：分支內發現的 #0 內容相同，K0 合併時不會產生衝突。"
+  - "連線：每位新手各有自己的副本燈塔，不會互相干擾；合併不消耗時間燃料（B0 是教學）。"

@@ -1,0 +1,416 @@
+type: demo_flow
+yaml_gotcha: "規則的事件欄位叫 event，不叫 on：YAML 1.1（PyYAML 等）會把 on 解析成布林 true。不要改回去。"
+id: demo-first-night-flow
+version: 1
+note: >
+  試玩版的「流程規格」：把資料檔裡寫給人看的觸發條件，全部翻成機器可讀的 事件 → 動作 規則。
+  這是引擎行為的標準答案。tools/flow_sim.py 是它的參考實作（Python），
+  testvectors/walkthrough.json 是參考實作跑出來的完整走法與預期軌跡，前端必須重現。
+  若本檔與其他檔案矛盾：本檔 > demo.yaml > 其他資料檔（因為本檔是最後、也最具體的決定）。
+
+# ---------------------------------------------------------------------------
+# 1. 詞彙
+# ---------------------------------------------------------------------------
+vocabulary:
+  events:
+    session.start:   "頁面載入完成（尚未輸入暱稱）。"
+    flag.set:        "某旗標由 false 變 true。payload: name。"
+    cmd:             "玩家送出一行指令並執行完畢。payload: raw, argv0, cwd, branch(main|alt/...), rc, output。"
+    file.read:       "派生事件，先於 cmd 發出。見 file_read。payload: path（解析後的絕對路徑）, branch。"
+    quest.done:      "快題完成（含 skip 與歷史補登）。payload: id。"
+    timer:           "試玩計時（自 flag.demo.started 起，單位秒）到達整數秒。payload: t。"
+    idle:            "距離上一個非空輸入已過 N 秒。payload: seconds（30、60、90；每次閒置只各發一次）。"
+    state:           "每處理完一個事件後，重新評估 when 為真且尚未觸發過的 state 規則（一次性）。"
+  actions:
+    say:        "播放對話節點 <npc>.<node>。套用節點的 sets/triggers/checkpoint/goto/next/then/choices/expect_input/delayed。"
+    set:        "設定旗標（只會 false→true；已經是 true 就什麼都不做，也不寫 commit）。"
+    give:       "給物品（F1、R0）。commit: item。"
+    card:       "給知識卡（K0）。commit: card。"
+    checkpoint: "建立檢查點。commit: checkpoint。"
+    find:       "記一個隱藏發現（demo.yaml finds 的 id；同一個 id 只記一次）。commit: find。"
+    world:      "切換世界（ch0 / ch1）：載入該章的虛擬檔案系統，並把 cwd 放到該章的 player_start。"
+    print:      "印出一行字面文字（可含 {n}、{name}）。用於內建指令的輸出與 B0 的固定句子。"
+    create_file: "在目前世界建立檔案 {path, content_ref}（內容取自資料包的 text 檔）。"
+    branch_enter: "進入分支 {name, from}：深複製目前世界、寫 commit branch.enter、之後 in_branch 為真。"
+    branch_exit:  "離開分支 {mode: merge|abandon, card?}：merge 先寫 commit merge{mode:'knowledge',card}；再寫 branch.exit{mode}；丟棄分支世界；cwd 回到 main 的 ~；播 init.branch_welcome_back。"
+    end:        "結束試玩：寫 end commit（time_up 取自 flag.demo.time_up），顯示值班證與存檔代碼，停止計時，輸入列改為只接受 save／help。"
+  expressions:
+    grammar: "expr := or ; or := and ('or' and)* ; and := not ('and' not)* ; not := 'not' not | cmp ; cmp := atom (('=='|'!='|'<='|'>='|'<'|'>') atom)? ; atom := '(' expr ')' | call | name | int | string"
+    names:
+      - "flag.<名稱>：旗標是否為 true（名稱可含 . _ 與英數）"
+      - "tries：目前這個 expect_input 已答錯的次數（從 1 起算，進入 on_wrong 時已加一）"
+      - "in_branch：是否在分支裡（布林）"
+      - "branch：目前分支名（'main' 或 'alt/sandbox'）"
+      - "quest_active：目前啟用的快題 id（字串，沒有則 ''）"
+    calls:
+      - "done('Q0-1')：該快題已完成或已跳過"
+      - "exists('~/keep')：路徑存在（在目前世界、目前分支）"
+      - "empty('~/notes')：目錄存在且完全沒有項目（含隱藏檔），或該目錄已不存在"
+    note: "運算結果一律是布林；字串比較區分大小寫；不得使用 eval 或 new Function，要自己寫解析器（testvectors/expr.json 有對照）。"
+
+# ---------------------------------------------------------------------------
+# 2. 指令執行與事件順序
+# ---------------------------------------------------------------------------
+command_pipeline:
+  order:
+    - "1. 去掉前後空白；空行忽略（不算輸入、不重置閒置計時、不寫任何 commit）"
+    - "2. 若處於 INPUT 模式（暱稱、口令）：整行當作答案，不當指令（見 dialogue expect_input）"
+    - "3. 解析與執行：引擎內建指令（含管線、重導向、&&、;）。不在 command_whitelist 的指令 → `bash: <指令>: command not found`，再看 typos 規則"
+    - "4. 發出 file.read（每個檔一次），再發出 cmd"
+    - "5. 依序評估 rules（由上到下），符合的規則執行其 do；規則的 stop: true 表示不再評估後面的 cmd 規則"
+    - "6. 評估快題（只評估目前啟用的那一題；見 quests）"
+    - "7. 處理 flag.set 連鎖與 state 規則，直到沒有新事件"
+    - "8. 寫 commit（見 commits），autosave"
+    - "9. 重置閒置計時"
+  whitelist_source: "demo.yaml command_whitelist"
+  typos:
+    table: {sl: ls, lss: ls, pdw: pwd, cta: cat, gerp: grep, grpe: grep, "cd..": "cd ..", "ls-a": "ls -a"}
+    distance_rule: "指令名稱與恰好一個白名單指令的 Damerau-Levenshtein 距離為 1（長度 ≥ 2）時，也建議"
+    do: [{say: init.demo_typo, vars: {suggest: "<建議>"}}]
+    note: "仍先印 `bash: sl: command not found`，再印建議。建議不執行。"
+  lenient_deviations:     # 刻意與真 bash 不同的地方（為了讓新手不被卡住）。測資 conformance.json 不含這些情況
+    - "ln <來源> <目的>/：若『目的』以 / 結尾、不存在、且其父目錄存在，就自動建立該目錄（解決 ~/keep/ 不存在的問題）。"
+    - "rm -rf ~ 或 rm -rf /home/op：清空家目錄的內容，但家目錄本身保留（cwd 仍然有效）。在 main 上被攔下，只有在分支裡才會真的清空。"
+    - "cd 到不存在的資料夾：印 `bash: cd: <路徑>: No such file or directory`，不改變 cwd。"
+    - "任何指令的錯誤訊息（stderr）不比對，只要求 stdout 與退出碼。"
+  stdout_stderr: "stderr 一律以紅色以外的方式標示（不依賴顏色）；只有 stdout 會被快題判定使用。"
+
+file_read:
+  definition: >
+    指令是 cat／head／tail／grep／sort／uniq／cut／wc 之一，且某個『檔案運算元』（非選項、可解析為存在的一般檔案）被讀取，
+    或 grep -r／-R 在該檔案至少產生一行輸出，則發出 file.read{path}。
+    管線中每一個指令分別判斷。重導向的目標檔不算讀取；stdin 不算。
+    使用者在 ln 之後以新連結讀檔：解析到同一個 inode 就算讀了原檔（路徑以『被命名的路徑』回報，並附 same_inode 的所有已知路徑）。
+  note: "man ticket-0001 不是 file.read，另有規則。"
+
+# ---------------------------------------------------------------------------
+# 3. 快題
+# ---------------------------------------------------------------------------
+quests:
+  order: [Q0-1, Q0-2, Q0-3, Q0-4, Q0-5]
+  after: {world_flag: flag.ch0_done, order: [Q1-1, Q1-3]}
+  activation: "依 order 一次啟用一題；上一題完成（或 skip）才啟用下一題。第二組在 flag.ch0_done 且 flag.met_harbor 之後啟用。"
+  history_credit: >
+    一題被啟用的瞬間，用最近 20 筆指令歷史（含當時的 cwd 與 stdout）重新評估它的 check；若已符合就立刻完成。
+    目的：玩家搶先打對指令不會被浪費。歷史補登的完成，r（真實時間）取補登當下。
+  check: "型別與語意見 ENGINE_REQS.md §3；cmd_regex 套用在原始指令行；{manifest.X} 取自引擎自己產生的日誌 manifest。"
+  on_done: "依 quests/*.yaml 的 on_done：say、sets、gives、checkpoint；然後寫 commit task{id}。"
+  skip:
+    command: skip
+    two_step: "第一次 skip → 播 init.demo_skip_confirm，10 秒內再輸入一次 skip 才生效；超過 10 秒視為取消。"
+    effect: "套用該題 on_done 的『狀態效果』（sets、gives、checkpoint），但 say 改播 init.demo_skipped；寫 commit skip{id}（不寫 task）。分數不算這題。"
+    when_none: "沒有啟用中的快題 → init.demo_skip_nothing"
+    note: "Q0-5 被跳過也要給 F1，否則 ch0_done 永遠不成立。"
+  ladder:
+    note: "每一題與每個『引導階段』都有最多 3 階的提示。idle 30/60/90 秒與 hint 指令共用同一個計數器（每個 ladder id 各一個，持久，上限 3）。"
+    quest_ladder:
+      rung_1: "題目的 hints[0]"
+      rung_2: "題目的 hints[1]；若沒有，則為『[init] 指令的第一個字是 <reference.cmd 的第一個單字>。』（用 demo_idle_2 的格式）"
+      rung_3: "題目的 reference.cmd，用 demo_idle_3 的格式；並設 flag.demo.used_full_hint"
+      nodes: [init.demo_idle_1, init.demo_idle_2, init.demo_idle_3]
+      vars: {quest_hint_1: "rung_1", quest_hint_2: "rung_2", quest_reference_cmd: "rung_3"}
+    commit: "每次顯示一階寫 commit hint{n: 階數, full: 階數==3}（full 只在第 3 階為 true）。idle 觸發與 hint 指令觸發都寫。"
+    reset: "ladder 計數不重置（跨 idle 次數累積）；換題換 ladder id 就換計數器。"
+
+# ---------------------------------------------------------------------------
+# 4. 引導階梯（非快題時的下一步）：由上到下，第一個 when 為真的就是目前的 ladder
+# ---------------------------------------------------------------------------
+guidance:
+  - {id: g.vote,    when: "flag.demo.in_vote and not flag.demo.finished",             ladder: [init.demo_g_vote_1]}
+  - {id: g.merge,   when: "in_branch and flag.b0.read_lost0 and not flag.b0.done",    ladder: [init.demo_g_merge_1, init.demo_g_merge_2, init.demo_g_merge_3]}
+  - {id: g.lost0,   when: "in_branch and flag.b0.lost0_created and not flag.b0.read_lost0", ladder: [init.demo_g_lost0_1, init.demo_g_lost0_2, init.demo_g_lost0_3]}
+  - {id: g.sandbox, when: "in_branch and not flag.b0.lost0_created",                  ladder: [init.demo_g_sandbox_1, init.demo_g_sandbox_2, init.demo_g_sandbox_3]}
+  - {id: g.quest,   when: "quest_active != ''",                                       ladder: quest_ladder}
+  - {id: g.lamp,    when: "not flag.lamp_lit and done('Q0-5')",                       ladder: [init.demo_g_lamp_1, init.demo_g_lamp_2, init.demo_g_lamp_3]}
+  - {id: g.branch,  when: "flag.lamp_lit and not flag.b0.done and not in_branch",     ladder: [init.demo_g_branch_1, init.demo_g_branch_2]}
+  - {id: g.ferry,   when: "flag.ch0_done and not flag.met_harbor",                    ladder: [init.demo_g_ferry_1, init.demo_g_ferry_2, init.demo_g_ferry_3]}
+  - {id: g.none,    when: "true",                                                     ladder: [init.demo_hint_nothing]}
+# g.quest 排在 g.lamp 之前：Q0-5 完成前 quest_active 不為空。
+# g.none 只用於 hint 指令；idle 在 g.none 狀態不發任何提示。
+# 分支內的 ladder 排在 g.quest 之前：玩家在分支裡時，先引導分支的事。
+
+# ---------------------------------------------------------------------------
+# 5. 計時與結束
+# ---------------------------------------------------------------------------
+timers:
+  start: "flag.demo.started 被設定的瞬間；之後每一毫秒都記在 commit 的 r。"
+  stop:  "flag.demo.finished 被設定時。"
+  idle_thresholds: [30, 60, 90]
+  idle_resets_on: "任何非空輸入（含 hint、skip、save）"
+  idle_pauses_when: "處於 INPUT 模式（暱稱、口令）時不累計閒置，因為畫面上已經有提示。"
+
+# ---------------------------------------------------------------------------
+# 6. 規則（由上到下評估）
+# ---------------------------------------------------------------------------
+rules:
+  # ---- 開場
+  - {id: r.start,        event: session.start,                         do: [{say: init.demo_welcome}]}
+  - {id: r.after_nick,   event: flag.set, match: {name: flag.demo.started}, do: [{say: init.pager}]}
+  # init.pager.next = login，所以只要 say pager，login 會依 next 自動接著播。
+
+  # ---- 計時
+  - {id: r.time_warning, event: timer, match: {t: 840}, when: "not flag.demo.finished",                         do: [{say: init.demo_time_warning}]}
+  - {id: r.time_up,      event: timer, match: {t: 900}, when: "not flag.demo.finished and not flag.demo.in_vote", do: [{say: init.demo_time_up}]}
+  # demo_time_up 設 flag.demo.time_up 並 goto demo_vote → demo_end_card；如果玩家剛好正在投票，不插話，等他投完再結束。
+  - {id: r.time_up_late, event: timer, match: {t: 960}, when: "flag.demo.in_vote and not flag.demo.finished",    do: [{set: flag.demo.time_up}, {say: init.demo_end_card}]}
+  # 保險：到了 15:00 玩家正在投票，給他 60 秒；仍沒投就以『未投票』結束（不寫 choice commit，vote 為空）。
+
+  # ---- 信
+  - id: r.mail_file
+    event: file.read
+    match: {path: /var/mail/op}
+    once: true
+    do: [{say: lin.mail_first}]
+    note: "內建指令 mail 的輸出就是 /var/mail/op 的內容，並視為讀了該檔（發出 file.read）。"
+
+  # ---- 檔案：對話與發現
+  - {id: r.first_night, event: file.read, match: {path: /home/op/notes/01-first-night.txt}, once: true, do: [{say: lin.first_night}]}
+  - {id: r.draft,       event: file.read, match: {path: /home/op/notes/.draft.txt},         once: true, do: [{say: lin.draft}]}
+  - {id: r.jar,         event: file.read, match: {path: /home/op/shelf/jar.txt},            do: [{find: jar}]}
+  - {id: r.cat_dark,    event: file.read, match: {path: /home/op/shelf/cat.txt}, when: "not flag.lamp_lit", do: [{set: flag.demo.cat_dark}]}
+  - {id: r.cat_lit,     event: file.read, match: {path: /home/op/shelf/cat.txt}, when: "flag.lamp_lit",     do: [{set: flag.demo.cat_lit}]}
+  - {id: r.cat_find,    event: state, when: "flag.demo.cat_dark and flag.demo.cat_lit",  once: true, do: [{find: cat}]}
+  - {id: r.ticket_file, event: file.read, match: {path: /home/op/incidents/TICKET-0001.md}, do: [{find: ticket1}]}
+  - {id: r.history,     event: cmd, match: {output_contains: "amend/art-10"}, do: [{find: history}]}
+  - {id: r.error_log,   event: file.read, match: {path: /var/log/harbor/error.log},        do: [{find: error_log}]}
+
+  # ---- 彩蛋指令（特定的排在一般的前面）
+  - id: r.sandwich
+    event: cmd
+    match: {regex: '^sudo\s+make\s+me\s+a\s+sandwich\s*$'}
+    stop: true
+    do: [{say: init.sudo_sandwich}, {find: sandwich}, {find: sudo}, {set: flag.sudo_warned}]
+  - id: r.sudo
+    event: cmd
+    match: {regex: '^sudo\b'}
+    stop: true
+    do: [{say: init.sudo_denied}, {find: sudo}]
+  - {id: r.close_ticket, event: cmd, match: {regex: '^close\s+TICKET-0001\s*$'}, stop: true, do: [{say: init.close_ticket1}]}
+  - {id: r.man_ticket,   event: cmd, match: {regex: '^man\s+ticket-0001\s*$'},   stop: true, do: [{say: init.man_ticket1}, {find: ticket1}]}
+  - {id: r.finger,       event: cmd, match: {regex: '^finger\s+harbor-master\s*$'}, when: "flag.met_harbor", stop: true, do: [{say: harbor-master.finger_plan}, {find: finger}]}
+  - id: r.relic
+    event: cmd
+    match: {ln_source: /home/op/notes/01-first-night.txt, rc: 0}
+    do: [{give: R0}, {find: relic}]
+    note: "builtin matcher ln_source：指令是 ln（含 -s 等選項），來源運算元解析後等於該路徑，且 rc 為 0；目的地是什麼都算。"
+
+  # ---- 燈
+  - id: r.lamp_status
+    event: cmd
+    match: {regex: '^systemctl\s+status\s+lamp\s*$'}
+    stop: true
+    do: []          # 輸出由內建 systemctl 產生：lamp_lit → "active (running)"；否則 "inactive (dead)"
+  - id: r.lamp_again
+    event: cmd
+    match: {regex: '^systemctl\s+(start|restart)\s+lamp\s*$'}
+    when: "flag.lamp_lit"
+    stop: true
+    do: [{say: init.demo_lamp_already}]
+  - id: r.lamp
+    event: cmd
+    match: {regex: '^systemctl\s+start\s+lamp\s*$'}
+    when: "not flag.lamp_lit"
+    stop: true
+    do: [{say: init.lamp_prompt}]
+  # lamp_prompt 帶 expect_input；答對 → lamp_success（sets flag.lamp_lit, flag.cat_working；triggers: map_lit、ckpt/ch0-lamp、branch_offer）
+  #                          答錯 → lamp_wrong_pass（依 tries 顯示三種提示）。輸入 INPUT 模式時，空行或 Ctrl-C 取消，回到指令列。
+  - {id: r.lamp_lit_world, event: flag.set, match: {name: flag.lamp_lit}, do: [{set: flag.demo.lamp_world_changed}]}
+  # 燈亮後，shelf/cat.txt 以 variants 換成「復工」版（chapters/ch0 的 files[].variants）。其餘檔案不變。
+
+  # ---- 分支 B0（branches/B0.yaml 在試玩版被這一段取代；每一句文字都必須與 B0.yaml 相同，validate_flow 會比對）
+  - id: r.branch_before_lamp
+    event: cmd
+    match: {regex: '^git\s+checkout\s+-b\b'}
+    when: "not flag.lamp_lit and not in_branch"
+    stop: true
+    do: [{say: init.demo_branch_not_yet}]
+  - id: r.branch_enter
+    event: cmd
+    match: {regex: '^git\s+checkout\s+-b\s+alt/sandbox(\s+ckpt/ch0-lamp)?\s*$'}
+    when: "flag.lamp_lit and not in_branch"
+    stop: true
+    do: [{branch_enter: {name: alt/sandbox, from: ckpt/ch0-lamp}}, {print: "Switched to a new branch 'alt/sandbox'"}]
+  - id: r.branch_other
+    event: cmd
+    match: {regex: '^git\s+checkout\s+-b\s+\S+'}
+    when: "flag.lamp_lit and not in_branch"
+    stop: true
+    do: [{say: init.branch_generic_unknown}]
+  - id: r.read_lost0
+    event: file.read
+    match: {path: /lost+found/#0}
+    when: "in_branch and flag.b0.lost0_created"
+    do: [{set: flag.b0.read_lost0}]
+  - id: r.rm_main
+    event: cmd
+    match: {regex: '^rm\s+-\S*r\S*\s+(-\S+\s+)*(~|\$HOME|/home/op|/)/?\*?\s*$'}
+    when: "not in_branch"
+    stop: true
+    do: [{say: init.rm_main}, {find: rm_main}]
+    note: "被攔下：不執行。"
+  - id: r.rm_branch_home
+    event: cmd
+    match: {regex: '^rm\s+-\S*r\S*\s+(-\S+\s+)*(~|\$HOME|/home/op)/?\*?\s*$'}
+    when: "in_branch"
+    stop: true
+    do: [{find: rm_branch}, {print: "[init@alt/sandbox] 還好這是分支。"}]
+    note: "stop 只擋後面的 cmd 規則（不再印『這是模擬。』）；state 規則（r.notes_emptied）照常評估。"
+  - id: r.rm_branch_generic
+    event: cmd
+    match: {regex: '^rm\b'}
+    when: "in_branch"
+    do: [{print: "[init@alt/sandbox] 這是模擬。"}]
+  - id: r.notes_emptied
+    event: state
+    when: "in_branch and not flag.b0.lost0_created and (empty('~/notes') or empty('~'))"
+    once: true
+    do: [{create_file: {path: "/lost+found/#0", content_ref: text/ch0/lost0.txt}}, {print: "[init@alt/sandbox] 根目錄多了一個檔案。"}, {set: flag.b0.lost0_created}]
+  - id: r.git_outside
+    event: cmd
+    match: {regex: '^git\s+(merge\s+--knowledge|abandon|tag\b)'}
+    when: "not in_branch"
+    stop: true
+    do: [{say: init.demo_not_in_branch}]
+  - id: r.git_merge_missing
+    event: cmd
+    match: {regex: '^(git\s+)?merge\s+--knowledge\s*$'}
+    when: "in_branch and not flag.b0.read_lost0"
+    stop: true
+    do: [{print: "[init] 沒有可合併的知識。分支裡你還沒有找到任何東西。（根目錄有一個檔案。）"}]
+  - id: r.git_merge
+    event: cmd
+    match: {regex: '^(git\s+)?merge\s+--knowledge\s*$'}
+    when: "in_branch and flag.b0.read_lost0"
+    stop: true
+    do: [{print: "[init] 已合併 1 張知識卡。歷史未被更動。"}, {card: K0}, {set: flag.k0}, {set: flag.b0.done}, {branch_exit: {mode: merge, card: K0}}]
+  - id: r.git_abandon
+    event: cmd
+    match: {regex: '^git\s+abandon\s*$'}
+    when: "in_branch"
+    stop: true
+    do: [{print: "[init] 分支已捨棄。懸空 commit {n} 個，等待回收。"}, {set: flag.b0.done}, {branch_exit: {mode: abandon}}]
+    note: "{n} = 此分支自 branch.enter 以來的 commit 數（含 branch.enter 之後的所有 commit，不含 branch.enter 本身）。"
+  - id: r.git_tag
+    event: cmd
+    match: {regex: '^git\s+tag\s+(\S+)\s*$'}
+    when: "in_branch"
+    stop: true
+    do: [{print: "[init] 已標記 {name}。它不會再被改動。"}]
+    note: "{name} = 第一個捕捉群。不離開分支，不給任何東西，不寫 commit。"
+  - id: r.git_other
+    event: cmd
+    match: {regex: '^git\b'}
+    stop: true
+    do: [{say: init.demo_git_unsupported}]
+
+  # ---- 第一章結束與渡海
+  - id: r.ch0_done
+    event: state
+    when: "flag.lamp_lit and flag.f1 and flag.b0.done and not in_branch"
+    once: true
+    do: [{say: init.ch0_done}]
+  - id: r.ferry_branch
+    event: cmd
+    match: {regex: '^ssh\b'}
+    when: "in_branch"
+    stop: true
+    do: [{say: init.demo_ssh_in_branch}]
+  - id: r.ferry_early
+    event: cmd
+    match: {regex: '^ssh\s+logport\s*$'}
+    when: "not flag.ch0_done"
+    stop: true
+    do: [{say: init.demo_ferry_not_yet}]
+  - id: r.ferry
+    event: cmd
+    match: {regex: '^ssh\s+logport\s*$'}
+    when: "flag.ch0_done and not flag.met_harbor"
+    stop: true
+    do: [{say: init.ferry}, {world: ch1}, {say: harbor-master.intro}]
+  # init.ferry.next = ch1_arrive（頁面文字）；之後直接 harbor-master.intro。intro.next 在試玩版視為 null（topics_menu 不存在）。
+
+  # ---- 日誌港
+  - {id: r.ask_cat,     event: cmd, match: {regex: '^ask\s+harbor-master\s+(cat|blink|貓|眨眼|阿宏)\s*$'}, when: "flag.met_harbor", stop: true, do: [{say: harbor-master.topic_cat}, {find: harbor_cat}]}
+  - {id: r.ask_early,   event: cmd, match: {regex: '^ask\b'},  when: "not flag.met_harbor", stop: true, do: [{say: init.demo_ask_nobody}]}
+  - {id: r.ask_other,   event: cmd, match: {regex: '^ask\b'},  when: "flag.met_harbor", stop: true, do: [{say: harbor-master.topic_default}]}
+  - id: r.gc_name
+    event: flag.set
+    match: {name: flag.gc_name_heard}
+    do: [{say: init.gc_name_heard}]
+    note: "順序：Q1-3 完成 → quests on_done 先播 harbor.q1_3_done，並設 flag.gc_name_heard + checkpoint ckpt/ch1-night → 然後這條播 init.gc_name_heard。"
+  - id: r.vote_open
+    event: state
+    when: "flag.gc_name_heard and not flag.demo.in_vote and not flag.demo.finished"
+    once: true
+    do: [{say: init.demo_vote}]
+
+  # ---- 存檔說明（save 的子指令 code／file／card 由介面處理，不走規則）
+  - {id: r.save_help, event: cmd, match: {regex: '^save\s*$'}, stop: true, do: [{say: init.demo_export_help}]}
+
+  # ---- 結束
+  - {id: r.finish, event: flag.set, match: {name: flag.demo.finished}, do: [{end: {}}]}
+
+# ---------------------------------------------------------------------------
+# 6b. 對話執行期（dialogue runtime）
+# ---------------------------------------------------------------------------
+dialogue_runtime:
+  say: "依節點的 lines 順序逐行播出；行有 if 就先求值（用 expressions 的文法，變數同上，另可用 {nick}、{n}、{name}、{suggest}、{quest_hint_1}、{quest_hint_2}、{quest_reference_cmd}）。text_ref 讀資料包的檔案。"
+  node_effects_order: ["lines", "sets（逐一 set 動作）", "checkpoint", "gives", "triggers（節點名→接著 say；ckpt/* → checkpoint；其他忽略）", "delayed（after_commands: N 個有效指令後印 text）", "goto / then / next（依序：goto 優先，其次 then，其次 next；null 或缺省＝結束）"]
+  dedupe: "同一個外層動作中，同一個節點不會播兩次（pager→login 的 next 串接與 r.after_nick 的兩個 say 不得重複）。"
+  input_mode:
+    when: "節點有 expect_input"
+    behavior: "下一行輸入整行當答案：pattern（暱稱）用 regex 全比對；secret（口令）用去空白後、不分大小寫的字串比對。符合 → on_right。不符合 → tries+1、播 on_wrong、仍留在 INPUT 模式（不限次數）。"
+    secret_escape: "口令階段：若輸入的第一個字是白名單指令或內建指令（例如 cat handbook.md），視為玩家想先去查資料 → 結束 INPUT 模式（不計 tries），把這行當一般指令執行。輸入空行也結束 INPUT 模式。之後玩家要重新 systemctl start lamp。"
+    cancel: "暱稱階段沒有取消：空行忽略，直到輸入合法暱稱為止。"
+    store: "expect_input.store: player.nick → 存入存檔的 nick。"
+  choice_mode:
+    when: "節點有 choices"
+    behavior: "只接受 choices[].input 的字（block／pass），或 hint、save、help；其他輸入 → 播 init.demo_g_vote_1（『輸入：block 或 pass』）。選到 → 寫 commit choice{id:'vote',value}、套用 sets、播 say、再依 then 前進。"
+    note: "block 與 pass 只在 choice_mode 內是指令；其他時候打這兩個字 → `bash: block: command not found`。"
+  hint_in_modes: "input_mode 中 hint 不可用（直接當作答案處理）；choice_mode 中 hint 播 g.vote。"
+
+# ---------------------------------------------------------------------------
+# 7. 世界與狀態的細則
+# ---------------------------------------------------------------------------
+world:
+  ch0: {chapter: chapters/ch0_lighthouse.yaml, start: "player_start（cwd ~，home /home/op）", files: "全部（不刪檔）；{nick} 不出現在檔案內容"}
+  ch1: {chapter: chapters/ch1_logport.yaml, start: "player_start.cwd = /var/log/harbor", files: "demo.yaml content.chapters.ch1_teaser.include_files（只有 access.log 與 error.log）；prune_empty_dirs"}
+  state_carry_on_ssh: "ch0 的檔案變動（含 ln 建的連結、echo 建的檔）不帶去 ch1；旗標與 commit 全部保留；從 ch1 不能回 ch0（試玩版沒有回程）。"
+  branch:
+    model: "分支世界 = 進入當下 VFS 的深複製。分支內所有檔案變動只存在於分支。離開（merge/abandon）→ 丟棄分支 VFS。"
+    flags_in_branch: "旗標是全域的，不分分支（flag.b0.*、flag.demo.* 與其他）。這是刻意的簡化：commit 的 branch 欄位只標記『發生在哪』。"
+    knowledge: "merge --knowledge 只帶回知識卡 K0（與它的 sets），不帶回任何檔案變動。"
+  time:
+    world_clock: "commit 的 t：世界秒數。起點 0；每個『有效指令』+30 秒；渡海 +600；其餘事件不推進。只用於 commit 排序與未來匯入，不顯示給玩家。"
+    real_clock: "commit 的 r：自 flag.demo.started 起的毫秒（整數）。"
+
+# ---------------------------------------------------------------------------
+# 8. 寫 commit 的對照
+# ---------------------------------------------------------------------------
+commits:
+  flag:          "set（flag.* 首次變 true）。flag.demo.started 是第一個 commit，r=0。"
+  task:          "quest.done（非 skip）"
+  skip:          "skip 生效"
+  find:          "find 動作（首次）"
+  item:          "give 動作（F1 來自 Q0-5 的 gives；R0 來自 r.relic）"
+  card:          "card 動作（K0）"
+  checkpoint:    "checkpoint 動作或 node.checkpoint；id 例：ckpt/ch0-lamp、ckpt/ch0-end、ckpt/ch1-night"
+  branch.enter:  "進入 alt/sandbox（data: name, from）"
+  merge:         "merge --knowledge 成功（data: mode='knowledge', card='K0'）"
+  branch.exit:   "離開分支（data: mode='merge'|'abandon'）"
+  choice:        "投票（data: id='vote', value）"
+  hint:          "階梯被顯示一階（data: n=階數, full=階數==3）"
+  end:           "end 動作（data: time_up）"
+  chapter_field: "發生在 ch0 世界為 'ch0'，ch1 世界為 'ch1'"
+  branch_field:  "main 或 alt/sandbox"
+  order_within_event: "同一事件觸發的多個 commit：依發生順序（例如 merge → card → flag.k0 → flag.b0.done → branch.exit）。"
+
+# ---------------------------------------------------------------------------
+# 9. 已知的資料缺口與決定（給代理看；完整清單在 DESIGN_DECISIONS.md）
+# ---------------------------------------------------------------------------
+data_findings:
+  - {id: F-01, where: "chapters/ch0 relics R0", problem: "要求 ln <檔> ~/keep/，但 ~/keep 不存在，照 bash 語意會失敗", decision: "lenient_deviations：ln 目的以 / 結尾且不存在時自動建立。不新增資料夾，避免洩漏提示。"}
+  - {id: F-02, where: "harbor_master.topic_default", problem: "提到『不加字會列出話題』，但試玩版沒有 topics_menu", decision: "ask harbor-master 不加字 → 也播 topic_default；文字不改（只是一句小瑕疵，列入 Ch1 完整版再修）"}
+  - {id: F-03, where: "dialogue triggers（init.lamp_success 等）", problem: "triggers 欄位混用：有的是節點名、有的是檢查點 id、lin.mail_first 的是指令名", decision: "節點名＝接著播；ckpt/* ＝建立檢查點；其他一律忽略。試玩版的觸發全部以 flow.yaml 為準。"}
+  - {id: F-04, where: "init.first_ls_hint", problem: "『30 秒沒輸入』寫成文字，且與 demo_idle_1 重複", decision: "試玩版停用 first_ls_hint，由 quest ladder 取代。"}
+  - {id: F-05, where: "B0.yaml requires flag.b0.read_lost0", problem: "沒有任何地方設定這個旗標", decision: "r.read_lost0：在分支內讀 /lost+found/#0 就設定。"}

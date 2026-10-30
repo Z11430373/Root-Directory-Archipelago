@@ -1,0 +1,87 @@
+type: quests
+chapter: ch0
+# check 型別（引擎需實作，見 ENGINE_REQS.md）：
+#   ran_regex            玩家執行過符合 regex 的指令（以指令字串比對）
+#   output_contains      任一符合 cmd_regex 的指令，其標準輸出含 text
+#   output_line_contains_all / output_last_line_equals / file_matches   見 ch1
+# reference 是驗證器用的「標準做法」：在還原出來的虛擬檔案系統上用真的 bash 跑一次，結果必須通過 check。
+# negative_references 則必須「不通過」，用來確認檢查沒有寬鬆到亂過。
+
+quests:
+  - id: Q0-1
+    island: lighthouse
+    title: 列出家目錄有什麼
+    teaches: [ls]
+    prompt: "[init] 任務：看看家目錄裡有什麼。"
+    check: {type: ran_regex, regex: '^ls(\s+(-\S+|~/?|\./?|/home/\S+))*\s*$'}
+    reference: {cwd: "~", cmd: "ls"}
+    examples:
+      pass: ["ls", "ls ~", "ls -l", "ls ./"]
+      fail: ["cat handbook.md", "lsof"]
+    hints:
+      - "[init] 指令是兩個字母，l 開頭。"
+    on_done: {say: init.q0_1_done}
+
+  - id: Q0-2
+    island: lighthouse
+    title: 讀值班手冊，找出第一個口令
+    teaches: [cat]
+    prompt: "[init] 任務：讀手冊。口令在裡面。"
+    check: {type: ran_regex, regex: '^cat\s+(~/|\./)?handbook\.md\s*$'}
+    reference: {cwd: "~", cmd: "cat handbook.md", expect: {contains: ["lamp-before-sudo"]}}
+    examples:
+      pass: ["cat handbook.md", "cat ~/handbook.md", "cat ./handbook.md"]
+      fail: ["cat notes/01-first-night.txt", "ls handbook.md"]
+    hints:
+      - "[init] 手冊的檔名在 ls 的輸出裡。"
+      - "[init] 讀檔的指令是 cat。口令在第 5 節。"
+    on_done: {say: init.q0_2_done, sets: [flag.handbook_read, flag.charter_summary_read]}
+
+  - id: Q0-3
+    island: lighthouse
+    title: 找出隱藏的草稿
+    teaches: [ls -a, hidden files]
+    prompt: "[init] 任務：notes/ 裡似乎有東西沒列出來。"
+    check: {type: output_contains, cmd_regex: '^ls\b', text: ".draft.txt"}
+    reference: {cwd: "~", cmd: "ls -a notes"}
+    negative_references:
+      - {cwd: "~", cmd: "ls notes"}
+    examples:
+      pass: ["ls -a notes", "ls -la notes", "ls -a ~/notes"]
+      fail: ["ls notes", "ls"]
+    hints:
+      - "[init] 檔名以點開頭的檔案，ls 預設不顯示。"
+      - "[init] ls 加一個選項，就能看到它們。選項是 a。"
+    on_done: {say: init.q0_3_done, sets: [flag.draft_found]}
+
+  - id: Q0-4
+    island: lighthouse
+    title: 燈是什麼時候、被誰熄的
+    teaches: [grep]
+    prompt: "[init] 任務：燈為什麼是熄的。日誌在 logs/。"
+    check: {type: output_contains, text: "lamp.service stopped by uid=lin"}
+    reference: {cwd: "~", cmd: "grep lamp logs/lamp.log", expect: {last_line_contains: "stopped by uid=lin"}}
+    examples:
+      pass: ["grep lamp logs/lamp.log", "cat logs/lamp.log", "tail -n 3 logs/lamp.log"]
+      fail: ["grep cat logs/lamp.log", "head -n 3 logs/lamp.log"]
+    hints:
+      - "[init] 日誌很短，讀完也行。但試試只找包含 lamp 的行：grep <字> <檔案>。"
+    on_done: {say: init.q0_4_done, sets: [flag.lin_stopped_lamp]}
+    note: "整章的小暗號：燈不是被 GC 熄的，是 lin 親手熄的，時間剛好是 02:00:00。"
+
+  - id: Q0-5
+    island: lighthouse
+    title: 全家目錄找出 KEY-FRAG
+    teaches: [grep -r]
+    prompt: "[init] 任務：lin 的信說有東西沒寫進手冊。整個家目錄找 KEY-FRAG。"
+    check: {type: output_contains, text: "KEY-FRAG[1]"}
+    reference: {cwd: "~", cmd: "grep -r KEY-FRAG ~", expect: {contains: ["KEY-FRAG[1]", ".draft.txt"]}}
+    negative_references:
+      - {cwd: "~", cmd: "grep KEY-FRAG notes/01-first-night.txt"}
+    examples:
+      pass: ["grep -r KEY-FRAG ~", "grep -r KEY-FRAG .", "grep -R KEY-FRAG ~/notes"]
+      fail: ["grep KEY-FRAG handbook.md"]
+    hints:
+      - "[init] 單一檔案找不到的東西，可能在資料夾裡面。grep 有遞迴的選項。"
+      - "[init] grep -r <字> <目錄>。家目錄可以寫成 ~。"
+    on_done: {say: init.q0_5_done, sets: [flag.f1], gives: [F1]}

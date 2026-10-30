@@ -1,0 +1,956 @@
+{
+ "cases": [
+  {
+   "chapter": "ch0",
+   "cmd": "ls",
+   "cwd": "~",
+   "id": "c0-00",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "handbook.md\nincidents\nlogs\nnotes\nshelf\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "ls -a",
+   "cwd": "~",
+   "id": "c0-01",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": ".\n..\n.bash_history\nhandbook.md\nincidents\nlogs\nnotes\nshelf\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "ls shelf",
+   "cwd": "~",
+   "id": "c0-02",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "cat.txt\njar.txt\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "ls -a notes",
+   "cwd": "~",
+   "id": "c0-03",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": ".\n..\n.draft.txt\n01-first-night.txt\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "ls incidents notes",
+   "cwd": "~",
+   "id": "c0-04",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "incidents:\nTICKET-0001.md\n\nnotes:\n01-first-night.txt\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "cat handbook.md",
+   "cwd": "~",
+   "id": "c0-05",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "# 燈塔機房．值班手冊（rev 5）\n\n> 寫給下一個值班員。字很少，請全部讀完。 —— lin\n\n## 1. 你是誰\n\n你是值班員。你的工作是「在」。\n管理員目前不在。請不要等他。\n\n## 2. 燈\n\n燈亮，代表這座島有人值班。燈熄，代表沒有。\n燈不會自己亮，也不會自己熄。\n（我說過兩次了。第二次是怕你沒看第一次。）\n\n## 3. 四個指令，先學這些\n\n    ls        看有什麼（加 -a 連躲起來的也看）\n    cd        走過去\n    cat       讀\n    grep      找（加 -r 連資料夾裡面都找）\n\n## 4. 島嶼憲章．值班員摘要（Rev 5）\n\n全文在權限堡的 /etc/charter。你現在只需要知道這幾條：\n\n    第一條  島不屬於任何人，包括寫憲章的人。\n    第二條  日誌只歸檔，不刪除。\n    第三條  動用 root 須三名值班員同時簽核。掛機不算人，\n            三人中至少一人必須清醒。\n    第六條  GC 單次停頓不得超過一次眨眼\n            （150 毫秒，以值班室的標準眨眼貓為準）。\n    第九條  修憲須附測試並通過 CI。不得在週五下午修憲。\n\n## 5. 值班登記\n\n啟動燈之前，INIT 會問你口令。\n口令：lamp-before-sudo\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "cat shelf/jar.txt shelf/cat.txt",
+   "cwd": "~",
+   "id": "c0-06",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "   ┌──────── RELAY #7 ────────┐\n   │      \\ /     \\ /          │     標本 No.1\n   │       (oo)====(oo)        │     第一隻 bug\n   │    ───┤  ├────┤  ├───     │     採集者：moth（v1.x）\n   └───────────────────────────┘\n   備註：它不是在壞掉。它是在卡住。\n /\\_/\\    標準眨眼貓 #0\n( -.- )   狀態：罷工中（已連續 41 天，與燈同期）\n > ^ <    備用貓：未登記\n          眨眼 = 150 ms（憲章第六條）\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "cat notes/.draft.txt",
+   "cwd": "~",
+   "id": "c0-07",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "（草稿．未寄出）\n給下一個值班員：\n\n這一片先放在這裡。燈塔是最不會被收走的地方，因為每天都有人看它。\n（或者說，曾經每天都有人。）\n\nKEY-FRAG[1]: 7c1f-9a3e-0b44-e2d8\n\n憲章第三條寫得很清楚：\n    「任何持有 root 的操作，須有三名值班員同時在線。」\n所以這一片，請不要一個人拿去用。找兩個人。至少一個要清醒。\n\n                                  —— lin\nP.S. 我這週五下午想改一條憲章。CI 說不行。\n     CI 說得對。我也不想煮一個月的咖啡。\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "cat .bash_history",
+   "cwd": "~",
+   "id": "c0-08",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "ls\ncat handbook.md\ncd /var/log\ncat boot.0\ncd ~\ngrep -r lamp .\nsystemctl status lamp\nman 7 init\nls -a notes\nvi notes/.draft.txt\ncat notes/.draft.txt\ndate\nuptime\nlast | head -3\nssh permfort\ncd /etc/charter.d\nvi amend-10.draft\ngit push origin amend/art-10\ncat /var/log/ci/last.txt\nsleep 3600\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "cat notes/01-first-night.txt",
+   "cwd": "~",
+   "id": "c0-09",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "第一夜清單（值班員版）\n\n[ ] ls\n[ ] cat handbook.md\n[ ] 不要 sudo\n[ ] 看窗外（logs/lamp.log）\n[ ] 睡前確認 CI 是綠的\n\n第五項是開玩笑的。CI 從來不是綠的。\n但你要養成「確認」的習慣。確認，是值班員唯一的魔法。\n\n                                  —— lin\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "cat incidents/TICKET-0001.md",
+   "cwd": "~",
+   "id": "c0-10",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "# TICKET-0001\n\n狀態:     OPEN (reopened 4 times)\n報告人:   ████████\n嚴重度:   (未定)\n建立:     v0.x\n標題:     (空白)\n\n描述:\n  無法重現。\n\n最後更新: 今日 02:00:00\n          （每天都會更新一次，內容不變。）\n\n> close: 權限不足（需要報告人或 root）\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "cat logs/lamp.log",
+   "cwd": "~",
+   "id": "c0-11",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "2031-10-13 18:03:11 lamp.service started by uid=lin\n2031-10-13 18:03:12 lamp.service active (running)\n2031-10-14 09:12:44 cat.service blink calibrated (150 ms)\n2031-10-15 18:00:02 lamp.service brightness 80%\n2031-10-17 18:00:02 lamp.service brightness 80%\n2031-10-19 11:30:19 cat.service backup cat: not registered\n2031-10-20 18:00:02 lamp.service brightness 80%\n2031-10-22 23:41:08 relay.service click (moth was here)\n2031-10-23 18:00:02 lamp.service brightness 80%\n2031-10-25 18:00:03 lamp.service brightness 80%\n2031-10-26 23:58:30 lamp.service flicker x2 (operator tired)\n2031-10-27 02:00:00 lamp.service stopped by uid=lin\n2031-10-27 02:00:03 cat.service on strike (no operator on duty)\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "cat var/mail/op",
+   "cwd": "/",
+   "id": "c0-12",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "From: lin\nTo: 下一個值班員\nSubject: 先 ls，再 cat，別急著 sudo\n\n如果你收到這封信，代表 INIT 還有力氣呼叫人。\n燈塔不會自己亮，但也不會自己熄。\n手冊在家目錄。看完再去看窗外。\n                                  —— lin\nP.S. 日誌裡有一件事我沒寫進手冊。你自己找。\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "cat var/log/boot.0",
+   "cwd": "/",
+   "id": "c0-13",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "[    0.000] boot: 世界啟動\n[    0.001] net: 無法連線\n[    0.002] init: 開始值班\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "head -n 3 handbook.md",
+   "cwd": "~",
+   "id": "c0-14",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "# 燈塔機房．值班手冊（rev 5）\n\n> 寫給下一個值班員。字很少，請全部讀完。 —— lin\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "head -2 handbook.md",
+   "cwd": "~",
+   "id": "c0-15",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "# 燈塔機房．值班手冊（rev 5）\n\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "tail -n 2 logs/lamp.log",
+   "cwd": "~",
+   "id": "c0-16",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "2031-10-27 02:00:00 lamp.service stopped by uid=lin\n2031-10-27 02:00:03 cat.service on strike (no operator on duty)\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "tail -1 logs/lamp.log",
+   "cwd": "~",
+   "id": "c0-17",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "2031-10-27 02:00:03 cat.service on strike (no operator on duty)\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "wc -l logs/lamp.log",
+   "cwd": "~",
+   "id": "c0-18",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "13 logs/lamp.log\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "wc -l handbook.md logs/lamp.log",
+   "cwd": "~",
+   "id": "c0-19",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "  38 handbook.md\n  13 logs/lamp.log\n  51 total\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "grep -r KEY . ",
+   "cwd": "~",
+   "id": "c0-20",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "./notes/.draft.txt:KEY-FRAG[1]: 7c1f-9a3e-0b44-e2d8\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "grep -rn amend .",
+   "cwd": "~",
+   "id": "c0-21",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "./.bash_history:17:vi amend-10.draft\n./.bash_history:18:git push origin amend/art-10\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "grep -ri charter handbook.md",
+   "cwd": "~",
+   "id": "c0-22",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "全文在權限堡的 /etc/charter。你現在只需要知道這幾條：\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "grep -c '' handbook.md",
+   "cwd": "~",
+   "id": "c0-23",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "38\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "grep -v '^#' logs/lamp.log",
+   "cwd": "~",
+   "id": "c0-24",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "2031-10-13 18:03:11 lamp.service started by uid=lin\n2031-10-13 18:03:12 lamp.service active (running)\n2031-10-14 09:12:44 cat.service blink calibrated (150 ms)\n2031-10-15 18:00:02 lamp.service brightness 80%\n2031-10-17 18:00:02 lamp.service brightness 80%\n2031-10-19 11:30:19 cat.service backup cat: not registered\n2031-10-20 18:00:02 lamp.service brightness 80%\n2031-10-22 23:41:08 relay.service click (moth was here)\n2031-10-23 18:00:02 lamp.service brightness 80%\n2031-10-25 18:00:03 lamp.service brightness 80%\n2031-10-26 23:58:30 lamp.service flicker x2 (operator tired)\n2031-10-27 02:00:00 lamp.service stopped by uid=lin\n2031-10-27 02:00:03 cat.service on strike (no operator on duty)\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "grep -n lamp logs/lamp.log",
+   "cwd": "~",
+   "id": "c0-25",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "1:2031-10-13 18:03:11 lamp.service started by uid=lin\n2:2031-10-13 18:03:12 lamp.service active (running)\n4:2031-10-15 18:00:02 lamp.service brightness 80%\n5:2031-10-17 18:00:02 lamp.service brightness 80%\n7:2031-10-20 18:00:02 lamp.service brightness 80%\n9:2031-10-23 18:00:02 lamp.service brightness 80%\n10:2031-10-25 18:00:03 lamp.service brightness 80%\n11:2031-10-26 23:58:30 lamp.service flicker x2 (operator tired)\n12:2031-10-27 02:00:00 lamp.service stopped by uid=lin\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "grep -r lin notes shelf",
+   "cwd": "~",
+   "id": "c0-26",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "notes/.draft.txt:                                  —— lin\nnotes/01-first-night.txt:                                  —— lin\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "grep nothing-here handbook.md; echo rc=$?",
+   "cwd": "~",
+   "id": "c0-27",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "rc=1\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "grep -r KEY-FRAG ~",
+   "cwd": "~",
+   "id": "c0-28",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "/home/op/notes/.draft.txt:KEY-FRAG[1]: 7c1f-9a3e-0b44-e2d8\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "grep -rl lin .",
+   "cwd": "~",
+   "id": "c0-29",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "./handbook.md\n./notes/.draft.txt\n./notes/01-first-night.txt\n./logs/lamp.log\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "cd shelf && pwd && ls",
+   "cwd": "~",
+   "id": "c0-30",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "/home/op/shelf\ncat.txt\njar.txt\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "cd .. && pwd",
+   "cwd": "~/shelf",
+   "id": "c0-31",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "/home/op\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "cd / && pwd",
+   "cwd": "~",
+   "id": "c0-32",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "/\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "cd ~/notes && ls -a",
+   "cwd": "/",
+   "id": "c0-33",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": ".\n..\n.draft.txt\n01-first-night.txt\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "pwd",
+   "cwd": "~",
+   "id": "c0-34",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "/home/op\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "cat handbook.md | grep -i charter | wc -l",
+   "cwd": "~",
+   "id": "c0-35",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "1\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "echo hello > note.txt && cat note.txt",
+   "cwd": "~",
+   "id": "c0-36",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "hello\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "echo a > n.txt && echo b >> n.txt && cat n.txt",
+   "cwd": "~",
+   "id": "c0-37",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "a\nb\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "cat shelf/jar.txt | head -n 1",
+   "cwd": "~",
+   "id": "c0-38",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "   ┌──────── RELAY #7 ────────┐\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "sort handbook.md | head -n 3",
+   "cwd": "~",
+   "id": "c0-39",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "\n\n\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "cut -d: -f1 logs/lamp.log | head -n 2",
+   "cwd": "~",
+   "id": "c0-40",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "2031-10-13 18\n2031-10-13 18\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "cat nope.txt; echo rc=$?",
+   "cwd": "~",
+   "id": "c0-41",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "rc=1\n"
+  },
+  {
+   "chapter": "ch0",
+   "cmd": "ls nope; echo rc=$?",
+   "cwd": "~",
+   "id": "c0-42",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "rc=2\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "ls",
+   "cwd": "/var/log/harbor",
+   "id": "c1-00",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "access.log\nerror.log\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "ls -a",
+   "cwd": "/var/log/harbor",
+   "id": "c1-01",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": ".\n..\naccess.log\nerror.log\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "cat error.log",
+   "cwd": "/var/log/harbor",
+   "id": "c1-02",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "[28/Nov/2031:03:11:52 +0000] WARN  slipper thrown at gc by anonymous (art.6; 實體拖鞋禁止進入機房)\n[28/Nov/2031:03:11:53 +0000] INFO  slipper does not exist in log namespace; WARN downgraded to INFO\n[29/Nov/2031:09:44:10 +0000] ERROR dock/berth-17: crane stuck (cause: tea)\n[30/Nov/2031:14:02:31 +0000] ERROR pudding P-0007 expired (art.4: 視同第二次漏洞)\n[30/Nov/2031:14:02:32 +0000] ERROR second vulnerability opened: pudding P-0007\n[01/Dec/2031:02:00:12 +0000] INFO  convoy 10.7.0.23 passed (3 ferries, 0 incidents)\n[01/Dec/2031:11:20:05 +0000] WARN  wristwatch/0.9 claims \"我這邊顯示是 02:00:00\"; rejected (art.8: 以鐘塔為準)\n[02/Dec/2031:06:15:44 +0000] ERROR cat.service: backup cat not registered\n[02/Dec/2031:06:15:44 +0000] ERROR cat.service: blink reference unavailable; gc pause cannot be audited (art.6)\n[03/Dec/2031:23:59:59 +0000] INFO  tower: 敲鐘 x0 (season not ended)\n[04/Dec/2031:16:47:02 +0000] WARN  amendment attempt rejected: it is Friday afternoon (art.9) -- submitter: anonymous\n[04/Dec/2031:16:47:03 +0000] INFO  anonymous 將負責煮下週一早上的咖啡，煮一個月\n[05/Dec/2031:08:30:00 +0000] ERROR dock/berth-03: no ship; berth empty; 港務員 reports \"我在等\"\n[06/Dec/2031:19:12:40 +0000] INFO  archive: /var/log/harbor/access.log rotated (read-only, auditable)\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "head -n 5 error.log",
+   "cwd": "/var/log/harbor",
+   "id": "c1-03",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "[28/Nov/2031:03:11:52 +0000] WARN  slipper thrown at gc by anonymous (art.6; 實體拖鞋禁止進入機房)\n[28/Nov/2031:03:11:53 +0000] INFO  slipper does not exist in log namespace; WARN downgraded to INFO\n[29/Nov/2031:09:44:10 +0000] ERROR dock/berth-17: crane stuck (cause: tea)\n[30/Nov/2031:14:02:31 +0000] ERROR pudding P-0007 expired (art.4: 視同第二次漏洞)\n[30/Nov/2031:14:02:32 +0000] ERROR second vulnerability opened: pudding P-0007\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "tail -n 3 error.log",
+   "cwd": "/var/log/harbor",
+   "id": "c1-04",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "[04/Dec/2031:16:47:03 +0000] INFO  anonymous 將負責煮下週一早上的咖啡，煮一個月\n[05/Dec/2031:08:30:00 +0000] ERROR dock/berth-03: no ship; berth empty; 港務員 reports \"我在等\"\n[06/Dec/2031:19:12:40 +0000] INFO  archive: /var/log/harbor/access.log rotated (read-only, auditable)\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "wc -l error.log",
+   "cwd": "/var/log/harbor",
+   "id": "c1-05",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "14 error.log\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "grep -c '' error.log",
+   "cwd": "/var/log/harbor",
+   "id": "c1-06",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "14\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "grep -i slipper error.log",
+   "cwd": "/var/log/harbor",
+   "id": "c1-07",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "[28/Nov/2031:03:11:52 +0000] WARN  slipper thrown at gc by anonymous (art.6; 實體拖鞋禁止進入機房)\n[28/Nov/2031:03:11:53 +0000] INFO  slipper does not exist in log namespace; WARN downgraded to INFO\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "grep -n WARN error.log | head -n 3",
+   "cwd": "/var/log/harbor",
+   "id": "c1-08",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "1:[28/Nov/2031:03:11:52 +0000] WARN  slipper thrown at gc by anonymous (art.6; 實體拖鞋禁止進入機房)\n2:[28/Nov/2031:03:11:53 +0000] INFO  slipper does not exist in log namespace; WARN downgraded to INFO\n7:[01/Dec/2031:11:20:05 +0000] WARN  wristwatch/0.9 claims \"我這邊顯示是 02:00:00\"; rejected (art.8: 以鐘塔為準)\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "sort error.log | uniq -c | sort -rn | head -n 3",
+   "cwd": "/var/log/harbor",
+   "id": "c1-09",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "      1 [30/Nov/2031:14:02:32 +0000] ERROR second vulnerability opened: pudding P-0007\n      1 [30/Nov/2031:14:02:31 +0000] ERROR pudding P-0007 expired (art.4: 視同第二次漏洞)\n      1 [29/Nov/2031:09:44:10 +0000] ERROR dock/berth-17: crane stuck (cause: tea)\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "cut -d' ' -f1 error.log | sort | uniq -c",
+   "cwd": "/var/log/harbor",
+   "id": "c1-10",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "      1 [01/Dec/2031:02:00:12\n      1 [01/Dec/2031:11:20:05\n      2 [02/Dec/2031:06:15:44\n      1 [03/Dec/2031:23:59:59\n      1 [04/Dec/2031:16:47:02\n      1 [04/Dec/2031:16:47:03\n      1 [05/Dec/2031:08:30:00\n      1 [06/Dec/2031:19:12:40\n      1 [28/Nov/2031:03:11:52\n      1 [28/Nov/2031:03:11:53\n      1 [29/Nov/2031:09:44:10\n      1 [30/Nov/2031:14:02:31\n      1 [30/Nov/2031:14:02:32\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "pwd",
+   "cwd": "/var/log/harbor",
+   "id": "c1-11",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "/var/log/harbor\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "cd .. && pwd && ls",
+   "cwd": "/var/log/harbor",
+   "id": "c1-12",
+   "needs_identical_log": false,
+   "rc": 0,
+   "stdout": "/var/log\nharbor\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "wc -l access.log",
+   "cwd": "/var/log/harbor",
+   "id": "c1L-00",
+   "needs_identical_log": true,
+   "rc": 0,
+   "stdout": "3315 access.log\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "head -n 2 access.log",
+   "cwd": "/var/log/harbor",
+   "id": "c1L-01",
+   "needs_identical_log": true,
+   "rc": 0,
+   "stdout": "10.4.12.186 - - [07/Nov/2031:00:13:21 +0000] \"GET /crane/status HTTP/1.1\" 200 1935 \"-\" \"ssh-ferry/2.1\" 119\n10.2.1.1 - - [07/Nov/2031:00:44:31 +0000] \"GET /dock/berth-21 HTTP/1.1\" 200 2157 \"-\" \"curl/7.88\" 652\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "tail -n 1 access.log",
+   "cwd": "/var/log/harbor",
+   "id": "c1L-02",
+   "needs_identical_log": true,
+   "rc": 0,
+   "stdout": "10.9.61.217 - op-bo [07/Dec/2031:10:06:51 +0000] \"POST /lighthouse/lamp/start HTTP/1.1\" 200 32 \"-\" \"ssh/op\" 24\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "grep -c 404 access.log",
+   "cwd": "/var/log/harbor",
+   "id": "c1L-03",
+   "needs_identical_log": true,
+   "rc": 0,
+   "stdout": "110\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "grep -c ' 404 ' access.log",
+   "cwd": "/var/log/harbor",
+   "id": "c1L-04",
+   "needs_identical_log": true,
+   "rc": 0,
+   "stdout": "78\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "grep -c '\" 404 ' access.log",
+   "cwd": "/var/log/harbor",
+   "id": "c1L-05",
+   "needs_identical_log": true,
+   "rc": 0,
+   "stdout": "78\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "grep '02:00:00' access.log | head -n 3",
+   "cwd": "/var/log/harbor",
+   "id": "c1L-06",
+   "needs_identical_log": true,
+   "rc": 0,
+   "stdout": "10.7.0.2 - - [07/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [08/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [09/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "grep -c 'gc/1.0' access.log",
+   "cwd": "/var/log/harbor",
+   "id": "c1L-07",
+   "needs_identical_log": true,
+   "rc": 0,
+   "stdout": "31\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "grep -c 10.7.0.2 access.log",
+   "cwd": "/var/log/harbor",
+   "id": "c1L-08",
+   "needs_identical_log": true,
+   "rc": 0,
+   "stdout": "62\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "grep -c '^10\\.7\\.0\\.2 ' access.log",
+   "cwd": "/var/log/harbor",
+   "id": "c1L-09",
+   "needs_identical_log": true,
+   "rc": 0,
+   "stdout": "31\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "cut -d' ' -f1 access.log | sort | uniq -c | sort -rn | head -n 3",
+   "cwd": "/var/log/harbor",
+   "id": "c1L-10",
+   "needs_identical_log": true,
+   "rc": 0,
+   "stdout": "    138 10.2.1.1\n     72 10.4.0.9\n     54 10.1.5.5\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "cut -d'[' -f2 access.log | cut -d: -f1 | sort | uniq -c | sort -rn | head -n 1",
+   "cwd": "/var/log/harbor",
+   "id": "c1L-11",
+   "needs_identical_log": true,
+   "rc": 0,
+   "stdout": "    185 24/Nov/2031\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "grep -c 'POST /appeal' access.log",
+   "cwd": "/var/log/harbor",
+   "id": "c1L-12",
+   "needs_identical_log": true,
+   "rc": 0,
+   "stdout": "80\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "grep 'gc/1.0' access.log | tail -n 1",
+   "cwd": "/var/log/harbor",
+   "id": "c1L-13",
+   "needs_identical_log": true,
+   "rc": 0,
+   "stdout": "10.7.0.2 - - [07/Dec/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n"
+  },
+  {
+   "chapter": "ch1",
+   "cmd": "grep ' 404 ' access.log | cut -d' ' -f1 | sort | uniq -c | sort -rn | head -n 2",
+   "cwd": "/var/log/harbor",
+   "id": "c1L-14",
+   "needs_identical_log": true,
+   "rc": 0,
+   "stdout": "      3 10.5.17.18\n      3 10.2.1.1\n"
+  }
+ ],
+ "env": {
+  "LC_ALL": "C",
+  "bash": "GNU bash, version 5.2.21(1)-release (x86_64-pc-linux-gnu)"
+ },
+ "log": {
+  "access_log_sha256": "09a7fd1fbbabd2d78c49da7c3dc4d6c7cd052ac22af1a9e800f49041aaefdd4c",
+  "first_line": "10.4.12.186 - - [07/Nov/2031:00:13:21 +0000] \"GET /crane/status HTTP/1.1\" 200 1935 \"-\" \"ssh-ferry/2.1\" 119",
+  "last_nonempty_line": "10.9.61.217 - op-bo [07/Dec/2031:10:06:51 +0000] \"POST /lighthouse/lamp/start HTTP/1.1\" 200 32 \"-\" \"ssh/op\" 24",
+  "manifest": {
+   "appeal_day": "24/Nov/2031",
+   "busiest_count": 185,
+   "busiest_day": "24/Nov/2031",
+   "days": 30,
+   "decoy404_lines": 30,
+   "lines_per_day": 100,
+   "n404": 78,
+   "n_0200": 31,
+   "n_appeal": 80,
+   "n_gc": 31,
+   "n_grep404_naive": 110,
+   "n_ip_prefix_naive": 62,
+   "n_lines": 3315,
+   "nick": "op-zien",
+   "rotated_lines": 1055,
+   "seed": 5,
+   "top3": [
+    "10.2.1.1 138",
+    "10.4.0.9 72",
+    "10.1.5.5 54"
+   ]
+  },
+  "params": {
+   "days": 30,
+   "lines_per_day": 100,
+   "nick": "op-zien",
+   "now": "2031-12-07",
+   "npc": true,
+   "seed": 5
+  },
+  "rule": "目標：前端移植 gen_logs.py 後 access.log 逐位元相同；做不到就守 I1–I7，並跳過 needs_identical_log 的案例"
+ },
+ "note": "由 demo/tools/make_conformance.py make 產生，請勿手改。排序以 LC_ALL=C（位元組順序）為準。",
+ "quests": [
+  {
+   "chapter": "ch0",
+   "check": {
+    "regex": "^ls(\\s+(-\\S+|~/?|\\./?|/home/\\S+))*\\s*$",
+    "type": "ran_regex"
+   },
+   "fail": [
+    {
+     "cmd": "cat handbook.md",
+     "cwd": "~",
+     "expect_check": false,
+     "stdout": null
+    },
+    {
+     "cmd": "lsof",
+     "cwd": "~",
+     "expect_check": false,
+     "stdout": null
+    }
+   ],
+   "id": "Q0-1",
+   "pass": [
+    {
+     "cmd": "ls",
+     "cwd": "~",
+     "expect_check": true,
+     "stdout": "handbook.md\nincidents\nlogs\nnotes\nshelf\n"
+    },
+    {
+     "cmd": "ls",
+     "cwd": "~",
+     "expect_check": true,
+     "stdout": null
+    },
+    {
+     "cmd": "ls ~",
+     "cwd": "~",
+     "expect_check": true,
+     "stdout": null
+    },
+    {
+     "cmd": "ls -l",
+     "cwd": "~",
+     "expect_check": true,
+     "stdout": null
+    },
+    {
+     "cmd": "ls ./",
+     "cwd": "~",
+     "expect_check": true,
+     "stdout": null
+    }
+   ],
+   "prompt": "[init] 任務：看看家目錄裡有什麼。"
+  },
+  {
+   "chapter": "ch0",
+   "check": {
+    "regex": "^cat\\s+(~/|\\./)?handbook\\.md\\s*$",
+    "type": "ran_regex"
+   },
+   "fail": [
+    {
+     "cmd": "cat notes/01-first-night.txt",
+     "cwd": "~",
+     "expect_check": false,
+     "stdout": null
+    },
+    {
+     "cmd": "ls handbook.md",
+     "cwd": "~",
+     "expect_check": false,
+     "stdout": null
+    }
+   ],
+   "id": "Q0-2",
+   "pass": [
+    {
+     "cmd": "cat handbook.md",
+     "cwd": "~",
+     "expect_check": true,
+     "stdout": "# 燈塔機房．值班手冊（rev 5）\n\n> 寫給下一個值班員。字很少，請全部讀完。 —— lin\n\n## 1. 你是誰\n\n你是值班員。你的工作是「在」。\n管理員目前不在。請不要等他。\n\n## 2. 燈\n\n燈亮，代表這座島有人值班。燈熄，代表沒有。\n燈不會自己亮，也不會自己熄。\n（我說過兩次了。第二次是怕你沒看第一次。）\n\n## 3. 四個指令，先學這些\n\n    ls        看有什麼（加 -a 連躲起來的也看）\n    cd        走過去\n    cat       讀\n    grep      找（加 -r 連資料夾裡面都找）\n\n## 4. 島嶼憲章．值班員摘要（Rev 5）\n\n全文在權限堡的 /etc/charter。你現在只需要知道這幾條：\n\n    第一條  島不屬於任何人，包括寫憲章的人。\n    第二條  日誌只歸檔，不刪除。\n    第三條  動用 root 須三名值班員同時簽核。掛機不算人，\n            三人中至少一人必須清醒。\n    第六條  GC 單次停頓不得超過一次眨眼\n            （150 毫秒，以值班室的標準眨眼貓為準）。\n    第九條  修憲須附測試並通過 CI。不得在週五下午修憲。\n\n## 5. 值班登記\n\n啟動燈之前，INIT 會問你口令。\n口令：lamp-before-sudo\n"
+    },
+    {
+     "cmd": "cat handbook.md",
+     "cwd": "~",
+     "expect_check": true,
+     "stdout": null
+    },
+    {
+     "cmd": "cat ~/handbook.md",
+     "cwd": "~",
+     "expect_check": true,
+     "stdout": null
+    },
+    {
+     "cmd": "cat ./handbook.md",
+     "cwd": "~",
+     "expect_check": true,
+     "stdout": null
+    }
+   ],
+   "prompt": "[init] 任務：讀手冊。口令在裡面。"
+  },
+  {
+   "chapter": "ch0",
+   "check": {
+    "cmd_regex": "^ls\\b",
+    "text": ".draft.txt",
+    "type": "output_contains"
+   },
+   "fail": [
+    {
+     "cmd": "ls notes",
+     "cwd": "~",
+     "expect_check": false,
+     "stdout": "01-first-night.txt\n"
+    }
+   ],
+   "id": "Q0-3",
+   "pass": [
+    {
+     "cmd": "ls -a notes",
+     "cwd": "~",
+     "expect_check": true,
+     "stdout": ".\n..\n.draft.txt\n01-first-night.txt\n"
+    }
+   ],
+   "prompt": "[init] 任務：notes/ 裡似乎有東西沒列出來。"
+  },
+  {
+   "chapter": "ch0",
+   "check": {
+    "text": "lamp.service stopped by uid=lin",
+    "type": "output_contains"
+   },
+   "fail": [],
+   "id": "Q0-4",
+   "pass": [
+    {
+     "cmd": "grep lamp logs/lamp.log",
+     "cwd": "~",
+     "expect_check": true,
+     "stdout": "2031-10-13 18:03:11 lamp.service started by uid=lin\n2031-10-13 18:03:12 lamp.service active (running)\n2031-10-15 18:00:02 lamp.service brightness 80%\n2031-10-17 18:00:02 lamp.service brightness 80%\n2031-10-20 18:00:02 lamp.service brightness 80%\n2031-10-23 18:00:02 lamp.service brightness 80%\n2031-10-25 18:00:03 lamp.service brightness 80%\n2031-10-26 23:58:30 lamp.service flicker x2 (operator tired)\n2031-10-27 02:00:00 lamp.service stopped by uid=lin\n"
+    }
+   ],
+   "prompt": "[init] 任務：燈為什麼是熄的。日誌在 logs/。"
+  },
+  {
+   "chapter": "ch0",
+   "check": {
+    "text": "KEY-FRAG[1]",
+    "type": "output_contains"
+   },
+   "fail": [
+    {
+     "cmd": "grep KEY-FRAG notes/01-first-night.txt",
+     "cwd": "~",
+     "expect_check": false,
+     "stdout": ""
+    }
+   ],
+   "id": "Q0-5",
+   "pass": [
+    {
+     "cmd": "grep -r KEY-FRAG ~",
+     "cwd": "~",
+     "expect_check": true,
+     "stdout": "/home/op/notes/.draft.txt:KEY-FRAG[1]: 7c1f-9a3e-0b44-e2d8\n"
+    }
+   ],
+   "prompt": "[init] 任務：lin 的信說有東西沒寫進手冊。整個家目錄找 KEY-FRAG。"
+  },
+  {
+   "chapter": "ch1",
+   "check": {
+    "cmd_regex": "404",
+    "type": "output_last_line_equals",
+    "value": "{manifest.n404}"
+   },
+   "fail": [
+    {
+     "cmd": "grep -c 404 access.log",
+     "cwd": "/var/log/harbor",
+     "expect_check": false,
+     "stdout": "110\n"
+    }
+   ],
+   "id": "Q1-1",
+   "pass": [
+    {
+     "cmd": "grep -c ' 404 ' access.log",
+     "cwd": "/var/log/harbor",
+     "expect_check": true,
+     "stdout": "78\n"
+    }
+   ],
+   "prompt": "[init] 任務：access.log 裡，狀態碼 404 出現幾次。"
+  },
+  {
+   "chapter": "ch1",
+   "check": {
+    "cmd_regex": "02:00:00",
+    "text": "gc/1.0 (sweep)",
+    "type": "output_contains"
+   },
+   "fail": [],
+   "id": "Q1-3",
+   "pass": [
+    {
+     "cmd": "grep '02:00:00' access.log",
+     "cwd": "/var/log/harbor",
+     "expect_check": true,
+     "stdout": "10.7.0.2 - - [07/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [08/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [09/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [10/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [11/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [12/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [13/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [14/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [15/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [16/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [17/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [18/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [19/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [20/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [21/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [22/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [23/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [24/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [25/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [26/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [27/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [28/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [29/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [30/Nov/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [01/Dec/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [02/Dec/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [03/Dec/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [04/Dec/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [05/Dec/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [06/Dec/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n10.7.0.2 - - [07/Dec/2031:02:00:00 +0000] \"GET /gc/probe HTTP/1.1\" 200 12 \"-\" \"gc/1.0 (sweep)\" 3\n"
+    }
+   ],
+   "prompt": "[init] 任務：看看 02:00:00 整點到底是誰在敲門。"
+  }
+ ],
+ "schema": 1,
+ "vfs": {
+  "ch0": {
+   "cwd_start": "~",
+   "dirs": [
+    "/",
+    "/home",
+    "/home/op",
+    "/home/op/incidents",
+    "/home/op/logs",
+    "/home/op/notes",
+    "/home/op/shelf",
+    "/var",
+    "/var/log",
+    "/var/mail"
+   ],
+   "files": {
+    "/home/op/.bash_history": "39c01b2b04ef3c7eb7c47aaa32bf481f7a72049274b377456bae909787b43b8e",
+    "/home/op/handbook.md": "de3e8b2ab5f62595a93ba2e064297fad820ccd7c35aacb20404182604d3eae1c",
+    "/home/op/incidents/TICKET-0001.md": "9d53191559b235fe1a0fe1f4474d84751c039590c9d897dee3cef1dc3c653080",
+    "/home/op/logs/lamp.log": "5b0a0722f5a1c4fbfa21005cfe59d13c3dde2adaca3ad7790fed220f1c5d6118",
+    "/home/op/notes/.draft.txt": "c2d853fe27c6785923513411047d1a7bb7bfa63f0f4e87d7edef8f5dbe2e89a7",
+    "/home/op/notes/01-first-night.txt": "76e281eb0b7b28c8b0ce2bdc29f299d3b7de395dcffb3f27a57263c6e33d6720",
+    "/home/op/shelf/cat.txt": "2768869523b5a11be148aff212b9ff8c11b7cbd4ca88c005ce22f3f5671df080",
+    "/home/op/shelf/jar.txt": "0c31f73dd5fe300ab1da0f63507d26b98b827ee02ae3349b579571927cd5a844",
+    "/var/log/boot.0": "04c257025085c5d27112f616d60b500ca28040061d3ce5b625d89369154f4143",
+    "/var/mail/op": "210aa5c0124840792588353ecf0d703e2ad01d91087a86773c7633f1b77930f7"
+   },
+   "generated": [],
+   "home": "/home/op"
+  },
+  "ch1": {
+   "cwd_start": "/var/log/harbor",
+   "dirs": [
+    "/",
+    "/home",
+    "/home/op",
+    "/var",
+    "/var/log",
+    "/var/log/harbor"
+   ],
+   "files": {
+    "/var/log/harbor/access.log": "09a7fd1fbbabd2d78c49da7c3dc4d6c7cd052ac22af1a9e800f49041aaefdd4c",
+    "/var/log/harbor/error.log": "3ad6ea335ce46fb15c8186669f1178a93d0755fa8cc47a96275934777f7d0901"
+   },
+   "generated": [
+    "/var/log/harbor/access.log"
+   ],
+   "home": "/home/op"
+  }
+ }
+}

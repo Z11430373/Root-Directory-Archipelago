@@ -1,0 +1,187 @@
+type: dialogue
+npc: harbor-master
+alias: harbor
+note: >
+  harbor-master：老港務員，愛抱怨、愛吹牛、茶不離手。第一個會幫你也會騙你的人。
+  他是「憲章修訂史」的活博物館：每一版修憲都出在他眼前，他每次都說「這條是我提議的」，日誌沒有紀錄。
+  指令：ask harbor-master <關鍵字>（也接受 talk）。沒有關鍵字時列出他願意聊的話題。
+  話題的幽默來自憲章；他的語氣仍然是疲憊的老人，不是搞笑角色。
+
+nodes:
+  - node: intro
+    lines:
+      - {text_ref: text/ch1/harbor_intro.txt}
+    sets: [flag.met_harbor]
+    next: topics_menu
+
+  - node: topics_menu
+    lines:
+      - {text: "harbor-master: 想聊什麼？我話多。（ask harbor-master charter / cake / cat / slipper / wang / drinks / tower / pudding / friday）"}
+
+  # ------------------------------------------------------------------ 快題與工單的回應
+  - node: q1_1_done
+    lines:
+      - {text: "harbor-master: 這麼多 404？港口的東西，不是消失了，就是從來沒存在過。"}
+  - node: q1_2_done
+    lines:
+      - {text: "harbor-master: 那天啊……鐘塔那件事。去問我 tower。"}
+    sets: [flag.tower_topic_open]
+  - node: q1_3_done
+    lines:
+      - {text: "harbor-master: 02:00:00？那個？別理它。每晚都來，禮貌得很。"}
+      - {text: "harbor-master: 它從來不要什麼。敲一下門，就走。"}
+    note: "玩家第一次聽到 GC 這個名字（由 INIT 的 gc_name_heard 節點說出）。"
+  - node: q1_4_done
+    lines:
+      - {text: "harbor-master: 單獨存下來了？嘖，我以前都用腦子記。"}
+  - node: q1_5_done
+    lines:
+      - {text: "harbor-master: lin 寫給我的？……那傢伙。放了一封信在我的港口，我居然沒發現。"}
+      - {text: "harbor-master: 念。念給我聽。——不用了。我自己等一下會看。"}
+    sets: [flag.harbor_knows_letter]
+
+  - node: t0427_ac
+    lines:
+      - {text: "Service restored. uptime +3h"}
+      - {text: "harbor-master: 前三名裡……有它。"}
+      - {text: "harbor-master: 每晚都來的那位。你看，我說過它禮貌。"}
+      - {text: "harbor-master: 12 個區塊給你。算我請客。茶不算。"}
+    sets: [flag.t0427_done]
+
+  # ------------------------------------------------------------------ 合併 K1 之後
+  - node: after_k1_hint
+    lines:
+      - {text: "[init] 提示：回到主線後，可以再問一次 harbor-master。"}
+
+  - node: softens
+    when: "flag.k1 and ask harbor-master gc / ask harbor-master 02:00 / talk"
+    lines:
+      - {text: "harbor-master: （停下茶杯）"}
+      - {text: "harbor-master: 你怎麼知道？……"}
+      - {text: "harbor-master: 我年輕時也想擋過。"}
+      - {text: "harbor-master: 那一晚，港口少了三個區塊。我再也沒擋過。"}
+    sets: [flag.harbor_softened]
+    note: "對應 K1 的 harbor.softens 效果。『少了三個區塊』與 B1 模擬輸出的 3x sectors 呼應。"
+
+  # ------------------------------------------------------------------ 話題：憲章修訂史的傳聞
+  - node: topic_charter
+    keywords: [charter, 憲章]
+    lines:
+      - {text: "harbor-master: 憲章？我看它改了五版。每一版都是上一版出事以後補的洞。"}
+      - {text: "harbor-master: 憲章這東西，是靠出事長大的。"}
+      - {text: "harbor-master: 想聽哪一次？cake、cat、slipper、wang、drinks、tower、pudding、friday。"}
+    sets: [flag.asked_charter]
+
+  - node: topic_cake
+    keywords: [cake, 蛋糕, pudding_origin, 小林]
+    lines:
+      - {text: "harbor-master: 蛋糕事件。第七十二小時整點，小林說『視同授權』，拿 root 把漏洞補了。"}
+      - {text: "harbor-master: 補得很好。然後他把全島的桌布換成他的貓。"}
+      - {text: "harbor-master: 道歉蛋糕放了三天，長毛。從那以後改成布丁，借用期間不准改桌布。"}
+    sets: [flag.heard_cake]
+
+  - node: topic_pudding
+    keywords: [pudding, 布丁]
+    lines:
+      - {text: "harbor-master: 布丁？『過期布丁視同第二次漏洞』，這條是我提議的。"}
+      - {text: "harbor-master: （日誌沒有紀錄。）"}
+      - {text: "harbor-master: 你去看 error.log。P-0007。那個布丁，現在還是個漏洞。"}
+    sets: [flag.heard_pudding]
+    hint_file: /var/log/harbor/error.log
+
+  - node: topic_cat
+    keywords: [cat, blink, 貓, 眨眼, 阿宏]
+    lines:
+      - {text: "harbor-master: 阿宏那次 GC 停了 3.9 秒。他說他是慢眨眼體質，一眨就是 4 秒。"}
+      - {text: "harbor-master: 經查，合憲。當時條文只說『一次眨眼』，沒說誰的眼。"}
+      - {text: "harbor-master: 所以後來有了值班室那隻貓。標準眨眼貓。150 毫秒。貓罷工的時候，備用貓頂班。"}
+      - {text: "harbor-master: 備用貓？沒登記。去燈塔看看那隻貓還罷不罷工。"}
+    sets: [flag.heard_cat]
+    hint_file: "lighthouse:~/shelf/cat.txt"
+
+  - node: topic_slipper
+    keywords: [slipper, 拖鞋]
+    lines:
+      - {text: "harbor-master: 拖鞋？第六條。GC 停太久，島民可以在日誌裡扔拖鞋。WARN 等級。"}
+      - {text: "harbor-master: 實體拖鞋禁止進機房。因為有一個下午，兩台風扇。"}
+      - {text: "harbor-master: 那是一個令人懷念的下午。"}
+    sets: [flag.heard_slipper]
+
+  - node: topic_wang
+    keywords: [wang, 老王, typhoon, 颱風, ferrous]
+    lines:
+      - {text: "harbor-master: 老王？ferrous 啦，島民都這樣叫他。"}
+      - {text: "harbor-master: 季末到了，他不交 root。他說：『菲律賓外海還有一個熱帶性低氣壓，颱風季沒有結束。』"}
+      - {text: "harbor-master: 我說老王，你那個颱風在菲律賓外海，我們這裡連毛毛雨都沒有。"}
+      - {text: "harbor-master: 他就這樣抱著 root，抱到隔年。所以現在『季』以鐘塔為準，不接受氣象季、新番季、財報季。"}
+    sets: [flag.heard_wang]
+
+  - node: topic_drinks
+    keywords: [drinks, 飲料, 手搖, 首富]
+    lines:
+      - {text: "harbor-master: 有一次兩個新任為了搶 root，通宵蹲在交接點。各寫了腳本，同一毫秒簽收。"}
+      - {text: "harbor-master: 兩個 root，各自合法。後到的那個要請全島喝飲料。三千杯。"}
+      - {text: "harbor-master: 訂單把網路塞爆，那天剛好戰時斷網。手搖店老闆當天成為島上首富。"}
+      - {text: "harbor-master: 他到現在還欠我兩杯。"}
+      - {text: "harbor-master: 現在規定：出現兩根棒子，兩根都作廢，由第三人重新發棒。飲料各付各的。"}
+    sets: [flag.heard_drinks]
+
+  - node: topic_tower
+    keywords: [tower, 鐘塔, 時間, 申訴]
+    variants:
+      - if: "not flag.q1_2_done"
+        lines:
+          - {text: "harbor-master: 鐘塔就在港口，你出門就看得到。第八條：全島時間以它為準。"}
+          - {text: "harbor-master: 手錶快慢、時區、『我這邊顯示是』，一律不得抗辯。"}
+          - {text: "harbor-master: 想知道這條怎麼來的？別問我——問日誌。找最忙的那一天。"}
+      - if: "flag.q1_2_done"
+        lines:
+          - {text: "harbor-master: 你找到那天了。那天有人送來好幾百封申訴，每一封都寫著：『我這邊顯示是』。"}
+          - {text: "harbor-master: grep appeal。看看那些 user-agent。wristwatch。"}
+          - {text: "harbor-master: 然後第八條就誕生了。"}
+    sets: [flag.heard_tower]
+    hint_file: "/var/log/harbor/access.log (grep appeal)"
+
+  - node: topic_friday
+    keywords: [friday, 週五, 修憲, CI]
+    lines:
+      - {text: "harbor-master: 週五下午不修憲。第九條。"}
+      - {text: "harbor-master: 以前有人週五下午五點前修了一條，週一全島才發現它跟另一條打架。"}
+      - {text: "harbor-master: 現在修憲要附測試、過 CI。違者煮一個月的咖啡，是週一早上的那種。"}
+      - {text: "harbor-master: 上週四，有人在週五下午試過。日誌裡有。匿名。咖啡呢，我猜是我喝到的。"}
+    sets: [flag.heard_friday]
+    hint_file: /var/log/harbor/error.log
+
+  - node: topic_gc
+    keywords: [gc, 回收, 02:00, 訪客]
+    variants:
+      - if: "flag.k1"
+        goto: softens
+      - if: "not flag.k1"
+        lines:
+          - {text: "harbor-master: GC？別理它。每晚都來，禮貌得很。"}
+          - {text: "harbor-master: 你要是想擋它……算了。你自己會想。"}
+
+  - node: topic_lin
+    keywords: [lin]
+    variants:
+      - if: "not flag.harbor_knows_letter"
+        lines:
+          - {text: "harbor-master: lin？……他很久沒來喝茶了。"}
+          - {text: "harbor-master: 他以前什麼都不拿，只在港口站著，看 02:00 那位訪客。"}
+      - if: "flag.harbor_knows_letter"
+        lines:
+          - {text: "harbor-master: lin 看 GC 的樣子，像看一個晚歸的朋友。"}
+          - {text: "harbor-master: 我沒問過他為什麼。我們這一行，不問為什麼。"}
+
+  - node: topic_default
+    lines:
+      - {text: "harbor-master: 這個我不懂。我只懂茶。（ask harbor-master 後面不加字，我會列出我願意聊的。）"}
+
+  # ------------------------------------------------------------------ finger
+  - node: finger_plan
+    when: "finger harbor-master"
+    lines:
+      - {text: "Login: harbor-master          Name: 港務員"}
+      - {text: "Plan:"}
+      - {text: "今天也在喝茶。"}

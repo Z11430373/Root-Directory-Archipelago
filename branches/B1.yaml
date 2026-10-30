@@ -1,0 +1,94 @@
+type: branch
+id: B1
+title: 封鎖 02:00 的訪客
+chapter: ch1
+branch_type: whatif               # 假設分支：可寫入的模擬，結果以知識卡帶回
+name: whatif/block-gc
+from: ckpt/ch1-night              # Q1-3 完成時自動打的檢查點：昨夜 02:00:00 之前
+card: K1
+teaching_goal: "假設分支是模擬，不改歷史；封鎖不是解法；知識卡才是帶回主線的貨幣。"
+prefix_format: "[init@whatif/block-gc]"
+online_cost: {time_fuel: 1}       # 連線版回溯消耗 1 單位時間燃料；離線免費
+
+enter:
+  command: "git checkout -b whatif/block-gc ckpt/ch1-night"
+  init_says:
+    - "[init] 你回到昨夜 02:00 之前。這是模擬。"
+    - "[init] 你可以改變任何事。歷史不會被改變。"
+  world: copy_of_logport_at_checkpoint
+
+# 模擬防火牆。接受兩種寫法（擇一實作即可，建議兩個都接）：
+firewall:
+  commands:
+    - "iptables -A INPUT -s <ip|cidr> -j DROP"
+    - "fw block <ip|cidr>"
+    - "iptables -L"                 # 列出規則
+    - "iptables -F"                 # 清空規則
+  on_rule_added: run_sim            # 加入規則後，世界自動快轉到 02:00:00 並印出結果
+  gc_ip: "10.7.0.2"
+  convoy_ip: "10.7.0.23"
+
+# 結果表：依「規則是否涵蓋 GC 的 IP / 車隊的 IP」決定輸出
+outcomes:
+  - id: block_gc_exact
+    when: {covers_gc: true, covers_convoy: false}
+    lines:
+      - "[sim] whatif/block-gc"
+      - "[sim] 02:00:00 probe rejected"
+      - "[sim] 02:00:07 gc: escalating to forced sweep"
+      - "[sim] 02:00:41 reclaimed 3x sectors"
+      - "[sim] 第六條：GC 不得被封鎖。這個模擬正在違反它。"
+      - "[sim] 這是模擬。真實歷史沒有被更動。"
+    sets: [flag.b1.saw_escalation]
+  - id: block_gc_and_convoy
+    when: {covers_gc: true, covers_convoy: true}     # 例如封整個 10.7.0.0/24
+    lines:
+      - "[sim] whatif/block-gc"
+      - "[sim] 02:00:00 probe rejected"
+      - "[sim] 02:00:07 gc: escalating to forced sweep"
+      - "[sim] 02:00:12 ferry convoy 10.7.0.23 dropped (collateral)"
+      - "[sim] 02:00:41 reclaimed 3x sectors"
+      - "[sim] 第六條：GC 不得被封鎖。這個模擬正在違反它。"
+      - "[sim] 這是模擬。真實歷史沒有被更動。"
+    sets: [flag.b1.saw_escalation, flag.b1.collateral]
+    note: "同樣的知識，多一個教訓：封太大一片，會誤傷車隊（也就是守護夜班會提到的『誤殺』）。"
+  - id: block_other
+    when: {covers_gc: false}
+    lines:
+      - "[sim] whatif/block-gc"
+      - "[sim] 02:00:00 probe accepted (rule did not match)"
+      - "[sim] 02:00:03 sweep complete. reclaimed 0 sectors"
+      - "[sim] 這是模擬。你封鎖的不是那個訪客。"
+    sets: []
+
+# 其他玩法的通用回應
+generic:
+  unknown_change: "[sim] 沒有可模擬的變更。"
+  gc_process_kill: "[init@whatif/block-gc] gc 不是你的行程。Permission denied。"
+  stop_gc_service: "[init@whatif/block-gc] 嘗試停止 GC：Permission denied (charter article 6)。"
+
+exits:
+  - command: "git merge --knowledge"
+    requires: flag.b1.saw_escalation
+    on_success:
+      say: "[init] 已合併 1 張知識卡。歷史未被更動。"
+      gives_card: K1
+      sets: [flag.k1, flag.b1.done]
+      then: {dialogue: harbor.after_k1_hint}      # 回到主線再問 harbor-master 才會觸發 softens
+    on_missing_requirement:
+      say: "[init] 沒有可合併的知識。你還沒有看過模擬的結果。"
+  - command: "git abandon"
+    on_success:
+      say: "[init] 分支已捨棄。懸空 commit {n} 個，等待回收。"
+      sets: [flag.b1.done]
+  - command: "git tag <name>"
+    on_success: {say: "[init] 已標記 {name}。它不會再被改動。"}
+
+after_exit:
+  - return_to: main
+  - restore_world: true
+
+rules_notes:
+  - "假設分支的結果不得得出『歷史被改變』的結論，因為那只是模擬。"
+  - "回溯分支（flashback）才需要揭露一個主線沒提過的事實；B1 是假設分支，揭露的是『機制』，不是『過去』。"
+  - "lin 的信（for-harbor-master.txt）在 B1 之前已經讀過，他說：『就讓他在分支裡試。』——這是被邀請的實驗。"

@@ -1,0 +1,14 @@
+[28/Nov/2031:03:11:52 +0000] WARN  slipper thrown at gc by anonymous (art.6; 實體拖鞋禁止進入機房)
+[28/Nov/2031:03:11:53 +0000] INFO  slipper does not exist in log namespace; WARN downgraded to INFO
+[29/Nov/2031:09:44:10 +0000] ERROR dock/berth-17: crane stuck (cause: tea)
+[30/Nov/2031:14:02:31 +0000] ERROR pudding P-0007 expired (art.4: 視同第二次漏洞)
+[30/Nov/2031:14:02:32 +0000] ERROR second vulnerability opened: pudding P-0007
+[01/Dec/2031:02:00:12 +0000] INFO  convoy 10.7.0.23 passed (3 ferries, 0 incidents)
+[01/Dec/2031:11:20:05 +0000] WARN  wristwatch/0.9 claims "我這邊顯示是 02:00:00"; rejected (art.8: 以鐘塔為準)
+[02/Dec/2031:06:15:44 +0000] ERROR cat.service: backup cat not registered
+[02/Dec/2031:06:15:44 +0000] ERROR cat.service: blink reference unavailable; gc pause cannot be audited (art.6)
+[03/Dec/2031:23:59:59 +0000] INFO  tower: 敲鐘 x0 (season not ended)
+[04/Dec/2031:16:47:02 +0000] WARN  amendment attempt rejected: it is Friday afternoon (art.9) -- submitter: anonymous
+[04/Dec/2031:16:47:03 +0000] INFO  anonymous 將負責煮下週一早上的咖啡，煮一個月
+[05/Dec/2031:08:30:00 +0000] ERROR dock/berth-03: no ship; berth empty; 港務員 reports "我在等"
+[06/Dec/2031:19:12:40 +0000] INFO  archive: /var/log/harbor/access.log rotated (read-only, auditable)

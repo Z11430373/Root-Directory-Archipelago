@@ -1,0 +1,164 @@
+type: chapter
+id: ch1
+island: logport
+title: 日誌港
+subtitle: 日誌港 logport
+unlock: [flag.ch0_done]
+done_flag: flag.ch1_done
+goal: 學會管線（grep | sort | uniq -c | sort -rn）、重導向、fsck，解第一張 OJ 工單，拿到 F2，認識 GC 的探測。
+tone: 港口的老人話多、愛吹牛；日誌本身是冷的。這一章的笑點來自港務員，不安來自 02:00:00。
+estimated_minutes: {solo: 60, with_branch: 80}
+
+player_start:
+  host: logport
+  user: "op-{nick}"
+  cwd: /var/log/harbor
+  home: /home/op
+  arrive_via: "ssh logport（渡海，延遲 38 ms）"
+
+files:
+  - path: /var/log/harbor/access.log
+    generate: {seed: save.seed, lines: 1200000, template: harbor_access, spec: tools/gen_logs.py, lines_per_day: 40000, days: 30}
+    footprints: {solo: [player, npc_ada, npc_bo], multi_offline: [player, peers], online: [player, other_players_nicknamized]}
+    perms: "0644"
+    note: "約 120 萬行。以不變量 I1–I7（見 gen_logs.py）驗證；測試時可用 lines_per_day=300。"
+  - path: /var/log/harbor/rotated/access.log.1.gz
+    generate: {seed: save.seed, template: harbor_access_rotated, spec: tools/gen_logs.py#generate_rotated, gzip: true}
+    perms: "0644"
+    optional_easter_egg: "zcat rotated/access.log.1.gz | grep lin → lin 離開那晚的足跡（01:58:12 登入；02:00:00 同時看 GC 探測並在燈塔熄燈；02:00:41 登出）。"
+  - {path: /var/log/harbor/error.log,       content_ref: text/ch1/error.log,           perms: "0644", mtime: "2031-12-06 19:12"}
+  - {path: /srv/harbor/tickets/TICKET-0427.md, content_ref: text/tickets/0427.md,      perms: "0644", mtime: "2031-12-07 06:00"}
+  - {path: /srv/harbor/lin-ticket.md,       content_ref: text/ch1/lin-ticket.md,       perms: "0644", mtime: "2031-09-01 10:00", dialogue: lin.lin_ticket, relic: R1}
+  - path: "/srv/harbor/lost+found/#3141"
+    content_ref: text/ch1/letter3141_damaged.txt
+    perms: "0600"
+    mtime: "2031-10-26 21:40"
+    holds: F2
+    hidden_fragment: true          # 損毀版沒有 KEY-FRAG 字樣，grep 找不到；復原後才有
+    hardlink: {fragment: F2, link_time: "2031-10-26 21:40:00"}
+  - {path: /usr/share/man/man8/fsck.txt,    content_ref: text/ch1/man_fsck.txt,        perms: "0644"}
+dirs: [/var/log/harbor/rotated, /srv/harbor/tickets, "/srv/harbor/lost+found", /home/op]
+
+# 日誌的世界內說明：鐘塔時間、時區 +0000（憲章第八條）
+log_format: 'IP - USER [DD/Mon/YYYY:HH:MM:SS +0000] "METHOD PATH HTTP/1.1" STATUS BYTES "-" "UA" RT_MS'
+
+# fsck 模擬（Q1-5）
+fsck:
+  target_dir: /srv/harbor
+  check_output:
+    - "fsck: checking /srv/harbor ..."
+    - "  lost+found/#3141  orphan inode (size 412, owner uid=lin, mtime 2031-10-26 21:40)"
+    - "  header truncated: 3 lines missing (From: / To: / Subject:)"
+    - "  journal entry #3141 found: name=\"for-harbor-master.txt\""
+    - "fsck: 1 problem found. rerun with -y to repair."
+  repair_output:
+    - "fsck: restored lost+found/#3141 -> /srv/harbor/for-harbor-master.txt (header rebuilt from journal)"
+    - "fsck: 0 problems remaining."
+  repair_effect:
+    - {rename: {from: "/srv/harbor/lost+found/#3141", to: /srv/harbor/for-harbor-master.txt}}
+    - {replace_content: {path: /srv/harbor/for-harbor-master.txt, content_ref: text/ch1/letter3141_restored.txt}}
+    - {sets: [flag.fsck_done]}
+  without_y: "只檢查，不改動任何檔案。"
+
+npcs: [harbor-master, init, gc, lin]
+quick_tasks: [Q1-1, Q1-2, Q1-3, Q1-4, Q1-5]
+tickets: [T0427]
+fragments: [F2]
+relics:
+  - {id: R1, path: /srv/harbor/lin-ticket.md, how: "ln <檔案> ~/keep/"}
+
+checkpoints:
+  - {id: ckpt/ch1-start, when: "抵達日誌港"}
+  - {id: ckpt/ch1-night, when: "Q1-3 完成（昨夜 02:00:00 之前）— B1 的起點"}
+  - {id: ckpt/ch1-end,   when: "dialogue init.ch1_done"}
+
+branch_points:
+  - {id: B1, type: whatif, from: ckpt/ch1-night, card: K1}
+
+required_to_finish: [Q1-1, Q1-2, Q1-3, Q1-4, Q1-5, T0427, B1_exited]
+
+scenes:
+  - id: s1.1
+    title: 渡海與到港
+    beats:
+      - {say: init.ferry}
+      - {say: init.ch1_arrive}
+      - {say: harbor-master.intro}
+  - id: s1.2
+    title: 一百二十萬行
+    beats:
+      - {task: Q1-1}
+      - {task: Q1-2}
+      - {stage: "最忙的那一天是申訴日。harbor-master 的 tower 話題在這裡打開。"}
+      - {say: harbor-master.topic_tower}
+  - id: s1.3
+    title: 02:00:00
+    beats:
+      - {task: Q1-3}
+      - {say: init.gc_name_heard}
+      - {say: harbor-master.q1_3_done}
+      - {stage: "自動檢查點 ckpt/ch1-night。玩家可以先去開 B1，也可以繼續往下。"}
+  - id: s1.4
+    title: 單獨存檔
+    beats:
+      - {task: Q1-4}
+  - id: s1.5
+    title: 最常見的訪客（OJ 工單）
+    beats:
+      - {ticket: T0427}
+  - id: s1.6
+    title: 被截斷的信
+    beats:
+      - {task: Q1-5}
+      - {say: lin.letter_harbor}
+      - {say: harbor-master.q1_5_done}
+      - {file: /var/log/harbor/error.log}
+  - id: s1.7
+    title: 封鎖 02:00 的訪客（假設分支）
+    beats:
+      - {branch: B1}
+      - {card: K1}
+      - {stage: "回到主線，再問 harbor-master：他會停下茶杯。"}
+      - {say: harbor-master.softens}
+  - id: s1.8
+    title: 傳聞：憲章是靠出事長大的（選擇性）
+    beats:
+      - {say: harbor-master.topic_charter}
+      - {say: harbor-master.topic_cake}
+      - {say: harbor-master.topic_cat}
+      - {say: harbor-master.topic_slipper}
+      - {say: harbor-master.topic_wang}
+      - {say: harbor-master.topic_drinks}
+      - {say: harbor-master.topic_pudding}
+      - {say: harbor-master.topic_friday}
+  - id: s1.9
+    title: 離港
+    beats:
+      - {say: init.ch1_done}
+
+modes:
+  solo:
+    summary: "access.log 由你的存檔種子程序生成，並混進幾行你自己在 Ch0 留下的足跡，例如你登入燈塔的紀錄。判題用本機內建的小測資。"
+    details:
+      - "足跡：今日（登入後）有 POST /lighthouse/login、GET /lighthouse/handbook、GET /lighthouse/map、POST /lighthouse/lamp/start。"
+      - "ada、bo 各留下一組足跡（op-ada、op-bo 的燈塔登入），讓日誌有『別人也來過』的感覺。"
+      - "T0427 用 tickets/T0427/tests/ 的 5 組本機測資判題；可選擇連到自己的 OJ。不排名。"
+  multi_offline:
+    summary: "存檔交換時，對方的足跡會被寫進你的 access.log，你們的日誌互相滲透；任何人都能從日誌看出對方走過哪裡。"
+    details:
+      - "匯入對方存檔時，用 gen_logs.py 的 --peer 規則把對方暱稱的足跡加進日誌（時間為對方存檔的世界時間）。"
+      - "judge 結果附簽名收據（receipt），寫進 commit；換人看到存檔時可驗證那個 AC 是真的。"
+      - "B1 的 K1 合併：兩人若分別得到 block_gc_exact 與 block_gc_and_convoy 兩種結果，不構成衝突，卡片取聯集並附註『collateral』。"
+  online:
+    summary: "日誌是整個世界活動的縮影，裡面有其他玩家的登入、錯誤指令、渡海紀錄（暱稱化）。你 grep 得到隔壁隊伍的動向，這是偵察；別人也看得到你的。工單送到 OJ 正式判題。"
+    details:
+      - "access.log 的熱門 IP 與流量由真實玩家活動決定，GC 的 02:00:00 探測仍然固定（I1）。"
+      - "T0427 送正式 OJ，帶相似度檢查；時限 2000 ms、記憶體 256 MB。"
+      - "B1 回溯消耗 1 單位時間燃料（全隊共享，每日補充 3）。"
+      - "每晚真實 02:00 GC 會探測，玩家在線時可 tail -f access.log 看到它。"
+
+authoring_notes:
+  - "第一次聽到 GC 這個名字是在 Q1-3 完成時（INIT 說出 10.7.0.2 與 gc/1.0 (sweep)）。GC 在 Ch1 沒有對話、沒有敵意。"
+  - "B1 的 [sim] 輸出必須與設計稿逐字一致（見 branches/B1.yaml 的 block_gc_exact）；新增的第六條提示是額外一行，放在 reclaimed 之後。"
+  - "harbor-master 的傳聞只能是傳聞：他會吹牛，日誌沒有的事不要寫成事實。"
+  - "TICKET-0427 的彩蛋（前三名有 GC）只存在於『縮小的範例』；真實日誌的前三名是 10.2.1.1、10.4.0.9、10.1.5.5。"

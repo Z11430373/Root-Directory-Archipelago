@@ -1,0 +1,78 @@
+type: import_rules
+id: demo-to-full
+note: >
+  試玩版存檔如何匯入正式版。原則：存檔是 commit 紀錄，匯入就是「重放」，所以試玩版用的旗標、快題編號、
+  知識卡編號、檢查點名稱，和正式版是同一套。這裡只規定：哪些帶得過去、哪些丟掉、有衝突時怎麼辦。
+
+schema: 1
+
+verify:
+  chain: "每個 commit 的 id = sha256(parent_id + 規範化 JSON)[:8]；整串對得上才算「完整」（只證明沒壞，不證明真的玩過；見 integrity.yaml）"
+  code_checksum: "短代碼尾端 CRC32；不符就拒絕匯入並提示『代碼被截斷或貼錯』"
+  on_unverified: "仍可匯入，標記 unverified：不進名人堂、不能排名、徽章不給（離線單人玩法不受影響）"
+  note: "純前端無法防作弊，只做『誠實的人不會誤傷、改存檔的人會被標記』。"
+
+identity:
+  nick: "player.nick → 正式版 op-<nick>；與既有存檔衝突時 → 走 on_conflict"
+  seed: keep               # 保留種子，正式版 access.log 與試玩版的足跡才會一致
+
+carry:
+  flags:                   # 白名單：只帶這些
+    - flag.mail_read
+    - flag.handbook_read
+    - flag.charter_summary_read
+    - flag.draft_found
+    - flag.draft_read
+    - flag.lin_stopped_lamp
+    - flag.f1
+    - flag.lamp_lit
+    - flag.cat_working
+    - flag.map_seen
+    - flag.k0
+    - flag.b0.done
+    - flag.b0.lost0_created
+    - flag.b0.read_lost0
+    - flag.ch0_done
+    - flag.met_harbor
+    - flag.gc_name_heard
+    - flag.q1_3_done
+    - flag.sudo_warned
+    - flag.first_night_read
+    - flag.heard_cat
+  quests_done: [Q0-1, Q0-2, Q0-3, Q0-4, Q0-5]     # Ch0 五題原樣算數
+  quests_not_carried:
+    - {id: Q1-1, why: "試玩版日誌只有約 3 千行，答案與正式版（120 萬行）不同；正式版要重做"}
+    - {id: Q1-3, why: "同上；但 flag.gc_name_heard 已帶過去，所以 GC 的名字不會重新驚喜一次——這是刻意的取捨"}
+  items: [F1, R0, badge.demo_first_night]
+  cards: [K0]
+  branches:
+    - {id: B0, carry: "exit state only"}
+    - {id: B1, carry: "不帶（試玩版只有投票預告）"}
+  checkpoints: [ckpt/ch0-start, ckpt/ch0-lamp, ckpt/ch0-end]
+  create_on_import:
+    - {when: "flag.gc_name_heard", make: ckpt/ch1-night, note: "正式版的 B1 可以立刻開，不用重做 Q1-3"}
+    - {when: "flag.ch0_done", make: ckpt/ch1-start}
+
+drop:
+  - "所有 flag.demo.* （試玩專用）"
+  - "試玩版的日誌檔（正式版用同一個 seed 重新生成）"
+  - "指令歷史（只保留 notable 事件）"
+
+memory:                    # 不是旗標，是「正式版 INIT 會記得」的一句話
+  - {from: flag.demo.vote_block, say: "[init] 你在試玩時說過：block。", chapter: ch1, node: before_B1}
+  - {from: flag.demo.vote_pass,  say: "[init] 你在試玩時說過：pass。", chapter: ch1, node: before_B1}
+  - {from: flag.demo.used_full_hint, nothing: true}
+
+perks:                     # 活動紀念；數字由 Zien 決定，這裡只放預設
+  - {id: motd_line,        text: " * 試玩版值班員：{nick}（燈塔第 {demo_rank} 位）", condition: "level:intact"}
+  - {id: hall_of_fame_tag, text: "Demo 〈第一夜〉", condition: "level:intact"}
+  - {id: title, from: demo.title}
+
+footprints:
+  note: "試玩版的登入、看手冊、點燈會在正式版 Ch1 的 access.log 出現（時間為試玩存檔的世界時間）。"
+  lines: [POST /lighthouse/login, GET /lighthouse/handbook, GET /lighthouse/map, POST /lighthouse/lamp/start]
+
+on_conflict:               # 正式版裡已經有同暱稱的存檔
+  action: import_as_peer   # 當成『多人離線』的對方存檔匯入：足跡寫進日誌、K0 可 cherry-pick
+  ask_player: true
+  note: "不覆蓋任何既有存檔。"

@@ -1,0 +1,20 @@
+ls
+cat handbook.md
+cd /var/log
+cat boot.0
+cd ~
+grep -r lamp .
+systemctl status lamp
+man 7 init
+ls -a notes
+vi notes/.draft.txt
+cat notes/.draft.txt
+date
+uptime
+last | head -3
+ssh permfort
+cd /etc/charter.d
+vi amend-10.draft
+git push origin amend/art-10
+cat /var/log/ci/last.txt
+sleep 3600

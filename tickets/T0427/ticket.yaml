@@ -1,0 +1,30 @@
+type: ticket
+id: T0427
+display_id: TICKET-0427
+island: logport
+title: 最常見的訪客
+severity: 2
+tags: [hash, sort]
+story_ref: text/tickets/0427.md
+unlock: [flag.q1_3_done]        # 先在日誌裡看過 02:00:00 的訪客，再接這張單
+required_for_chapter: true
+judge:
+  oj_problem_id: null            # 接自己的 OJ 時填；正式測資上限 N = 1,200,000
+  limits: {time_ms: 2000, memory_mb: 256}
+  language_hint: python3
+  local:
+    tests_dir: tickets/T0427/tests
+    ref_solution: tickets/T0427/ref/sol.py
+    compare: exact_lines
+reward: {sectors: 12, keys: 1}
+hints:
+  - {cmd: "man ticket-0427", cost_keys: 1, text: "港口日誌是文字，先想想怎麼數東西。"}
+  - {cmd: "man -k count",     cost_keys: 2, text: "雜湊表與排序。"}
+  - {cmd: "man 7 solution",   cost_keys: 3, text: "逐行取出 IP，用字典計數，最後排序取前三。注意同次數時 IP 要逐段比大小，不是字串比大小。"}
+common_wrong:                    # 判題 WA 時 INIT 的提示（見 dialogue/init.yaml）
+  - {id: lexicographic_tiebreak, tests: [4], hint: "服務有回應，但資料不對（test #4）：IP 不是字串。"}
+  - {id: no_tiebreak,            tests: [2, 4], hint: "服務有回應，但資料不對（test #2）：次數相同時沒有規定順序嗎？"}
+on_ac:
+  dialogue: harbor.t0427_ac
+  sets: [flag.t0427_done]
+egg: "範例的前三名裡有 GC 的探測（10.7.0.2）。"

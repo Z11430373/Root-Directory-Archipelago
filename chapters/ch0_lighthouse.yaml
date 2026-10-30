@@ -1,0 +1,160 @@
+type: chapter
+id: ch0
+island: lighthouse
+title: 值班第一天
+subtitle: 燈塔島 lighthouse
+unlock: []
+done_flag: flag.ch0_done
+goal: 學會 ls、cd、cat、grep -r，拿到 F1，重新點亮燈塔，第一次開分支。
+tone: 日誌式的、克制的、有點冷幽默。這一章要讓玩家覺得「世界很安靜，但有人剛離開」。
+estimated_minutes: {solo: 25, with_branch_and_ticket: 40}
+
+player_start:
+  host: lighthouse
+  user: "op-{nick}"
+  cwd: "~"
+  home: /home/op
+  world_time: "2031-12-07 07:30:00"
+
+# ---------------------------------------------------------------------------
+# 虛擬檔案系統（內容大的放 text/，這裡只引用；格式沿用設計稿 §10）
+# ---------------------------------------------------------------------------
+files:
+  - {path: /home/op/handbook.md,               content_ref: text/ch0/handbook.md,     perms: "0644", mtime: "2031-10-13 17:50"}
+  - {path: /home/op/notes/01-first-night.txt,  content_ref: text/ch0/first-night.txt, perms: "0644", mtime: "2031-10-26 21:00", dialogue: lin.first_night, relic: R0}
+  - {path: /home/op/notes/.draft.txt,          content_ref: text/ch0/draft.txt,       perms: "0600", mtime: "2031-10-26 21:10", dialogue: lin.draft, holds: F1, hidden: true}
+  - {path: /home/op/incidents/TICKET-0001.md,  content_ref: text/ch0/ticket-0001.md,  perms: "0444", mtime: "2031-12-07 02:00", readonly: true}
+  - {path: /home/op/logs/lamp.log,             content_ref: text/ch0/lamp.log,        perms: "0644", mtime: "2031-10-27 02:00"}
+  - {path: /home/op/shelf/jar.txt,             content_ref: text/ch0/jar.txt,         perms: "0644", mtime: "2030-01-03 12:00"}
+  - path: /home/op/shelf/cat.txt
+    perms: "0644"
+    variants:
+      - {if: "not flag.lamp_lit", content_ref: text/ch0/cat_on_strike.txt}
+      - {if: "flag.lamp_lit",     content_ref: text/ch0/cat_working.txt}
+  - {path: /home/op/.bash_history,             content_ref: text/ch0/bash_history.txt, perms: "0600", mtime: "2031-10-27 01:59", dialogue: lin.bash_history}
+  - {path: /var/log/boot.0,                    content_ref: text/ch0/boot.0,          perms: "0644", mtime: "2025-01-01 00:00"}
+  - {path: /var/mail/op,                       content_ref: text/ch0/mail_lin_1.txt,  perms: "0600", mtime: "2031-10-27 01:55", dialogue: lin.mail_first}
+  - {path: /lost+found/,                       dir: true}     # 空；B0 在分支裡才會多出 #0
+# 規則：存檔裡 /home/op/notes/.draft.txt 與 F1 共用同一個 inode（硬連結），ls -li 兩邊相同。這是 Ch3 揭露 lin 如何藏鑰匙的伏筆。
+hardlinks:
+  - {path: /home/op/notes/.draft.txt, fragment: F1, link_time: "2031-10-26 21:10:00"}
+
+dirs: [/home/op/notes, /home/op/incidents, /home/op/logs, /home/op/shelf, /var/log, /var/mail, /lost+found]
+
+npcs: [init, lin]
+quick_tasks: [Q0-1, Q0-2, Q0-3, Q0-4, Q0-5]
+tickets: [T0100]               # 選擇性：燈亮之後才出現
+fragments: [F1]
+relics:
+  - {id: R0, path: /home/op/notes/01-first-night.txt, how: "ln <檔案> ~/keep/ （引用保存；沒有獎勵，INIT 不會提醒）"}
+
+checkpoints:
+  - {id: ckpt/ch0-start, when: "第一次登入"}
+  - {id: ckpt/ch0-lamp,  when: "dialogue init.lamp_success 完成（B0 的起點）"}
+  - {id: ckpt/ch0-end,   when: "dialogue init.ch0_done"}
+
+branch_points:
+  - {id: B0, type: parallel, from: ckpt/ch0-lamp, card: K0}
+
+required_to_finish: [Q0-1, Q0-2, Q0-3, Q0-4, Q0-5, lamp_lit, B0_exited]
+
+# 世界狀態變化
+on_lamp_lit:
+  - {set: flag.lamp_lit}
+  - {file_variant_changes: [/home/op/shelf/cat.txt]}
+  - {map: text/ch0/map_lit.txt}
+  - {season_counter: "+1 lit island"}      # 連線才有真實計數
+  - {unlock: [T0100, plaza]}
+
+# ---------------------------------------------------------------------------
+# 場景順序（SCRIPT.md 依此展開；引擎可忽略，只看上面的規則與觸發）
+# ---------------------------------------------------------------------------
+scenes:
+  - id: s0.1
+    title: 呼叫機
+    beats:
+      - {stage: "黑畫面。呼叫機的聲音。"}
+      - {say: init.pager}
+  - id: s0.2
+    title: 登入
+    beats:
+      - {say: init.login}
+      - {stage: "玩家輸入 mail。信是 lin 寫的。"}
+      - {say: lin.mail_first}
+  - id: s0.3
+    title: 手冊
+    beats:
+      - {task: Q0-1}
+      - {task: Q0-2}
+      - {file: /home/op/handbook.md}
+      - {stage: "手冊第 4 節的憲章摘要是全遊戲第一次出現憲章；第 5 節是口令。"}
+  - id: s0.4
+    title: 窗外
+    beats:
+      - {task: Q0-3}
+      - {task: Q0-4}
+      - {stage: "lamp.log 的最後一行是整章的小暗號。"}
+      - {file: /home/op/logs/lamp.log}
+  - id: s0.5
+    title: 沒有寄出的信
+    beats:
+      - {task: Q0-5}
+      - {say: lin.draft}
+      - {stage: "（選擇性）玩家可以順手看 shelf/、incidents/、.bash_history。"}
+      - {file: /home/op/shelf/jar.txt}
+      - {file: /home/op/shelf/cat.txt}
+      - {file: /home/op/incidents/TICKET-0001.md}
+      - {file: /home/op/.bash_history}
+  - id: s0.6
+    title: 點燈
+    beats:
+      - {say: init.lamp_prompt}
+      - {say: init.lamp_success}
+      - {say: init.map_lit}
+      - {stage: "shelf/cat.txt 的狀態變成『復工』。"}
+  - id: s0.7
+    title: 第一夜的試誤（分支教學）
+    beats:
+      - {say: init.branch_offer}
+      - {branch: B0}
+      - {card: K0}
+  - id: s0.8
+    title: 登記簿（選擇性工單）
+    beats:
+      - {ticket: T0100}
+  - id: s0.9
+    title: 渡海
+    beats:
+      - {say: init.ch0_done}
+
+# ---------------------------------------------------------------------------
+# 三種遊玩層級
+# ---------------------------------------------------------------------------
+modes:
+  solo:
+    summary: "燈塔是你的私人副本，INIT 全程陪伴，不限時、可無限重來。"
+    details:
+      - "INIT 提示在『30 秒無輸入』時改為『5 回合無有效指令』。"
+      - "分支同時最多 5 條，無成本。"
+      - "ada、bo 不在 Ch0 出場；他們只在 Ch1 的 access.log 留下足跡。"
+  multi_offline:
+    summary: "把存檔交給朋友，他會在 .bash_history 的盡頭看到你的指令，以及你留在 notes/ 的便條；換你接他的存檔，也會看到他的。燈塔因此變成一座輪流值班的島。"
+    details:
+      - "匯入對方存檔時：~/.bash_history 末尾追加一行『# --- <對方暱稱> (imported)』，之後是對方最後 20 行指令。"
+      - "~/notes/ 增加 peer-<暱稱>.txt，內容是對方存檔裡 notes 目錄的便條（玩家可在 Ch0 結尾用 echo 寫便條：echo '...' > ~/notes/for-next.txt，下一個接手的人會看到）。"
+      - "lamp.log 追加一行：<時間> lamp.service started by uid=<對方>。燈變成『輪流值班』。"
+      - "K0 合併沒有衝突。"
+  online:
+    summary: "每位新手各有一座副本燈塔，避免搶先與干擾。燈亮之後解鎖『值班室廣場』（共享區，可用 who 與 wall），而且全服有一個共同計數器：本季已亮燈的島嶼數。"
+    details:
+      - "MOTD 的條件行會顯示 {season.lit_islands}。"
+      - "廣場：who 列出在線值班員（暱稱化）；wall <訊息> 對全廣場廣播（限長 80 字、每分鐘 3 則）。"
+      - "B0 是教學，不消耗時間燃料。"
+      - "T0100 送正式 OJ 判題（接自己的 OJ 時），不排名。"
+
+# 作者備忘
+authoring_notes:
+  - "全章最重要的一個細節：燈不是被 GC 熄的，是 lin 親手熄的，時間剛好是 02:00:00。"
+  - "第二重要：Ch0 不可以出現『八片』、『Admin 是頭銜』、『INIT 開了 TICKET-0001』。"
+  - "手冊第 4 節只摘五條憲章；第六條刻意不寫『GC 不得被封鎖』，留給 Ch1 的 B1 揭露。"
+  - "週五下午修憲的伏筆出現三次：draft.txt 的 P.S.、.bash_history 的最後三行、MOTD 的條件行。"

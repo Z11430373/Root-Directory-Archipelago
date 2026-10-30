@@ -1,0 +1,4 @@
+op@lighthouse:~$ systemctl start lamp
+[init] lamp.service: active (running)
+[init] 值班已登記：uid=1001 (op-<你的暱稱>)。
+[init] 謝謝你回應。

@@ -1,0 +1,18 @@
+type: card
+id: K1
+name: GC 會對抗拒升級
+source_branch: B1
+source_type: whatif
+text: |
+  封鎖 GC 的探測，不會讓 GC 消失。
+  它會把「探測」升級成「強制回收」。
+  （模擬 whatif/block-gc：02:00:07 gc: escalating to forced sweep；02:00:41 reclaimed 3x sectors）
+  這不是敵意。這是它被設計成的樣子。
+credibility: 1.0
+effects:
+  - {where: blue.night2, do: no_penalty_on_gc_probe}        # 守護夜班第二夜：不再把 GC 的探測誤判成入侵
+  - {where: ch5.boss, do: reveal_weakness}                  # Ch5 GC 的破綻
+  - {where: harbor.softens, do: unlock_dialogue}            # harbor-master：「我年輕時也想擋過。」
+required_for: [ending.fork]
+unlock_flag: flag.k1
+charter_note: "第六條：GC 不得被封鎖。kestrel 早就知道。（Ch2 會回頭呼應這張卡。）"

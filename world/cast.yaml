@@ -1,0 +1,70 @@
+type: cast
+id: cast
+note: NPC 代號一律小寫；指令與路徑用等寬字。Ch0–Ch1 只用到下列角色。
+
+npcs:
+  init:
+    name: INIT
+    role: PID 1，世界最小的守護行程，呼叫玩家上線的人
+    voice: "狀態列式短句：[init] ...；越到後面語氣越像人。在分支裡會說「這是模擬」，每條訊息加上分支名。"
+    prefix: "[init]"
+    first_chapter: ch0
+    secrets:
+      - "TICKET-0001 是它開的（Ch7 揭露）。Ch0–1 絕不能暗示。"
+      - "它一直在挑人。Ch0–1 只能留下一個細節：呼叫機『你是目前唯一回應的人』。"
+    tone_rules:
+      - 句子短，不用驚嘆號。
+      - 不說「我」超過一次（Ch0–1 它還像程式）。例外：T0100 彩蛋與 Ch1 結尾各一次。
+      - 對玩家的錯誤指令只給事實，不嘲笑。
+
+  lin:
+    name: lin
+    role: v4 的最後一任 Admin，失蹤的前任值班員（玩家以為他是 Admin 的徒弟）
+    voice: "簡短、溫柔、愛叮嚀，常以 P.S. 收尾。從不解釋自己，只留下清單。"
+    prefix: "—— lin"
+    first_chapter: ch0
+    secrets:
+      - "他才是最後一任 Admin（Ch2 揭露）。Ch0–1 的文字必須同時成立於『徒弟』與『Admin』兩種讀法。"
+      - "他把 root 拆成八片（Ch3 揭露）。Ch0–1 只出現 KEY-FRAG[1]、KEY-FRAG[2]，不寫總數。"
+      - "他的修憲草案被 CI 擋下（Ch6 揭露）。Ch0 只留 P.S. 與 bash_history 兩處伏筆。"
+      - "第七條最後一次修改者是他（v4.7，舊設定保留，Ch6 git blame）。"
+    appears_as: [mail, notes, draft, bash_history, letter, ticket]   # 他不會現身，只留下東西
+
+  gc:
+    name: GC
+    role: 回收者，世界的免疫系統；表面的威脅
+    voice: "全小寫、不帶情緒，像日誌：[gc] ..."
+    prefix: "[gc]"
+    first_chapter: ch1
+    rule: "Ch1 只以 access.log 裡的一個 IP 與 user-agent 出場，沒有對話。"
+
+  harbor-master:
+    name: harbor-master
+    role: 日誌港的老港務員
+    voice: "愛抱怨、愛吹牛、茶不離手。第一個會幫你也會騙你的人。"
+    prefix: "harbor-master:"
+    first_chapter: ch1
+    finger_plan: "今天也在喝茶。"
+    lies:
+      - "『上一個看完的人現在在黑潮裡』（玩笑；他自己說『大概』）"
+      - "吹噓自己提議了『過期布丁視同第二次漏洞』（日誌沒有紀錄）"
+    softens_after: K1   # 玩家合併 K1 後，他會停下茶杯：「我年輕時也想擋過。」
+
+  cat0:
+    name: 標準眨眼貓
+    role: 值班室的計時標準（150 毫秒）。不說話，只有檔案與狀態。
+    first_chapter: ch0
+    files: [~/shelf/cat.txt, logs/lamp.log(cat.service)]
+    state: "罷工中（與燈同期，已 41 天）；燈亮後復工。備用貓：未登記。"
+
+  ada:
+    name: ada
+    role: 單人離線的同伴 NPC（補位）。Ch0–1 只留足跡，不出場。
+    footprints: {chapter: ch1, where: access.log, nick: op-ada}
+  bo:
+    name: bo
+    role: 單人離線的同伴 NPC（補位）。Ch0–1 只留足跡，不出場。
+    footprints: {chapter: ch1, where: access.log, nick: op-bo}
+
+# 之後章節才會用到的 NPC，這裡只登記代號，避免對話檔引用到不存在的人
+reserved: [sentry, postmaster, cron, traceroute, tar, wren, fan]

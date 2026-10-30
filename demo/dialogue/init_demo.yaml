@@ -1,0 +1,183 @@
+type: dialogue
+npc: init
+part_of: demo            # 只在試玩版載入；與 dialogue/init.yaml 同一個 NPC，節點名一律以 demo_ 開頭
+note: >
+  試玩版專用的 INIT 台詞。口吻不變：短句、不用驚嘆號。
+  試玩版是「活動」，所以多了幾句程式感更重的系統訊息（計時、暱稱、結尾）。
+
+nodes:
+  - node: demo_welcome
+    lines:
+      - {text: "ROOT ARCHIPELAGO  試玩版〈第一夜〉"}
+      - {text: "預計 15 分鐘。你可以隨時輸入 hint。"}
+      - {text: "[init] 請輸入你的暱稱（英文或數字，最多 12 字）。"}
+    expect_input: {pattern: '^[A-Za-z0-9_-]{1,12}$', on_wrong: demo_nick_bad, on_right: demo_nick_ok, store: player.nick}
+
+  - node: demo_nick_bad
+    lines:
+      - {text: "[init] 只接受英文、數字、底線、連字號，最多 12 字。"}
+
+  - node: demo_nick_ok
+    lines:
+      - {text: "[init] 暱稱已記錄：op-{nick}。"}
+    sets: [flag.demo.started]
+    next: null
+
+  # ---- 閒置提示（試玩版不使用鑰匙幣；提示免費、自動升級）
+  - node: demo_idle_1
+    when: "30 秒沒有有效輸入"
+    lines:
+      - {text: "[init] 提示：{quest_hint_1}"}
+  - node: demo_idle_2
+    when: "60 秒沒有有效輸入"
+    lines:
+      - {text: "[init] 提示：{quest_hint_2}"}
+  - node: demo_idle_3
+    when: "90 秒沒有有效輸入（或玩家輸入 hint 三次）"
+    lines:
+      - {text: "[init] 這一題的指令是：{quest_reference_cmd}"}
+      - {text: "[init] 輸入它。看看輸出。"}
+    sets: [flag.demo.used_full_hint]
+
+  # ---- 計時
+  - node: demo_time_warning
+    when: "試玩計時 14:00"
+    lines:
+      - {text: "[init] 值班時間剩一分鐘。"}
+  - node: demo_time_up
+    when: "試玩計時 15:00 仍未結束"
+    lines:
+      - {text: "[init] 值班時間到。"}
+      - {text: "[init] 進度已保存。正式版會從這裡繼續。"}
+    sets: [flag.demo.time_up]
+    goto: demo_vote            # 時間到也要問一次（只要 10 秒），再進尾聲
+
+  # ---- 懸念與投票
+  - node: demo_vote
+    sets: [flag.demo.in_vote]
+    when: "flag.gc_name_heard，或 seg7 開始"
+    lines:
+      - {text: "[init] 02:00 的訪客，今晚也會來。"}
+      - {text: "[init] 你要擋它嗎？"}
+      - {text: "[init] 輸入：block 或 pass"}
+    choices:
+      - {input: block, sets: [flag.demo.vote_block], say: demo_vote_block}
+      - {input: pass,  sets: [flag.demo.vote_pass],  say: demo_vote_pass}
+    then: demo_end_card
+    note: "不是 B1。只是一個預告：兩個選項都只記錄，不模擬。正式版才能回到那一晚在分支裡試。"
+
+  - node: demo_vote_block
+    lines:
+      - {text: "[init] 已記錄：block。"}
+      - {text: "[init] 正式版裡，你可以回到那一晚，在分支裡試。弄壞什麼都不要緊。"}
+  - node: demo_vote_pass
+    lines:
+      - {text: "[init] 已記錄：pass。"}
+      - {text: "[init] 正式版裡，你可以回到那一晚，看看如果擋了會怎樣。"}
+
+  # ---- 結尾
+  - node: demo_end_card
+    lines:
+      - {text: "[init] 值班登記完成。"}
+      - {text: "[init] 你的存檔代碼在下方。把它留著。"}
+      - {text: "[init] 正式版開門的時候，燈塔還會是亮的。"}
+    sets: [flag.demo.finished]
+    note: "最後一句是整個試玩版的口號。『還會是亮的』呼應 lin 的『燈我幫你留著』（Ch5 遺物）。"
+
+  - node: demo_export_help
+    when: "輸入 save"
+    lines:
+      - {text: "[init] save code   顯示存檔代碼（可複製貼上）"}
+      - {text: "[init] save file   下載存檔檔案 (.rasave.json)"}
+      - {text: "[init] save card   顯示值班證"}
+
+  # =========================================================================
+  # 流程補丁節點（flow.yaml 用）：讓每個「卡住的狀態」都有下一步，而且不會有死路
+  # =========================================================================
+
+  # ---- 系統／錯誤
+  - node: demo_lamp_already
+    lines:
+      - {text: "[init] 燈已經亮著。"}
+  - node: demo_branch_not_yet
+    lines:
+      - {text: "[init] 檢查點還不存在。先把燈點亮。"}
+  - node: demo_not_in_branch
+    lines:
+      - {text: "[init] 你不在分支裡。"}
+  - node: demo_git_unsupported
+    lines:
+      - {text: "[init] 這一版只開放：git checkout -b、git merge --knowledge、git abandon、git tag。"}
+  - node: demo_ferry_not_yet
+    lines:
+      - {text: "[init] 船還沒開。先把第一夜做完。"}
+  - node: demo_ssh_in_branch
+    lines:
+      - {text: "[init@alt/sandbox] 分支裡不能渡海。"}
+  - node: demo_typo
+    lines:
+      - {text: "[init] 你是指 {suggest} 嗎？"}
+  - node: demo_skip_confirm
+    lines:
+      - {text: "[init] 要跳過這一題嗎？再輸入一次 skip。"}
+  - node: demo_skipped
+    lines:
+      - {text: "[init] 已跳過。"}
+  - node: demo_skip_nothing
+    lines:
+      - {text: "[init] 現在沒有可以跳過的題目。"}
+  - node: demo_ask_nobody
+    lines:
+      - {text: "[init] 這裡沒有人可以問。"}
+  - node: demo_help
+    lines:
+      - {text: "[init] 可用的指令：ls cd pwd cat grep head tail sort uniq cut wc echo"}
+      - {text: "[init] 還有：mail man finger systemctl ssh ln rm sudo close git ask"}
+      - {text: "[init] 輸入 hint 看提示，輸入 save 看存檔。"}
+  - node: demo_hint_nothing
+    lines:
+      - {text: "[init] 現在沒有題目。你自己決定下一步。"}
+
+  # ---- 引導階梯（idle 30/60/90 秒與 hint 指令共用同一個計數；最後一階是完整答案）
+  - node: demo_g_lamp_1
+    lines: [{text: "[init] 燈還沒亮。"}]
+  - node: demo_g_lamp_2
+    lines: [{text: "[init] 啟動服務的指令是 systemctl。口令在手冊裡。"}]
+  - node: demo_g_lamp_3
+    lines: [{text: "[init] 輸入：systemctl start lamp"}]
+    sets: [flag.demo.used_full_hint]
+  - node: demo_g_branch_1
+    lines: [{text: "[init] 還有一件事。分支。"}]
+  - node: demo_g_branch_2
+    lines: [{text: "[init] 輸入：git checkout -b alt/sandbox"}]
+    sets: [flag.demo.used_full_hint]
+  - node: demo_g_sandbox_1
+    lines: [{text: "[init@alt/sandbox] 這是分支。弄壞什麼都不要緊。"}]
+  - node: demo_g_sandbox_2
+    lines: [{text: "[init@alt/sandbox] 試試把 notes 裡的東西刪掉。"}]
+  - node: demo_g_sandbox_3
+    lines: [{text: "[init@alt/sandbox] 輸入：rm -rf ~/notes"}]
+    sets: [flag.demo.used_full_hint]
+  - node: demo_g_lost0_1
+    lines: [{text: "[init@alt/sandbox] 根目錄多了一個檔案。"}]
+  - node: demo_g_lost0_2
+    lines: [{text: "[init@alt/sandbox] 它在 /lost+found 裡。"}]
+  - node: demo_g_lost0_3
+    lines: [{text: "[init@alt/sandbox] 輸入：cat /lost+found/#0"}]
+    sets: [flag.demo.used_full_hint]
+  - node: demo_g_merge_1
+    lines: [{text: "[init@alt/sandbox] 你讀到東西了。"}]
+  - node: demo_g_merge_2
+    lines: [{text: "[init@alt/sandbox] 知識可以帶回 main。歷史不會被改動。"}]
+  - node: demo_g_merge_3
+    lines: [{text: "[init@alt/sandbox] 輸入：git merge --knowledge"}]
+    sets: [flag.demo.used_full_hint]
+  - node: demo_g_ferry_1
+    lines: [{text: "[init] 第一夜結束了。"}]
+  - node: demo_g_ferry_2
+    lines: [{text: "[init] 下一站是日誌港。"}]
+  - node: demo_g_ferry_3
+    lines: [{text: "[init] 輸入：ssh logport"}]
+    sets: [flag.demo.used_full_hint]
+  - node: demo_g_vote_1
+    lines: [{text: "[init] 輸入：block 或 pass"}]

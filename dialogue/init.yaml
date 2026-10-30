@@ -1,0 +1,182 @@
+type: dialogue
+npc: init
+note: >
+  INIT 的口吻：狀態列式短句，不用驚嘆號，不嘲笑玩家。Ch0–1 它還像程式，只有 T0100 彩蛋與 Ch1 結尾各有一句像人。
+  格式：node = 節點 id；lines = 依序顯示，if 為條件；choices = 玩家選項；sets = 設定旗標。
+
+nodes:
+  # ------------------------------------------------------------------ Ch0 開場
+  - node: pager
+    lines:
+      - {text_ref: text/ch0/pager.txt}
+    next: login
+
+  - node: login
+    lines:
+      - {text_ref: text/ch0/motd.txt}
+      - {text: "[init] 你有一封信。指令是 mail。", if: "not flag.mail_read"}
+    next: null
+
+  - node: first_ls_hint
+    when: "玩家 30 秒沒有輸入任何指令（單人離線改為 5 回合）"
+    lines:
+      - {text: "[init] 提示：ls 列出目前資料夾的內容。"}
+
+  # ------------------------------------------------------------------ 快題完成語
+  - node: q0_1_done
+    lines:
+      - {text: "[init] 五個項目。還有一些 ls 預設不給你看。"}
+  - node: q0_2_done
+    lines:
+      - {text: "[init] 口令已記錄。"}
+      - {text: "[init] 手冊第 4 節是憲章摘要。全文在權限堡。"}
+  - node: q0_3_done
+    lines:
+      - {text: "[init] .draft.txt：隱藏檔。沒有被寄出的信。"}
+  - node: q0_4_done
+    lines:
+      - {text: "[init] lamp.service stopped by uid=lin。"}
+      - {text: "[init] 時間：02:00:00。"}
+  - node: q0_5_done
+    lines:
+      - {text: "[init] 取得：金鑰碎片 F1。"}
+      - {text: "[init] 它不能一個人使用。"}
+      - {text: "[init] 現在，可以啟動燈了。指令：systemctl start lamp。"}
+
+  # ------------------------------------------------------------------ 點燈
+  - node: lamp_prompt
+    when: "玩家執行 systemctl start lamp，且尚未點亮"
+    lines:
+      - {text: "[init] 值班登記需要口令。"}
+    expect_input: {secret: "lamp-before-sudo", on_wrong: lamp_wrong_pass, on_right: lamp_success}
+
+  - node: lamp_wrong_pass
+    lines:
+      - {text: "[init] 口令不符。", if: "tries == 1"}
+      - {text: "[init] 口令不符。它在手冊裡。", if: "tries == 2"}
+      - {text: "[init] 口令不符。cat handbook.md，第 5 節。", if: "tries >= 3"}
+
+  - node: lamp_success
+    lines:
+      - {text_ref: text/ch0/lamp_start.txt}
+    sets: [flag.lamp_lit, flag.cat_working]
+    triggers: [map_lit, ckpt/ch0-lamp, branch_offer]
+
+  - node: map_lit
+    lines:
+      - {text: "[init] 燈亮了。其他島的燈，現在看得到了。"}
+      - {text_ref: text/ch0/map_lit.txt}
+      - {text: "[init] 亮：有人值班。熄：沒有。", if: "not flag.map_seen"}
+    sets: [flag.map_seen]
+
+  # ------------------------------------------------------------------ B0 分支教學
+  - node: branch_offer
+    lines:
+      - {text: "[init] 你可以開一條分支。在分支裡，弄壞什麼都不要緊。"}
+      - {text: "[init] 指令：git checkout -b alt/sandbox"}
+      - {text: "[init] 也可以不開。"}
+    next: null
+
+  - node: rm_main
+    when: "在 main 上執行 rm -rf / 或 rm -rf ~"
+    lines:
+      - {text: "[init] 不行，這是 main。要不要開一條分支？"}
+      - {text: "[init] （git checkout -b alt/sandbox）", if: "not flag.b0.done"}
+
+  - node: branch_welcome_back
+    lines:
+      - {text: "[init] 你回到 main 了。你剛才弄壞的東西，這裡都還在。"}
+
+  # ------------------------------------------------------------------ 彩蛋與雜項
+  - node: sudo_denied
+    when: "Ch0 內執行 sudo"
+    lines:
+      - {text: "Permission denied."}
+      - {text: "[init] lin 說過了。", if: "not flag.sudo_warned"}
+    sets: [flag.sudo_warned]
+
+  - node: sudo_sandwich
+    when: "sudo make me a sandwich"
+    lines:
+      - {text: "Permission denied."}
+    note: "過一會兒，fan（尚未登場的角色）在茶水間留了一片三明治，系統訊息：[mail] fan: 茶水間有一片。"
+    delayed: {after_commands: 3, text: "[init] 茶水間有一片三明治。不是我放的。"}
+
+  - node: close_ticket1
+    when: "close TICKET-0001"
+    lines:
+      - {text: "close: 權限不足（需要報告人或 root）。"}
+
+  - node: man_ticket1
+    when: "man ticket-0001"
+    lines:
+      - {text: "TICKET-0001(7)        世界手冊        TICKET-0001(7)"}
+      - {text: "NAME"}
+      - {text: "    ticket-0001 - 無法重現"}
+      - {text: "SEE ALSO"}
+      - {text: "    lin(1), gc(8), init(1)"}
+    note: "彩蛋表第三列的原文：SEE ALSO 欄寫著 lin(1)、gc(8)、init(1)。"
+
+  # ------------------------------------------------------------------ T0100 彩蛋（INIT 的第一句話）
+  - node: t0100_ac
+    lines:
+      - {text: "Service restored. uptime +3h"}
+      - {text: "[init] 登記完成。"}
+      - {text: "[init] 這是我寫的第一支程式。"}
+      - {text: "[init] 它只會說一句話。我練習了很久。"}
+      - {text: "[init] 謝謝你回應。"}
+    sets: [flag.t0100_done]
+
+  # ------------------------------------------------------------------ Ch0 結尾 → 渡海
+  - node: ch0_done
+    when: "flag.lamp_lit and flag.f1 and flag.b0.done"
+    lines:
+      - {text: "[init] 燈塔今晚有人值班。"}
+      - {text: "[init] 日誌港的燈在閃。那裡有一位港務員。"}
+      - {text: "[init] 渡海：ssh logport"}
+    sets: [flag.ch0_done]
+    checkpoint: ckpt/ch0-end
+
+  # ------------------------------------------------------------------ Ch1
+  - node: ferry
+    when: "ssh logport"
+    lines:
+      - {text: "[init] 渡海：lighthouse -> logport。延遲 38 ms。風險：低。"}
+    next: ch1_arrive
+
+  - node: ch1_arrive
+    lines:
+      - {text_ref: text/ch1/page_logport.txt}
+    note: "之後直接進入 harbor-master.intro"
+
+  - node: judge_wa_lexicographic
+    lines:
+      - {text: "服務有回應，但資料不對（test #4）。"}
+      - {text: "[init] IP 不是字串。"}
+  - node: judge_wa_notiebreak
+    lines:
+      - {text: "服務有回應，但資料不對（test #2）。"}
+      - {text: "[init] 次數相同時，規格有寫順序。"}
+
+  - node: gc_name_heard
+    when: "Q1-3 完成"
+    lines:
+      - {text: "[init] 10.7.0.2。gc/1.0 (sweep)。每晚 02:00:00。"}
+      - {text: "[init] 已建立檢查點：ckpt/ch1-night。"}
+      - {text: "[init] 你可以回到那一晚。"}
+
+  - node: ch1_done
+    when: "flag.f2 and flag.t0427_done and flag.b1.done"
+    lines:
+      - {text: "[init] 日誌港：值班中。"}
+      - {text: "[init] 02:00 的訪客，今晚也會來。"}
+      - {text: "[init] 我沒有更動它。"}
+      - {text: "[init] 下一站：權限堡。門只認三個人。"}
+    sets: [flag.ch1_done]
+    checkpoint: ckpt/ch1-end
+    note: "『我沒有更動它。』是 Ch1 的一句像人的話：INIT 清楚知道自己可以更動，卻選擇不動。"
+
+  # ------------------------------------------------------------------ 分支通用
+  - node: branch_generic_unknown
+    lines:
+      - {text: "[init@{branch}] 這是模擬。"}

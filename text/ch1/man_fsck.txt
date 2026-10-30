@@ -1,0 +1,17 @@
+FSCK(8)
+
+NAME
+    fsck - 檢查並修復檔案系統
+
+SYNOPSIS
+    fsck <目錄>
+    fsck -y <目錄>
+
+DESCRIPTION
+    不加選項：只檢查，列出問題，不改動任何東西。
+    -y：對所有問題回答 yes，嘗試修復。
+        孤兒檔（lost+found 裡以 inode 編號命名的檔案）若在日誌（journal）裡
+        找得到原本的檔名與檔頭，會被還原成原本的樣子。
+
+SEE ALSO
+    ls(1), cat(1), mv(1)

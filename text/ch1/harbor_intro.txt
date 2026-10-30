@@ -1,0 +1,5 @@
+harbor-master: 新來的？別碰 access.log。一百二十萬行，
+               上一個看完的人現在在黑潮裡。
+harbor-master: ……開玩笑的。大概。
+harbor-master: 我當年一行 cat | grep | sort 就把整座港口看穿了。
+               你去，我喝茶。

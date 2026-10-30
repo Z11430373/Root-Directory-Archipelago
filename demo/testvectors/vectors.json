@@ -1,0 +1,1859 @@
+{
+ "accept": [
+  {
+   "code": "RA1-eNqNVUtzmzAY_C86y64eIMCnnnrpqedORyODCKoBuUJOmmby37vCDpNgu9ObZe332t1PvJCa7L5_J21vHggljR38doomRNsQmgvKcy4VZZT9oAtoMK7XwRogVE55VhbVGyKa6UDoC3EN2ZFvbMPJKy0LKnielfcwAhhkUBlfF-rM2Oy9P1yK5ZwWXFYrUN2lboOeTsNgwvMFKxRVqmL3akrUlBnaZ3KVrgmmjbr1pxFZSkZVqdS9LBmyqDIV4qssvRv1FP3xaBvdm-FIqJQU_SwktC7lv6T6aQIyYTxVFOwmYjo1HpCsAE2qXBVLl_rJhHHWLEed_C7ZeWq5gqwyL1ZpWg7aKsjFsrcbF-2wRH9JYhYqAYqbpJ2ZlwnBb4_ROZASnpFHMFoq-GtFG6jSvYskTQrrMbYW20T95MPBjThlIEzk8sqdRz1ZO8KcUE9mS4q6s_Xh6N0Yl35wjp_qjm1mjWBV2FCIxWH7YMa629oR_koxbfDDVRQloxks_jZ9_DTNjv2dpFIUm5Nnq-72bNv7KTJdg615yTIIVhYl_RC_jknU6jkQCpe0EDDvjYDBhgebOq1NSPN9ZYkQ36T2DqN_6m2DezgA21Fli4oz-o0TxLwmagsp19QeUvXk4ypbU_Tbzaxeap37QB1BC3a1HJin8SP6hAkKcWUCMKvP90rivpT_I6CFy7BCVdrXtWkGGzUeib2HiEDwqpi9j3ycXO8Inx8tJOEiz8S_cOkRKTlwUqj3uEvZX1zLyyDIw4US2Q3UQ62Tf3RnZxHSkysEntV3yPtz883oHrqY-sVDLLK8-hjnXW2XmEcfcSCPpj8ljfa9rw9pEwUVeMJvTTB_DVKYPoPhidRdUb7H2vN-R4chTkeya00_WbyuDPJKIRfoDwhBdi9zUrKL4WTPBfTcXPq1aV2Y4mUkSuwjFu_taj5AGRB23rbgfdyYUHfuaNGtT5-L9P5gD9tqL1um0mY6dL0jf1x6DsjRzKd15Ab-4Z_Zlm_TtkxgezBkx_HTYj93-evrX_pBBh4-149efb70",
+   "expect": {
+    "finds": [
+     "jar",
+     "sudo",
+     "history"
+    ],
+    "first_id": "6a8b7c35",
+    "full_hint": false,
+    "fullgame": {
+     "cards": [
+      "K0"
+     ],
+     "checkpoints": [
+      "ckpt/ch0-lamp",
+      "ckpt/ch0-end",
+      "ckpt/ch1-night",
+      "ckpt/ch1-start"
+     ],
+     "demo": false,
+     "dropped_flags": [
+      "flag.demo.finished",
+      "flag.demo.started",
+      "flag.demo.vote_block"
+     ],
+     "flags": [
+      "flag.b0.done",
+      "flag.b0.lost0_created",
+      "flag.b0.read_lost0",
+      "flag.cat_working",
+      "flag.ch0_done",
+      "flag.charter_summary_read",
+      "flag.draft_found",
+      "flag.draft_read",
+      "flag.f1",
+      "flag.gc_name_heard",
+      "flag.handbook_read",
+      "flag.k0",
+      "flag.lamp_lit",
+      "flag.lin_stopped_lamp",
+      "flag.mail_read",
+      "flag.map_seen",
+      "flag.met_harbor",
+      "flag.q1_3_done",
+      "flag.sudo_warned"
+     ],
+     "items": [
+      "F1",
+      "badge.demo_first_night"
+     ],
+     "level": "intact",
+     "level_reasons": [],
+     "memory": [
+      "[init] 你在試玩時說過：block。"
+     ],
+     "nick": "op-zien",
+     "perks": [
+      "motd_line",
+      "hall_of_fame_tag",
+      {
+       "title": "快手值班員"
+      }
+     ],
+     "quests_done": [
+      "Q0-1",
+      "Q0-2",
+      "Q0-3",
+      "Q0-4",
+      "Q0-5"
+     ],
+     "schema": 1,
+     "seed": 5,
+     "verified": "chain"
+    },
+    "head": "af9b3f06",
+    "level": "intact",
+    "level_reasons": [],
+    "n_commits": 41,
+    "nick": "zien",
+    "score": 135,
+    "seconds": 405,
+    "seed": 5,
+    "tasks": [
+     "Q0-1",
+     "Q0-2",
+     "Q0-3",
+     "Q0-4",
+     "Q0-5",
+     "Q1-1",
+     "Q1-3"
+    ],
+    "time_up": false,
+    "title_id": "sprinter",
+    "vote": "block"
+   },
+   "name": "golden_fast"
+  },
+  {
+   "code": "RA1-eNp9VcuSmzAQ_BedZa8ePIRPOeWSU86plEoL8kIMyAF589jyv6clMOvFdsoXBK2Znp6e8Rspye7bN7JvzQuhpLKd247eDN5WhKaCCsULRvH7ThdQZ5pWD9YAkaVU5IVMLghvxgOhb6SpyI58ZRtOzlTlVBZpnj7CCGDygnIubzLVpq-enTvM2VJOuQBuhSrrwHfQ46nrzPBnBosMIbPsITWJtCDOeZLnq4DVYPZe792pRxzFgFGyeBQnQZxMxVzpKk7b9Hr07ni0lW5NdyRUyhBM8QXYhBRzsB9mQKxQJM-T5C7EN-XB-qBqkgfqyVqLfTOMXvfNS-0voqUAFnJJWTe9D_H2p7Ylu71pR0tJT3YcZYQuZPyhZCnyioJKdEqs83JCcyheXCneeNst1z8H0nJCqLt6z21jAcL5WkrIp9sGzFG4AKBYm8B4_csNh6bHKeG0UO91LL496tHaHrZltCjYUkNZ2_JwdLMwkS7O_qms2Sb2DSYuaJFf-fO6KUgdGoLaGFNLQ54H05f11vawZtR7cN1NYChvOovXpvVPY3T77xALYyWKYq3TM9u2bvRMl9BqmlAYT6Zc0Q8B1peCsjreROmgKYVk9250dnixgWtphlDYFxZUc1UgeOjdr9ZW-H4O8nKZ8cXuEX5RA5dgYhmy3AzWIRAQ-CTzG51-N1H9Od1E5RztIFP45kaJyvXgmoVE6c3kQWA9AVJ4WvL3Oflfry2aep5upNl6sjrrNRbNsxuifyTPZYAgICe3w8Kn1QehFI9Ge4gLeyiBJiph7Bo3p_3JtbyUElAsEXdQL6UORtK1ja2AHlyJqNqCfFw438R9EdSOPJLiQ4Zrq08C6Mnx6CEWo1B3-EQeERZ3o-IZ-8jFNaVdor46jwN5Ne0p9P5oxjGQ4TAaZL4TPv5NhVs6YqkI86LUB952ou0byHI6zpsOKwitU6l4b913tJbs3mJMsvPDyU7xdaQWnjZxqc4iUWJfMdOXT_GAXqMF0yAPzvmNGcq6OVqQdZMYIdReihJqhUp7rHG8-duEZYR642l9cwNL8k9sy7dhDEf0rzNY03i0GP1dej7_Ay97Lgw-4b02334e",
+   "expect": {
+    "finds": [
+     "jar",
+     "ticket1",
+     "cat",
+     "harbor_cat"
+    ],
+    "first_id": "af84d343",
+    "full_hint": false,
+    "fullgame": {
+     "cards": [
+      "K0"
+     ],
+     "checkpoints": [
+      "ckpt/ch0-lamp",
+      "ckpt/ch0-end",
+      "ckpt/ch1-night",
+      "ckpt/ch1-start"
+     ],
+     "demo": false,
+     "dropped_flags": [
+      "flag.demo.finished",
+      "flag.demo.started",
+      "flag.demo.vote_pass"
+     ],
+     "flags": [
+      "flag.b0.done",
+      "flag.b0.lost0_created",
+      "flag.b0.read_lost0",
+      "flag.cat_working",
+      "flag.ch0_done",
+      "flag.charter_summary_read",
+      "flag.draft_found",
+      "flag.draft_read",
+      "flag.f1",
+      "flag.first_night_read",
+      "flag.gc_name_heard",
+      "flag.handbook_read",
+      "flag.heard_cat",
+      "flag.k0",
+      "flag.lamp_lit",
+      "flag.lin_stopped_lamp",
+      "flag.mail_read",
+      "flag.map_seen",
+      "flag.met_harbor",
+      "flag.q1_3_done"
+     ],
+     "items": [
+      "F1",
+      "badge.demo_first_night"
+     ],
+     "level": "intact",
+     "level_reasons": [],
+     "memory": [
+      "[init] 你在試玩時說過：pass。"
+     ],
+     "nick": "op-zien",
+     "perks": [
+      "motd_line",
+      "hall_of_fame_tag",
+      {
+       "title": "守夜人"
+      }
+     ],
+     "quests_done": [
+      "Q0-1",
+      "Q0-2",
+      "Q0-3",
+      "Q0-4",
+      "Q0-5"
+     ],
+     "schema": 1,
+     "seed": 5,
+     "verified": "chain"
+    },
+    "head": "f32c328e",
+    "level": "intact",
+    "level_reasons": [],
+    "n_commits": 44,
+    "nick": "zien",
+    "score": 135,
+    "seconds": 762,
+    "seed": 5,
+    "tasks": [
+     "Q0-1",
+     "Q0-2",
+     "Q0-3",
+     "Q0-4",
+     "Q0-5",
+     "Q1-1",
+     "Q1-3"
+    ],
+    "time_up": false,
+    "title_id": "watcher",
+    "vote": "pass"
+   },
+   "name": "golden_median"
+  },
+  {
+   "code": "RA1-eNqNVMFy2yAQ_RfO2AEEkvCpp1566jmTYbCELcaS0Eg4SZvxv3cX26ojx53ehP1239u3Dz5IRTbPz2TX2j2hpHZdWE_RjtHVhCpBM8ZFQRllL3QGdda3ZnQWELmiQpcFuyKinQ6EfhBfkw35yVacnGhZUJkzzR9hBGAKTbnSuV4wNbavtyEcLmyKU57nmi1QVYN6RzMdu86Ovy5gkQNYyOwRbQa0mQQMU2rRsB7tLppdOPbQp2SAkbx81EdCn7z8zHXp0_reTDEMg6tNa7uB0CzDZvk8QeP7iM12x7Ylm51tJ0dJTzb8dB42E-IRrwJeWUBHpfIF746DV4ryosjm3fnourn8O-4F3OaFFOzL4S8eIkT91fAPuUWeoEsrcWzTeqjKcipKJpcrrmw0b2E8-B5OIIYzqe4DN5jJuZ7gwJzlYl5G1bjqMISLrDQbnONT1bBVchw84thTl1_PEMfjPEKO7KqcR9iOtq-ateshXKliDN0dARTbzsHPto1PU8rrO4ZeUyFLwReTbNm6DVNkpgKD0x2T4JtUOqOfGiyLcB0mVUIFbFYyLb6q6Ny4d6i1siOa8YOhfaFGgYc-vLWuhv8hXBBYKdW8-wS_OghFYAbqglAvBjigAI6SZbn06d0nYy90ZylABZGHlOl7J-rQg1ag4DJj6u5SM3MGYCikzP9r5w5uLGhHypuVX2PkooGnYhtgm0rTQsC1Bgg05OT-hvH0eAFOlQVXt7iqCb5yM_I1RDiQV9sece7BThNJYSozXn4iuH1kscokLAUQvB26uIXiIEAQfefMcTjnFN4rRnUu1V81LzAV2Xykltcw47dJyvBrtfPjFFe93zfgF3GvEOfrX-kAY1KyP2d4DCGu7Fg1fnCgNeATjA_BhmglZVZUGvPuqwP88tvjhYRx02lZuYJt8G9szdeYwAl21lm4ZPDpIPUbdTr9Ad4q1GY-c09ca912",
+   "expect": {
+    "finds": [],
+    "first_id": "93accaf4",
+    "full_hint": true,
+    "fullgame": {
+     "cards": [
+      "K0"
+     ],
+     "checkpoints": [
+      "ckpt/ch0-lamp",
+      "ckpt/ch0-end",
+      "ckpt/ch1-start"
+     ],
+     "demo": false,
+     "dropped_flags": [
+      "flag.demo.finished",
+      "flag.demo.started",
+      "flag.demo.time_up",
+      "flag.demo.used_full_hint",
+      "flag.demo.vote_pass"
+     ],
+     "flags": [
+      "flag.b0.done",
+      "flag.b0.lost0_created",
+      "flag.b0.read_lost0",
+      "flag.cat_working",
+      "flag.ch0_done",
+      "flag.charter_summary_read",
+      "flag.draft_found",
+      "flag.draft_read",
+      "flag.f1",
+      "flag.handbook_read",
+      "flag.k0",
+      "flag.lamp_lit",
+      "flag.lin_stopped_lamp",
+      "flag.mail_read",
+      "flag.map_seen",
+      "flag.met_harbor"
+     ],
+     "items": [
+      "F1",
+      "badge.demo_first_night"
+     ],
+     "level": "intact",
+     "level_reasons": [],
+     "memory": [
+      "[init] 你在試玩時說過：pass。"
+     ],
+     "nick": "op-zien",
+     "perks": [
+      "motd_line",
+      "hall_of_fame_tag",
+      {
+       "title": "守夜人"
+      }
+     ],
+     "quests_done": [
+      "Q0-1",
+      "Q0-2",
+      "Q0-3",
+      "Q0-4",
+      "Q0-5"
+     ],
+     "schema": 1,
+     "seed": 5,
+     "verified": "chain"
+    },
+    "head": "954437c9",
+    "level": "intact",
+    "level_reasons": [],
+    "n_commits": 36,
+    "nick": "zien",
+    "score": 60,
+    "seconds": 870,
+    "seed": 5,
+    "tasks": [
+     "Q0-1",
+     "Q0-2",
+     "Q0-3",
+     "Q0-4",
+     "Q0-5",
+     "Q1-1"
+    ],
+    "time_up": true,
+    "title_id": "watcher",
+    "vote": "pass"
+   },
+   "name": "golden_slow"
+  },
+  {
+   "code": "RA1-eNqNVU2T4jYQ_S86G1bftjnllMuekuvWlkrYAivYFpHFzG6m5r-nWwZmx5hUiguCp36vX3_ojTRk9-0bOfT2SArSuiFsp2Rjci0pFC8E1ZoW8Ple3EGD9b2JzgJCK0BIKm6IZKcTKd6Ib8mO_EE3jLwXVVlIJir-DMMBU9YFoyUvF0ydHdt9CKcrm2IFY1LWC1TTod5opssw2PjzCuYawJSyZ7QCaIUE2orJRcA22kMyh3AZIU5FIQ4r9bM4EuLoKnPxRZzej2ZK4Xx2rentcCaFEADkrLoDPVJcg_1lI8TKSYKoVUjyzckldFWW6Fi59OLg45TM6I9dupmmkFKvU06XNqB-tL9WbBEM_zWvNo7YDLxGXUqux4FCvfqmw1Jm39VTvxT6rgsupVRL8QxowG4h-L2jfHLD_frvt8yFrMVq0eacJcMgWqxq7TzUJP7EtJFLKroKi673DbZvjbEkXRX0J0VBkDGQPVQfKm56n0COKjgXbGlvY5N5DfHkRzipqqh5JR5G7Wwm50aYNA1K6rv7Teea0zn4Md21wDl9aTq6ya32jibUolpPDqix1URRU7neaXEwMOcjusSLGub3htpHOzbd1o0wcog-xDA8sBdktIODn22fvkx5in9AKCguh1ZcjvmebvswJWoaKF_ePFA6JpQoi08Blpew2CbfBP-wTLAd1m4MLh4dam1sxNy-UrQ2tCjwNIbX3rXw__scQ4kPkxF-M-Qr_eiYZalPELDCnuMfl28-_fC5RFe6WQoUh2cq8ehEG0aXVy-kU6qHVUfNDIDNiy1e_Z-GcFBXMD9TVk_LPQvGCUbzpV626-CSgU27D1B24OW1ygsDmBl5HHSWdz8HU7TQ5X_hcBFzyEazPNN33JX2b2bENWcpMFpNV1DHxmDHmc7lmkmMx5n6FfncIbbJC_O6fFVd158YfvUJDkeHa1rD06FlLvc6crbKzJOms55KrSjPijMsF11z_TymixFC9uF4fTK1qMrPKQbfuDv8JSQ4kBfbX7D39n1oTigGHmQKg78iJr__eM3MYFjTUBtafcK6WVHy4PflTHYH208OljqFrqbiQ9B36Bmye8tByS7Fi5sJTBaH3zb5ubq6XxD3Alvl9lc-QBNBbedVEkNIGxubzp8dqA2zdxhK06qsHNvj2oEHEn75x-POJGebT8ubGxgK9hvdsi0uggkaY7Bkx-Crg-WzU-_v_wJ-q41y-0e9440eb",
+   "expect": {
+    "finds": [
+     "jar",
+     "ticket1",
+     "sudo",
+     "sandwich",
+     "history",
+     "relic",
+     "cat",
+     "rm_main",
+     "rm_branch",
+     "finger",
+     "harbor_cat",
+     "error_log"
+    ],
+    "first_id": "4aaee44e",
+    "full_hint": false,
+    "fullgame": {
+     "cards": [
+      "K0"
+     ],
+     "checkpoints": [
+      "ckpt/ch0-lamp",
+      "ckpt/ch0-end",
+      "ckpt/ch1-night",
+      "ckpt/ch1-start"
+     ],
+     "demo": false,
+     "dropped_flags": [
+      "flag.demo.finished",
+      "flag.demo.started",
+      "flag.demo.vote_block"
+     ],
+     "flags": [
+      "flag.b0.done",
+      "flag.b0.lost0_created",
+      "flag.b0.read_lost0",
+      "flag.cat_working",
+      "flag.ch0_done",
+      "flag.charter_summary_read",
+      "flag.draft_found",
+      "flag.draft_read",
+      "flag.f1",
+      "flag.first_night_read",
+      "flag.gc_name_heard",
+      "flag.handbook_read",
+      "flag.heard_cat",
+      "flag.k0",
+      "flag.lamp_lit",
+      "flag.lin_stopped_lamp",
+      "flag.mail_read",
+      "flag.map_seen",
+      "flag.met_harbor",
+      "flag.q1_3_done",
+      "flag.sudo_warned"
+     ],
+     "items": [
+      "F1",
+      "R0",
+      "badge.demo_first_night"
+     ],
+     "level": "intact",
+     "level_reasons": [],
+     "memory": [
+      "[init] 你在試玩時說過：block。"
+     ],
+     "nick": "op-zien",
+     "perks": [
+      "motd_line",
+      "hall_of_fame_tag",
+      {
+       "title": "拆門者"
+      }
+     ],
+     "quests_done": [
+      "Q0-1",
+      "Q0-2",
+      "Q0-3",
+      "Q0-4",
+      "Q0-5"
+     ],
+     "schema": 1,
+     "seed": 5,
+     "verified": "chain"
+    },
+    "head": "60878e1b",
+    "level": "intact",
+    "level_reasons": [],
+    "n_commits": 53,
+    "nick": "zien",
+    "score": 170,
+    "seconds": 829,
+    "seed": 5,
+    "tasks": [
+     "Q0-1",
+     "Q0-2",
+     "Q0-3",
+     "Q0-4",
+     "Q0-5",
+     "Q1-1",
+     "Q1-3"
+    ],
+    "time_up": false,
+    "title_id": "breaker",
+    "vote": "block"
+   },
+   "name": "golden_digger"
+  },
+  {
+   "code": "RA1-eNqNVbty2zAQ_BfUkIwnH6pSpUmV2uPBQBRkMiIJBoRsZzz699yBlGxTUiadIOwddvcefCcV2Tw-kn1rnwklO9f59RhtiG5HqCqpKITIKKPsiV5AnW1aE5wFhBRU5HnBzohoxwOh76TZkQ35yVacnKhkVPFSqnsYARjNKZdFmS9eqm2_23p_mF_LREKJBaqqkW8w47HrbPgzgxUDsJb5vWclPKsKyhX7oH92Idh9NHt_7CFPriBPKeW9PArpZ0gsX-Zpm96M0Q-D25nWdgOhGkkV7APY4BNzsl82oF3pvfzCu276iJD9sW3JZm_b0VHSkw0_0SLHbOIuNQ3pMkWl1FwvqO05SeGl1pfyNtF1l_DvWDqVUcGYEDf9mWwuNCSRJV9KB7mmbYC5klSUuV6WtrLRvPpwaHo4KUXLXJRXfTaY0bke7jXcFxcNVe2qw-BnYxJdOMeHqmar5DPIhoow9kn2Z6NDZ6CHe4SVtPxUjm2wfVWvXQ_tlDwPvrtKDu7bzsHfto0PY-rQt6luQspcLkRs2br1Y2SmAr_SVEErcSnLgn5JsAxCd02KhBbUGAGSbkR0Ljw75FrZgNp-MHTO75DgofevrdvB_Qm44TjwC70EPxsCQYDAJoaJWQg4QMJ0pbNy6dNbkyowPzdROU0Tw6-6BkTtfA9cFbZtrourMWZmAuiUgP9XvR3U9YQNAgSLZZN1LhpYDlsf0vKQWaGwUSEhJ9cDw8_rSkid63_h5BmXieIzbn72NzdyloILErKJG6jnymAjmdqlUkiYNalSL16Q94XzVd881xF5aIxTxdc431TuEvPiIxzIi22PWKdt66sDmgaLOVP5LQXpO4BhZgLjphRQ0y-uuGmkYgMijsO8m5IxslDZh5AnKATZvKekZBPD0U0PmEQOf632TRjjLIkS9wITeL5KB6gMGDaNXfA-rmyo6mZwwNbjdwJXEeCZYrzcFziiDbDekIHhOAw2HZaBK-gf_o2t-RpBI5jdWdir8NPBnG5gf7DT6S-ArwFp-ee20b2d0",
+   "expect": {
+    "finds": [
+     "jar",
+     "rm_main"
+    ],
+    "first_id": "5422c5e6",
+    "full_hint": false,
+    "fullgame": {
+     "cards": [
+      "K0"
+     ],
+     "checkpoints": [
+      "ckpt/ch0-lamp",
+      "ckpt/ch0-end",
+      "ckpt/ch1-night",
+      "ckpt/ch1-start"
+     ],
+     "demo": false,
+     "dropped_flags": [
+      "flag.demo.finished",
+      "flag.demo.started",
+      "flag.demo.vote_block"
+     ],
+     "flags": [
+      "flag.b0.done",
+      "flag.b0.lost0_created",
+      "flag.b0.read_lost0",
+      "flag.cat_working",
+      "flag.ch0_done",
+      "flag.charter_summary_read",
+      "flag.draft_found",
+      "flag.draft_read",
+      "flag.f1",
+      "flag.gc_name_heard",
+      "flag.handbook_read",
+      "flag.k0",
+      "flag.lamp_lit",
+      "flag.lin_stopped_lamp",
+      "flag.mail_read",
+      "flag.map_seen",
+      "flag.met_harbor",
+      "flag.q1_3_done"
+     ],
+     "items": [
+      "F1",
+      "badge.demo_first_night"
+     ],
+     "level": "intact",
+     "level_reasons": [],
+     "memory": [
+      "[init] 你在試玩時說過：block。"
+     ],
+     "nick": "op-p00",
+     "perks": [
+      "motd_line",
+      "hall_of_fame_tag",
+      {
+       "title": "擋門人"
+      }
+     ],
+     "quests_done": [
+      "Q0-1",
+      "Q0-2",
+      "Q0-3",
+      "Q0-4",
+      "Q0-5"
+     ],
+     "schema": 1,
+     "seed": 1000,
+     "verified": "chain"
+    },
+    "head": "d04019f8",
+    "level": "intact",
+    "level_reasons": [],
+    "n_commits": 40,
+    "nick": "p00",
+    "score": 115,
+    "seconds": 763,
+    "seed": 1000,
+    "tasks": [
+     "Q0-1",
+     "Q0-2",
+     "Q0-3",
+     "Q0-4",
+     "Q0-5",
+     "Q1-1",
+     "Q1-3"
+    ],
+    "time_up": false,
+    "title_id": "blocker",
+    "vote": "block"
+   },
+   "name": "crowd_0"
+  },
+  {
+   "code": "RA1-eNqNVU1z2jAQ_S86C6IvWzannnrpqedMRiNsgV1sy5VFkk4m_727MpBiYKbDBeO3b9--_eCDVGTz_Ex2nd0TSmrX-_UUbYiuJjTTVJQ6YxQ-L_QC6m3bmeAsIGQJCJmXZ0S004HQD9LWZEN-shUnn7QQVAlW6kcYAZicUy5kni8yNXaot94fTtmAiYtc6wWqalBvMNOx7234cwJrBAv5UJqEtKIAjMqXhHWwu2h2_jhgiQoxKn_Eo1A-8kghFjxdO5gp-nF0telsPwKZxAr-AbaY4kT2ywbkylK--5AJDHlrqwZwiUrq_C4uttXBRXRfoA0qWzq7a8MUzdDum3jyq2ToV6ke1ZlhKwtIK_lyIHYcZqWg0GR1sbuNrr-Ef0clCVHk7K7Zs4YcIZqppY_gnenaSKjiIEAJvpwAG82bD4d2gKc0S4IXN1M7msm5gVCBDhf8kqVqXHUYfTvEi2B4jk9Vw1apbaAdzc6--rYNdqiatRtg7jBoF3x_E0bJYHsHP9suPk1plN-BCzyCIQYR1_q2bN35KTJTgRdp_TRMnixlQa8IlkHonEmRULqmXGVS3IvoXdg71FrZgCX-YGiKr1HgYfBvnavhPfQ4h6yFvjQywc--QNA8oUppuSjgAIQaXwmdLX16b5O3p3SzFCCCkVOMFbdO1H4ArTi7SrLyZt-ZmQG5RICU_9NJB-tx0s7Km5PmooErsvXQTSGp5PMQAiEnt8vA013DWrVKM_EQh0cGTgfQFVd8p7S_uZHnUuCEaHkXta8MDpJpXGpFoRFZFv8iHxfOV2nJ8WBgXC6v4q6OxmyAgWUCNJ4D0KPv6Ek6EizZqUU6Qvc5XQhA2fk9GjGXyK-F-7ZyF_irj_BAXm13xEEZ7TThDdOw-HnB7mhJf1gYZRKWZooKJdWVbDfriS14eBzJZme7yYEfDFgZ_9L-AnNANh-Jk2xiOLqZ3yRp-G2VzubJUUrcKxyA86v0AIMB_Zq3PngfVzZUTTs6EOtn55BKs9LWubR4IeBQY6EMA0ebHpaBKxhf_o2t-RpXdoJe95ZsOHx1cCY2nDH--fkX-OMxOQ-0a6a8425",
+   "expect": {
+    "finds": [
+     "jar",
+     "sandwich",
+     "ticket1",
+     "harbor_cat",
+     "error_log"
+    ],
+    "first_id": "86d380e9",
+    "full_hint": false,
+    "fullgame": {
+     "cards": [
+      "K0"
+     ],
+     "checkpoints": [
+      "ckpt/ch0-lamp",
+      "ckpt/ch0-end",
+      "ckpt/ch1-night",
+      "ckpt/ch1-start"
+     ],
+     "demo": false,
+     "dropped_flags": [
+      "flag.demo.finished",
+      "flag.demo.started",
+      "flag.demo.vote_pass"
+     ],
+     "flags": [
+      "flag.b0.done",
+      "flag.b0.lost0_created",
+      "flag.b0.read_lost0",
+      "flag.cat_working",
+      "flag.ch0_done",
+      "flag.charter_summary_read",
+      "flag.draft_found",
+      "flag.draft_read",
+      "flag.f1",
+      "flag.first_night_read",
+      "flag.gc_name_heard",
+      "flag.handbook_read",
+      "flag.heard_cat",
+      "flag.k0",
+      "flag.lamp_lit",
+      "flag.lin_stopped_lamp",
+      "flag.mail_read",
+      "flag.map_seen",
+      "flag.met_harbor",
+      "flag.q1_3_done"
+     ],
+     "items": [
+      "F1",
+      "badge.demo_first_night"
+     ],
+     "level": "intact",
+     "level_reasons": [],
+     "memory": [
+      "[init] 你在試玩時說過：pass。"
+     ],
+     "nick": "op-p01",
+     "perks": [
+      "motd_line",
+      "hall_of_fame_tag",
+      {
+       "title": "守夜人"
+      }
+     ],
+     "quests_done": [
+      "Q0-1",
+      "Q0-2",
+      "Q0-3",
+      "Q0-4",
+      "Q0-5"
+     ],
+     "schema": 1,
+     "seed": 1001,
+     "verified": "chain"
+    },
+    "head": "709ad63a",
+    "level": "intact",
+    "level_reasons": [],
+    "n_commits": 44,
+    "nick": "p01",
+    "score": 120,
+    "seconds": 807,
+    "seed": 1001,
+    "tasks": [
+     "Q0-1",
+     "Q0-2",
+     "Q0-3",
+     "Q0-4",
+     "Q0-5",
+     "Q1-1",
+     "Q1-3"
+    ],
+    "time_up": false,
+    "title_id": "watcher",
+    "vote": "pass"
+   },
+   "name": "crowd_1"
+  },
+  {
+   "code": "RA1-eNqNVctu4zAM_BedlVRPP3La0172tOeiEBRbqYXYltdW-kCRf19ScbKp0ywK9BA1wyGHHDIfpCKbx0eya-0zoaR2XVhP0Y7R1YTmnIpS6YIyyp7oBdRZ35rRWUCIAhEiOyOinfaEfhBfkw35zVacHKksqBK5YvcwAjBFQblUXC4yNbavtyHs52xKA0qycoGqGqx3NNOh6-z4PoNliWDF76WVkFZjWpmJBWE92l00u3DogSeTWFop7vEo4MkxlyjUgqf1vZliGAZXm9Z2A6EFKuBlfgF6TDGTRV_tXcSWQdVc6ixf8O38OEXT--cmziKTAM71Gdj4PiLf7tC2ZLOz7eQo6cmGQ42YOtN3x6AhL2gVeclv8nKSwlWuL-300XWX8J-paGiUKiT_spmzXXKAXNXwSX7joVfjO7oBmcpSfkdVgYxiaQnstmk9ROkcssKMl56x0byGce97eIFDudA3sjs7mMm5fgbIf2OrGlfthzCXlaqHd3yoGrZKgz4mrwrJLnm3o-2rZu16cGrSMobuJgxU2c7Bv20bH6Zk_je0F6Mi02opcsvWbZgiMxV0Ny2swCExJegngmUQzsKkSEJLhhGwUl9EdG58dlhrZUeU-IthU0KNBe778Nq6Gr4_UiGAQ_xza4Kf-wJBcAJ4QiwF7IFQoNWLgi379OZTb-d0p1LAoCUSSXHbiTr0UGuWAVuZi5sLwcwJUKBe8Ph3JunAnGDGHCkztjSHiwbuzjbANLWGa8Mk3kkg5OR2vfjpEsI9VVlZ_g-HZwnWRCil82vcnPYPN3KWomFZVVEWX6CeK4NGMo1LoxAK_qTW18j7wvkqXZjTeYQMbBEXfOUuMS8hwoO82PaAcxrsNKEAOPkl-5zw-hcGo0zCUpVR2CzBr6HudBWiBwmHYd54aB-jimVp-CfoE4yBbD4SJ9nE8eBO_CaVhp9W6WTOgihxL7B_56_SA-YC7Tot3RhCXNmxavzgoNiAP0B4tqAzlbBiW5W4oHCkUSgT8BhseiwDV-Ae_oOt-Ro3ZoJWdxauFXx0sKUbzpg4Hv8Cz0cb_A-c128c0ba",
+   "expect": {
+    "finds": [
+     "ticket1",
+     "history"
+    ],
+    "first_id": "f91758f5",
+    "full_hint": false,
+    "fullgame": {
+     "cards": [
+      "K0"
+     ],
+     "checkpoints": [
+      "ckpt/ch0-lamp",
+      "ckpt/ch0-end",
+      "ckpt/ch1-night",
+      "ckpt/ch1-start"
+     ],
+     "demo": false,
+     "dropped_flags": [
+      "flag.demo.finished",
+      "flag.demo.started",
+      "flag.demo.vote_pass"
+     ],
+     "flags": [
+      "flag.b0.done",
+      "flag.b0.lost0_created",
+      "flag.b0.read_lost0",
+      "flag.cat_working",
+      "flag.ch0_done",
+      "flag.charter_summary_read",
+      "flag.draft_found",
+      "flag.draft_read",
+      "flag.f1",
+      "flag.first_night_read",
+      "flag.gc_name_heard",
+      "flag.handbook_read",
+      "flag.k0",
+      "flag.lamp_lit",
+      "flag.lin_stopped_lamp",
+      "flag.mail_read",
+      "flag.map_seen",
+      "flag.met_harbor",
+      "flag.q1_3_done"
+     ],
+     "items": [
+      "F1",
+      "badge.demo_first_night"
+     ],
+     "level": "intact",
+     "level_reasons": [],
+     "memory": [
+      "[init] 你在試玩時說過：pass。"
+     ],
+     "nick": "op-p02",
+     "perks": [
+      "motd_line",
+      "hall_of_fame_tag",
+      {
+       "title": "守夜人"
+      }
+     ],
+     "quests_done": [
+      "Q0-1",
+      "Q0-2",
+      "Q0-3",
+      "Q0-4",
+      "Q0-5"
+     ],
+     "schema": 1,
+     "seed": 1002,
+     "verified": "chain"
+    },
+    "head": "cc2a2bc9",
+    "level": "intact",
+    "level_reasons": [],
+    "n_commits": 42,
+    "nick": "p02",
+    "score": 105,
+    "seconds": 802,
+    "seed": 1002,
+    "tasks": [
+     "Q0-1",
+     "Q0-2",
+     "Q0-3",
+     "Q0-4",
+     "Q0-5",
+     "Q1-1",
+     "Q1-3"
+    ],
+    "time_up": false,
+    "title_id": "watcher",
+    "vote": "pass"
+   },
+   "name": "crowd_2"
+  },
+  {
+   "code": "RA1-eNqNVE2PmzAQ_S8-O1l_gYFTT7301PNqhRxwAuLDCJzuVhH_vc-QpC3ZSKtIEYY382bevPGFFCR7fSXH1pwIJaXt3H7yZvS2JFQyKtIE__i90TuoM3Wbj9YAoTUQqYxvCG-mhtALqUuSkZ9sx8lMlaIqZrF8hhHAaE55LDnfMFWmLw_ONVc2VMJjxcUGVVSh3jGfzl1nxt9XcBRSKiae0cpAmwLD1bbBcjRHnx_duUeeOAYmYsmzPAp5ZOBiUm3ytHWfT94Ngy3z1nQDoYkMRam7FlXd-5DseG5bkh1NO1lKepLxmUYaUBGnz3gj8ApNpWI63fAeOcFYKNciuTPV3nb38O9hLhpqai34p82vGqJQrlXEv1BukgAai2grAdrO2xpRoJOMpVuNCuPzdzc2dY-TQs9CR-LBcEM-WdtjGAoAye5-KypbNIO7lrX0hrN_KSq2WxSf15wp17eQw2j6otrbHpZZehld9xCGrkxn8dq0_mVaXPiBXCkWIk5EvKnvwPatmzzLC8i2bI6OKIdukv6XYBsURM6XSNgV01AcRvokorPjyYZaCzOGFn-wIIorQ4FN795bW-I77AB1lIj-qhPgN10QBFOFupTezrwJBaQhWKutTh_1ou2Vbi0F5pEh0cPmoKnS9ag1Dt95rB9WleUrAL7jSiZfmqTFHs7LIiqRbMXvrM9xARwcpomd0TBZ6AEJOXncG75cSULSKNEi_RcXSADzdWfz80AyP57tvFyBTKaK36FvoCTZZbkqV9R6beYLQXjaHetx8ru-PlVohthf8Nrt03JADZScVoONzvmdGYuqHiwacuHWC7uXEYZtOuhCBDPWRYM3A5M4DGY5bAN3UIp_Y3u-D-6YoGdnsJl4tHBkxhmT8_wHsWartQ-fde86599",
+   "expect": {
+    "finds": [],
+    "first_id": "12f42497",
+    "full_hint": false,
+    "fullgame": {
+     "cards": [
+      "K0"
+     ],
+     "checkpoints": [
+      "ckpt/ch0-lamp",
+      "ckpt/ch0-end",
+      "ckpt/ch1-start"
+     ],
+     "demo": false,
+     "dropped_flags": [
+      "flag.demo.finished",
+      "flag.demo.started",
+      "flag.demo.time_up"
+     ],
+     "flags": [
+      "flag.b0.done",
+      "flag.b0.lost0_created",
+      "flag.b0.read_lost0",
+      "flag.cat_working",
+      "flag.ch0_done",
+      "flag.charter_summary_read",
+      "flag.draft_found",
+      "flag.draft_read",
+      "flag.f1",
+      "flag.handbook_read",
+      "flag.k0",
+      "flag.lamp_lit",
+      "flag.lin_stopped_lamp",
+      "flag.mail_read",
+      "flag.map_seen",
+      "flag.met_harbor"
+     ],
+     "items": [
+      "F1",
+      "badge.demo_first_night"
+     ],
+     "level": "intact",
+     "level_reasons": [],
+     "memory": [],
+     "nick": "op-p03",
+     "perks": [
+      "motd_line",
+      "hall_of_fame_tag",
+      {
+       "title": "值班員"
+      }
+     ],
+     "quests_done": [
+      "Q0-1",
+      "Q0-2",
+      "Q0-3",
+      "Q0-4",
+      "Q0-5"
+     ],
+     "schema": 1,
+     "seed": 1003,
+     "verified": "chain"
+    },
+    "head": "0625b7c2",
+    "level": "intact",
+    "level_reasons": [],
+    "n_commits": 33,
+    "nick": "p03",
+    "score": 80,
+    "seconds": 870,
+    "seed": 1003,
+    "tasks": [
+     "Q0-1",
+     "Q0-2",
+     "Q0-3",
+     "Q0-4",
+     "Q0-5",
+     "Q1-1"
+    ],
+    "time_up": true,
+    "title_id": "default",
+    "vote": null
+   },
+   "name": "crowd_3"
+  },
+  {
+   "code": "RA1-eNqNVUtzmzAY_C86y64eIMCnnnrpqedORyODCKoBuUJOmmby37vCDpNgu9ObZe332t1PvJCa7L5_J21vHggljR38doomRNsQ\n  mgvKcy4VZZT9oAtoMK7XwRogVE55VhbVGyKa6UDoC3EN2ZFvbMPJKy0LKnielfcwAhhkUBlfF-rM2Oy9P1yK5ZwWXFYrUN2lboOeTsNgwvMFKxRVqmL3akrUlBnaZ3KVrgmmjbr1pxFZSkZVqdS9LBmyqDIV4qssvRv1FP3xaBvdm-FIqJQU_SwktC7lv6T6aQIyYTxV\r\nFOwmYjo1HpCsAE2qXBVLl_rJhHHWLEed_C7ZeWq5gqwyL1ZpWg7aKsjFsrcbF-2wRH9JYhYqAYqbpJ2ZlwnBb4_ROZASnpFHMFoq-GtFG6jSvYskTQrrMbYW20T95MPBjThlIEzk8sqdRz1ZO8KcUE9mS4q6s_Xh6N0Yl35wjp_qjm1mjWBV2FCIxWH7YMa629oR_koxbfDDVRQloxks_jZ9_DTNjv2dpFIUm5Nnq-72bNv7KTJdg615yTIIVhYl_RC_jknU6jkQCpe0EDDvjYDBhgebOq1NSPN9ZYkQ36T2DqN_6m2DezgA21Fli4oz-o0TxLwmagsp19QeUvXk4ypbU_Tbzaxeap37QB1BC3a1HJin8SP6hAkKcWUCMKvP90rivpT_I6CFy7BCVdrXtWkGGzUeib2HiEDwqpi9j3ycXO8Inx8tJOEiz8S_cOkRKTlwUqj3uEvZX1zLyyDIw4US2Q3UQ62Tf3RnZxHSkysEntV3yPtz883oHrqY-sVDLLK8-hjnXW2XmEcfcSCPpj8ljfa9rw9pEwUVeMJvTTB_DVKYPoPhidRdUb7H2vN-R4chTkeya00_WbyuDPJKIRfoDwhBdi9zUrKL4WTPBfTcXPq1aV2Y4mUkSuwjFu_taj5AGRB23rbgfdyYUHfuaNGtT5-L9P5gD9tqL1um0mY6dL0jf1x6DsjRzKd15Ab-4Z_Zlm_TtkxgezBkx_HTYj93-evrX_pBBh4-149efb70\n",
+   "expect": {
+    "finds": [
+     "jar",
+     "sudo",
+     "history"
+    ],
+    "first_id": "6a8b7c35",
+    "full_hint": false,
+    "fullgame": {
+     "cards": [
+      "K0"
+     ],
+     "checkpoints": [
+      "ckpt/ch0-lamp",
+      "ckpt/ch0-end",
+      "ckpt/ch1-night",
+      "ckpt/ch1-start"
+     ],
+     "demo": false,
+     "dropped_flags": [
+      "flag.demo.finished",
+      "flag.demo.started",
+      "flag.demo.vote_block"
+     ],
+     "flags": [
+      "flag.b0.done",
+      "flag.b0.lost0_created",
+      "flag.b0.read_lost0",
+      "flag.cat_working",
+      "flag.ch0_done",
+      "flag.charter_summary_read",
+      "flag.draft_found",
+      "flag.draft_read",
+      "flag.f1",
+      "flag.gc_name_heard",
+      "flag.handbook_read",
+      "flag.k0",
+      "flag.lamp_lit",
+      "flag.lin_stopped_lamp",
+      "flag.mail_read",
+      "flag.map_seen",
+      "flag.met_harbor",
+      "flag.q1_3_done",
+      "flag.sudo_warned"
+     ],
+     "items": [
+      "F1",
+      "badge.demo_first_night"
+     ],
+     "level": "intact",
+     "level_reasons": [],
+     "memory": [
+      "[init] 你在試玩時說過：block。"
+     ],
+     "nick": "op-zien",
+     "perks": [
+      "motd_line",
+      "hall_of_fame_tag",
+      {
+       "title": "快手值班員"
+      }
+     ],
+     "quests_done": [
+      "Q0-1",
+      "Q0-2",
+      "Q0-3",
+      "Q0-4",
+      "Q0-5"
+     ],
+     "schema": 1,
+     "seed": 5,
+     "verified": "chain"
+    },
+    "head": "af9b3f06",
+    "level": "intact",
+    "level_reasons": [],
+    "n_commits": 41,
+    "nick": "zien",
+    "score": 135,
+    "seconds": 405,
+    "seed": 5,
+    "tasks": [
+     "Q0-1",
+     "Q0-2",
+     "Q0-3",
+     "Q0-4",
+     "Q0-5",
+     "Q1-1",
+     "Q1-3"
+    ],
+    "time_up": false,
+    "title_id": "sprinter",
+    "vote": "block"
+   },
+   "name": "golden_fast_with_whitespace"
+  }
+ ],
+ "canonical_and_id": [
+  {
+   "body": {
+    "branch": "main",
+    "chapter": "ch0",
+    "data": {
+     "name": "flag.mail_read"
+    },
+    "kind": "flag",
+    "r": 1200,
+    "t": 0
+   },
+   "canonical": "{\"branch\":\"main\",\"chapter\":\"ch0\",\"data\":{\"name\":\"flag.mail_read\"},\"kind\":\"flag\",\"r\":1200,\"t\":0}",
+   "id": "2eeb8e12",
+   "parent": null,
+   "rule": "id = sha256_hex(utf8((parent or '') + canonical(body)))[:8]；canonical = 鍵依 Unicode 排序、無空白的 JSON"
+  },
+  {
+   "body": {
+    "branch": "alt/sandbox",
+    "chapter": "ch0",
+    "data": {
+     "card": "K0",
+     "mode": "knowledge"
+    },
+    "kind": "merge",
+    "r": 400000,
+    "t": 64
+   },
+   "canonical": "{\"branch\":\"alt/sandbox\",\"chapter\":\"ch0\",\"data\":{\"card\":\"K0\",\"mode\":\"knowledge\"},\"kind\":\"merge\",\"r\":400000,\"t\":64}",
+   "id": "2f918dfe",
+   "parent": "0a1b2c3d",
+   "rule": "id = sha256_hex(utf8((parent or '') + canonical(body)))[:8]；canonical = 鍵依 Unicode 排序、無空白的 JSON"
+  },
+  {
+   "body": {
+    "branch": "main",
+    "chapter": "ch1",
+    "data": {
+     "full": true,
+     "n": 3
+    },
+    "kind": "hint",
+    "r": 5,
+    "t": 9
+   },
+   "canonical": "{\"branch\":\"main\",\"chapter\":\"ch1\",\"data\":{\"full\":true,\"n\":3},\"kind\":\"hint\",\"r\":5,\"t\":9}",
+   "id": "8b63a2bc",
+   "parent": "ffffffff",
+   "rule": "id = sha256_hex(utf8((parent or '') + canonical(body)))[:8]；canonical = 鍵依 Unicode 排序、無空白的 JSON"
+  }
+ ],
+ "crc32": [
+  {
+   "crc32_hex8": "b29aa405",
+   "text": "RA1-"
+  },
+  {
+   "crc32_hex8": "e95e802c",
+   "text": "RA1-abc"
+  },
+  {
+   "crc32_hex8": "ddfd15fa",
+   "text": "RA1-eNqNVU2T4jYQ_S86G1bftjnllMuekuvWlkrYAivYFpHFzG6m5r-nWwZmx5hUiguCp36vX3_ojTRk9-0bOfT2SArSuiFsp2Rjci0pFC8E1ZoW8Ple3EGD"
+  }
+ ],
+ "file_tampered": {
+  "expect": {
+   "badge": false,
+   "level": "broken",
+   "verified": "unverified"
+  },
+  "file": {
+   "commits": [
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "name": "flag.demo.started"
+     },
+     "id": "af84d343",
+     "kind": "flag",
+     "parent": null,
+     "r": 28190,
+     "t": 52
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "name": "flag.mail_read"
+     },
+     "id": "cbba3776",
+     "kind": "flag",
+     "parent": "af84d343",
+     "r": 56124,
+     "t": 117
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "id": "Q0-1"
+     },
+     "id": "c546bdf5",
+     "kind": "task",
+     "parent": "cbba3776",
+     "r": 95699,
+     "t": 204
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "id": "Q0-2"
+     },
+     "id": "4f6e84b0",
+     "kind": "task",
+     "parent": "c546bdf5",
+     "r": 107089,
+     "t": 283
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "name": "flag.handbook_read"
+     },
+     "id": "b6e3afb3",
+     "kind": "flag",
+     "parent": "4f6e84b0",
+     "r": 119202,
+     "t": 334
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "name": "flag.charter_summary_read"
+     },
+     "id": "d046f490",
+     "kind": "flag",
+     "parent": "b6e3afb3",
+     "r": 130866,
+     "t": 360
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "id": "Q0-3"
+     },
+     "id": "f1dc9c37",
+     "kind": "task",
+     "parent": "d046f490",
+     "r": 142343,
+     "t": 394
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "name": "flag.draft_found"
+     },
+     "id": "52667197",
+     "kind": "flag",
+     "parent": "f1dc9c37",
+     "r": 154182,
+     "t": 474
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "id": "Q0-4"
+     },
+     "id": "38bad15e",
+     "kind": "task",
+     "parent": "52667197",
+     "r": 165847,
+     "t": 542
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "name": "flag.lin_stopped_lamp"
+     },
+     "id": "ee29f7d5",
+     "kind": "flag",
+     "parent": "38bad15e",
+     "r": 177728,
+     "t": 575
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "id": "jar"
+     },
+     "id": "d3cdcd54",
+     "kind": "find",
+     "parent": "ee29f7d5",
+     "r": 189472,
+     "t": 626
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "id": "ticket1"
+     },
+     "id": "daf4c99f",
+     "kind": "find",
+     "parent": "d3cdcd54",
+     "r": 200915,
+     "t": 673
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "name": "flag.first_night_read"
+     },
+     "id": "9263092e",
+     "kind": "flag",
+     "parent": "daf4c99f",
+     "r": 212846,
+     "t": 728
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "full": false,
+      "n": 1
+     },
+     "id": "c5a0cc1d",
+     "kind": "hint",
+     "parent": "9263092e",
+     "r": 224460,
+     "t": 797
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "id": "Q0-5"
+     },
+     "id": "719796d3",
+     "kind": "task",
+     "parent": "c5a0cc1d",
+     "r": 255852,
+     "t": 826
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "name": "flag.f1"
+     },
+     "id": "45b63a34",
+     "kind": "flag",
+     "parent": "719796d3",
+     "r": 275516,
+     "t": 902
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "id": "F1"
+     },
+     "id": "0237b32d",
+     "kind": "item",
+     "parent": "45b63a34",
+     "r": 295184,
+     "t": 938
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "name": "flag.draft_read"
+     },
+     "id": "4e17c768",
+     "kind": "flag",
+     "parent": "0237b32d",
+     "r": 314795,
+     "t": 958
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "name": "flag.lamp_lit"
+     },
+     "id": "140207a5",
+     "kind": "flag",
+     "parent": "4e17c768",
+     "r": 344414,
+     "t": 1005
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "name": "flag.cat_working"
+     },
+     "id": "6f7e3c00",
+     "kind": "flag",
+     "parent": "140207a5",
+     "r": 354228,
+     "t": 1046
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "name": "flag.map_seen"
+     },
+     "id": "c1f0b3ba",
+     "kind": "flag",
+     "parent": "6f7e3c00",
+     "r": 364130,
+     "t": 1106
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "id": "ckpt/ch0-lamp"
+     },
+     "id": "740ccf62",
+     "kind": "checkpoint",
+     "parent": "c1f0b3ba",
+     "r": 373920,
+     "t": 1195
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "id": "cat"
+     },
+     "id": "cf988bc5",
+     "kind": "find",
+     "parent": "740ccf62",
+     "r": 384003,
+     "t": 1241
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "from": "ckpt/ch0-lamp",
+      "name": "alt/sandbox"
+     },
+     "id": "7fe3c352",
+     "kind": "branch.enter",
+     "parent": "cf988bc5",
+     "r": 407001,
+     "t": 1286
+    },
+    {
+     "branch": "alt/sandbox",
+     "chapter": "ch0",
+     "data": {
+      "name": "flag.b0.lost0_created"
+     },
+     "id": "ef609e13",
+     "kind": "flag",
+     "parent": "7fe3c352",
+     "r": 420519,
+     "t": 1344
+    },
+    {
+     "branch": "alt/sandbox",
+     "chapter": "ch0",
+     "data": {
+      "name": "flag.b0.read_lost0"
+     },
+     "id": "51cacd2e",
+     "kind": "flag",
+     "parent": "ef609e13",
+     "r": 433749,
+     "t": 1410
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "card": "K0",
+      "mode": "knowledge"
+     },
+     "id": "c87f6b11",
+     "kind": "merge",
+     "parent": "51cacd2e",
+     "r": 447364,
+     "t": 1451
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "id": "K0"
+     },
+     "id": "6ef80c6e",
+     "kind": "card",
+     "parent": "c87f6b11",
+     "r": 460641,
+     "t": 1504
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "name": "flag.k0"
+     },
+     "id": "e5cb945a",
+     "kind": "flag",
+     "parent": "6ef80c6e",
+     "r": 474014,
+     "t": 1566
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "mode": "merge"
+     },
+     "id": "dd450090",
+     "kind": "branch.exit",
+     "parent": "e5cb945a",
+     "r": 487550,
+     "t": 1586
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "name": "flag.b0.done"
+     },
+     "id": "e6358ed6",
+     "kind": "flag",
+     "parent": "dd450090",
+     "r": 501115,
+     "t": 1649
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "name": "flag.ch0_done"
+     },
+     "id": "eaa53b6f",
+     "kind": "flag",
+     "parent": "e6358ed6",
+     "r": 514258,
+     "t": 1708
+    },
+    {
+     "branch": "main",
+     "chapter": "ch0",
+     "data": {
+      "id": "ckpt/ch0-end"
+     },
+     "id": "5dd5efbc",
+     "kind": "checkpoint",
+     "parent": "eaa53b6f",
+     "r": 527821,
+     "t": 1767
+    },
+    {
+     "branch": "main",
+     "chapter": "ch1",
+     "data": {
+      "name": "flag.met_harbor"
+     },
+     "id": "70d8b538",
+     "kind": "flag",
+     "parent": "5dd5efbc",
+     "r": 559554,
+     "t": 1827
+    },
+    {
+     "branch": "main",
+     "chapter": "ch1",
+     "data": {
+      "id": "Q1-1"
+     },
+     "id": "3da7c7b3",
+     "kind": "task",
+     "parent": "70d8b538",
+     "r": 577656,
+     "t": 1908
+    },
+    {
+     "branch": "main",
+     "chapter": "ch1",
+     "data": {
+      "id": "Q1-3"
+     },
+     "id": "497e0d46",
+     "kind": "task",
+     "parent": "3da7c7b3",
+     "r": 596056,
+     "t": 1950
+    },
+    {
+     "branch": "main",
+     "chapter": "ch1",
+     "data": {
+      "name": "flag.q1_3_done"
+     },
+     "id": "9885060e",
+     "kind": "flag",
+     "parent": "497e0d46",
+     "r": 614098,
+     "t": 2002
+    },
+    {
+     "branch": "main",
+     "chapter": "ch1",
+     "data": {
+      "name": "flag.gc_name_heard"
+     },
+     "id": "81b841f4",
+     "kind": "flag",
+     "parent": "9885060e",
+     "r": 632334,
+     "t": 2067
+    },
+    {
+     "branch": "main",
+     "chapter": "ch1",
+     "data": {
+      "id": "ckpt/ch1-night"
+     },
+     "id": "23d83711",
+     "kind": "checkpoint",
+     "parent": "81b841f4",
+     "r": 650783,
+     "t": 2089
+    },
+    {
+     "branch": "main",
+     "chapter": "ch1",
+     "data": {
+      "id": "harbor_cat"
+     },
+     "id": "6cebb7c5",
+     "kind": "find",
+     "parent": "23d83711",
+     "r": 669111,
+     "t": 2162
+    },
+    {
+     "branch": "main",
+     "chapter": "ch1",
+     "data": {
+      "name": "flag.heard_cat"
+     },
+     "id": "a066723b",
+     "kind": "flag",
+     "parent": "6cebb7c5",
+     "r": 687271,
+     "t": 2230
+    },
+    {
+     "branch": "main",
+     "chapter": "ch1",
+     "data": {
+      "id": "vote",
+      "value": "block"
+     },
+     "id": "31ddcad7",
+     "kind": "choice",
+     "parent": "a066723b",
+     "r": 728588,
+     "t": 2251
+    },
+    {
+     "branch": "main",
+     "chapter": "ch1",
+     "data": {
+      "name": "flag.demo.vote_pass"
+     },
+     "id": "88d91b76",
+     "kind": "flag",
+     "parent": "31ddcad7",
+     "r": 751477,
+     "t": 2276
+    },
+    {
+     "branch": "main",
+     "chapter": "ch1",
+     "data": {
+      "time_up": false
+     },
+     "id": "f32c328e",
+     "kind": "end",
+     "parent": "88d91b76",
+     "r": 790000,
+     "t": 2306
+    }
+   ],
+   "demo": true,
+   "demo_id": "demo-first-night",
+   "event": "demo-event-1",
+   "game": "root-archipelago",
+   "nick": "zien",
+   "pack": "root-archipelago-ch01@0.1.0",
+   "schema": 1,
+   "seed": 5
+  },
+  "name": "file_vote_flipped"
+ },
+ "note": "vectors.json：由 tools/testvectors.py make 產生。請勿手改。",
+ "reject": [
+  {
+   "code": "hello",
+   "name": "not_a_code",
+   "why": "不是 RA1- 開頭"
+  },
+  {
+   "code": "RB1-abc-00000000",
+   "name": "wrong_prefix",
+   "why": "前綴錯"
+  },
+  {
+   "code": "RA1-eNp9VcuSmzAQ_BedZa8ePIRPOeWSU86plEoLAkIMyAF589jyv6clMOvFdsoXBK2Znp6e8Rspye7bN7JvzQuhpLKd247eDN5WhKaCCsULRvH7ThdQZ5pWD9YAkaVU5IVMLghvxgOhb6SpyI58ZRtOzlTlVBZpnj7CCGDygnIubzLVpq-enTvM2VJOuQBuhSrrwHfQ46nrzPBnBosMIbPsITWJtCDOeZLnq4DVYPZe792pRxzFgFGyeBQnQZxMxVzpKk7b9Hr07ni0lW5NdyRUyhBM8QXYhBRzsB9mQKxQJM-T5C7EN-XB-qBqkgfqyVqLfTOMXvfNS-0voqUAFnJJWTe9D_H2p7Ylu71pR0tJT3YcZYQuZPyhZCnyioJKdEqs83JCcyheXCneeNst1z8H0nJCqLt6z21jAcL5WkrIp9sGzFG4AKBYm8B4_csNh6bHKeG0UO91LL496tHaHrZltCjYUkNZ2_JwdLMwkS7O_qms2Sb2DSYuaJFf-fO6KUgdGoLaGFNLQ54H05f11vawZtR7cN1NYChvOovXpvVPY3T77xALYyWKYq3TM9u2bvRMl9BqmlAYT6Zc0Q8B1peCsjreROmgKYVk9250dnixgWtphlDYFxZUc1UgeOjdr9ZW-H4O8nKZ8cXuEX5RA5dgYhmy3AzWIRAQ-CTzG51-N1H9Od1E5RztIFP45kaJyvXgmoVE6c3kQWA9AVJ4WvL3Oflfry2aep5upNl6sjrrNRbNsxuifyTPZYAgICe3w8Kn1QehFI9Ge4gLeyiBJiph7Bo3p_3JtbyUElAsEXdQL6UORtK1ja2AHlyJqNqCfFw438R9EdSOPJLiQ4Zrq08C6Mnx6CEWo1B3-EQeERZ3o-IZ-8jFNaVdor46jwN5Ne0p9P5oxjGQ4TAaZL4TPv5NhVs6YqkI86LUB952ou0byHI6zpsOKwitU6l4b913tJbs3mJMsvPDyU7xdaQWnjZxqc4iUWJfMdOXT_GAXqMF0yAPzvmNGcq6OVqQdZMYIdReihJqhUp7rHG8-duEZYR642l9cwNL8k9sy7dhDEf0rzNY03i0GP1dej7_Ay97Lgw-4b02334e",
+   "name": "crc_bad_char",
+   "why": "改一個字元，CRC 不符"
+  },
+  {
+   "code": "RA1-eNp9VcuSmzAQ_BedZa8ePIRPOeWSU86plEoL8kIMyAF589jyv6clMOvFdsoXBK2Znp6e8Rspye7bN7JvzQuhpLKd247eDN5WhKaCCsULRvH7ThdQZ5pWD9YAkaVU5IVMLghvxgOhb6SpyI58ZRtOzlTlVBZpnj7CCGDygnIubzLVpq-enTvM2VJOuQBuhSrrwHfQ46nrzPBnBosMIbPsITWJtCDOeZLnq4DVYPZe792pRxzFgFGyeBQnQZxMxVzpKk7b9Hr07ni0lW5NdyRUyhBM8QXYhBRzsB9mQKxQJM-T5C7EN-XB-qBqkgfqyVqLfTOMXvfNS-0voqUAFnJJWTe9D_H2p7Ylu71pR0tJT3YcZYQuZPyhZCnyioJKdEqs83JCcyheXCneeNst1z8H0nJCqLt6z21jAcL5WkrIp9sGzFG4AKBYm8B4_csNh6bHKeG0UO91LL496tHaHrZltCjYUkNZ2_JwdLMwkS7O_qms2Sb2DSYuaJFf-fO6KUgdGoLaGFNLQ54H05f11vawZtR7cN1NYChvOovXpvVPY3T77xALYyWKYq3TM9u2bvRMl9BqmlAYT6Zc0Q8B1peCsjreROmgKYVk9250dnixgWtphlDYFxZUc1UgeOjdr9ZW-H4O8nKZ8cXuEX5RA5dgYhmy3AzWIRAQ-CTzG51-N1H9Od1E5RztIFP45kaJyvXgmoVE6c3kQWA9AVJ4WvL3Oflfry2aep5upNl6sjrrNRbNsxuifyTPZYAgICe3w8Kn1QehFI9Ge4gLeyiBJiph7Bo3p_3JtbyUElAsEXdQL6UORtK1ja2AHlyJqNqCfFw438R9EdSOPJLiQ4Zrq08C6Mnx6CEWo1B3-EQeERZ3o-IZ-8jFNaVdor46jwN5Ne0p9P5oxjGQ4TAaZL4TPv5NhVs6YqkI86LUB952ou0byHI6zpsOKwitU6l4b913tJbs3mJMsvPDyU7xdaQWnjZxqc4iUWJfMdOXT_GAXqMF0yAPzvmNGcq6OVqQdZMYIdReihJqhUp7rHG8-duEZYR642l9cwNL8k9sy7dhDEf0rzNY03i0GP1dej7_Ay97",
+   "name": "truncated",
+   "why": "截斷"
+  },
+  {
+   "code": "RA1--b29aa405",
+   "name": "empty_body",
+   "why": "沒有本體（CRC 正確）"
+  },
+  {
+   "code": "RA1-ab*cd-ee143845",
+   "name": "illegal_chars",
+   "why": "含非 base64url 字元（CRC 正確）"
+  },
+  {
+   "code": "RA1-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA-82a0e393",
+   "name": "too_long",
+   "why": "超過 8000 字元"
+  },
+  {
+   "code": "RA1-eNrs1cty4kYUANBfSWktO3rwEF5llU1WWadSKg3IAzEgB-TJY8r_niuBGQ-28wXneIPgqvv27dvtr8kyufvtt-R-23xO0mTV7rrbY98c-naVpNMiLap8kaXx93t6Cdo1m219aJuImE3TYr4oJy8RfXN8SNKvyWaV3CW_Zjd58pxW87RcTOfTj2KKiJkv0jwv38y0bvarT133cJ5tmqd5EXFXUcv1kO-hPj7tds3hn3NwMYshZ7MPUytj2kg8zyfz-dWAq0Nz39f33dM-xqmyiKnKxUfjTGKcWTXONb0aZ7vZ18e-e3xsV_W22T0maVkOg1X5JXAzTHEe7I_mEGMNi8znk8m7If1m-dD2Q1Un8yH1yXUt7jeHY1_vN5_X_UvRphG4KC9Trjf7fhjv_mm7Te7um-2xTZN9cpfHMoZdmOUflmwa8xaLtIydKq7nzZN0HhVfvKr4pm93l9d_HpIuTxHVu_U-b1s2hOT5dSmjfPV2E5nHwosIWFw3QdPXf3WHh80-niZ5uqi-rePSt4_1sW330bZZulhklzUs1-3y4bE7F2ZMN577H5fr7Gbct2jiRbqYv-rP15sSUw8bEmvLsuqyIZ8OzX65vm330ZpjvQ_d7s3AUflm18bXzbb_8Th2-9_DWHGsisXiuk6fstttd-yzehm1Op3QaLxymlfpdwNcvzRUth7fjKVHmmVRZu-9sWsPn9sh12VzGBb2SzZUrVsNCT7su7-27Sp-fx7Km5ez_NLuY_hLNeKlaOJymOXNwXoYEijip3L-pk5_b8bqn6c7pfI8tkM5jb55U4lVt49cZ8NE0zcnLwpcnwKm0dNl_u2c_N9et7Gpz6c3prPrk7Vr-zoumk_dYeyfMp-XQ0gMmCdvD0t-uvqiUFU-NtqHccM9NImaVJMsex13nvbPvC5fljJEZZPinajPy3popHrdjlsR9cirYqzaJfLjhec3430xVHvMY7L4bobXrX4qQH3q-NjDuBiL6p18xjzGsPFurPJZ9n0u3WbZXkb90vXxkHxptk_D3j82x-OQTB6NFmV-Z_jx39TwVj3GpsVwXqrqu7zbU9r9Jsry9Hi-6eIKiq2rpsW3rfs9tja5-zqOmdz1h6f2NH49pjZ8uhkv1XOR0qT9Emf65afxIfY6tuB0kA9d1980h-V689hGst2pGMNQ92WxjGoNK93HNR7f_LsZLqNY7_h0_eZNtGT-U3ab3w7H8Bj7t2vimo6PbRz9u-nz8w8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwX3twQAIAAAAg6P_rfoQKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMBWxG8lIg-343c287b",
+   "name": "zip_bomb",
+   "why": "本體是合法存檔，後面補 5 MB 空白：沒有解壓上限就會被接受（代碼本身 < 8000 字元）"
+  },
+  {
+   "code": "RA1-eJzLyy9RyCrOz1NILFFIzMkBACyrBXo-c27f7ebc",
+   "name": "not_json",
+   "why": "解開後不是 JSON"
+  },
+  {
+   "code": "RA1-dGhpcyBpcyBub3QgemxpYiBkYXRh-62256486",
+   "name": "not_zlib",
+   "why": "不是 zlib 資料"
+  },
+  {
+   "code": "RA1-eJx9VcuS4jgQ_Jc6F4xK8kPyaU976dOcJyYUallgL36tLXoeHf73Ccngpg3MDYJUVlZWVvEOFopv3-DQmCMglK7t95M3o3clYMqRS1IMGbLvuIJaUzd6dKYEzFLkuRLJFeHNdAJ8h7qEAr6yHcGMMkeh0jx9huEwY66QSNxVqkxXvvb96VItJSROJDYoWwW9o57ObWvGXxcwz5Aoy55KEzCjSJAoyfMNYTmag9eH_tyVgJIhkRTqGU8CM2Yy1ko3PE3d6cn3w-BK3Zh2ABQikElagXUocSH7z4wwxyYpT5KHEF_bk_PB1SQP0pOtF4d6nLzu6mPlr6alSKTEWrKqOx_4DuemgeJgmskhdFDQjFmYQkZPLUthRq5QkFB8W5cA8wxJ3Thee9euz_8NosWCkA_9voyNBQjR1krTDrqpPYTGucpIbUNgvP7Rj6e6OwImhEp-9LHmdtCTcx1gxlAptvZgK2dPQ38xJsq1p8F_sRXbxbnNKBWq_Caft0OxxoeBZEiMyXUgr6PpbLV3nXdj9Hvs2ztihM60Dgowjf8yxbT_DFwpcq7U1qdXtm_6yTNtR2eWDZVIIiWJnwi2j4KzOr4EzDIkwQV79KJ149EFrdaMobEXFlzryyDw1PU_GlceXZBHSCKjNe4RfnXjhYUQi1DlbrFOQQBHEiK_8-lnHd2_lFukzDEOIhXZvRNl3znALBRK7zbPVkwvgFQhCfrYk7_N2nVl0K4i5XazWud1ZcbXfoz5EZSLAAFbEdwvCy2nj5AkxaA9xYU7lHAkmTB2i7uU_Z-0uLYSUCzhD1BHq0OQdOXiKLIUSfLo2op83jjt4r0IbkcdifpU4TbqiwF6SXwukKTg8oGeqCPC4m2UlLHPWvraupX1rfcOEN5Mcw6zH8w0BTGECQnKH9DHv6nwSkcs8rAvUn7S7RbZvm6dPg-XSzejYChkyj9G9x2hheI9ckLhx7Nb-HWUFj7t4lG9mITg3lznrz_FLzsKI1gWeex7vzOjrerBNebYL2YEqoPgVnAZOu1qe4ICftfhGMFg4rfty52tGP3D9rQPazjZyrUGCkKYnCuhSOc-6a1389bf",
+   "name": "truncated_zlib",
+   "why": "壓縮資料被截斷（但 CRC 對）"
+  },
+  {
+   "code": "RA1-eNp9VcuS4jgQ_BedBa2Hn5z2tJc97XliQqG2RePFtlhb9MxOB_8-WbJx0wY2uFh2qiorK6v4YBXbffvG9q19Y5zVrvPbMdghuJrxVHFVyFJw_L7zBdTZpjWDs0BkKVd5qZMrItjxyPgHa2q2Y3-LjWQXXuRcl2mePsMoYOQ25VLqu1QH29ev3h_ndKnkUgG3QlUHIjyY8dx1dvhvBqsMIbPsKTeNvGAuZZLnq4D1YPfB7P25R5xCAFPo8lmcBHGyIuZKV3Hapjdj8KeTq01ruxPjWlOwQi7AhlLMwf6xA2JRkTJPkoeQ0FRHF0jWJCfqyVqLfTOMwfTN2yFcRSNpS72kPDR9oHj7c9uy3d62o-OsZzuJMkoqQz6VLEVeVXKNTql1Xsl4DsXLG8Wb4Lrl-p9EWk-I4qHec9sEQaRcSwn5TNuAOQpXAJRrE9hgfvjh2PQ4JZKXxWcdi3FPZnSuh28FL0ux1FAdXHU8-VmYSBfn8FIdxCb2DS4ueZnf-PO2KUhNDUFtQhRLQ14H21eHrethzaj34Lu7wFDedg6vbRtexuj2nxQLc6XKcq3Tq9i2fgzCVNBqGlEYT6ey4F8CrC-RsibeROmgqZUWj250bnhzxLWyAxX2lyDVfE0Ej73_0boa3y8kr9SZXOwe4Vc1cAkm1pTlbrCOREDhk87vdPrZRPXndBOVS7SDTuGbOyVq34NrRonSu8mDwGYCpPC0lp9z8n-9dmjqZbqRZuvJ6lwwWDSvfoj-0TLXBEFAye6HRU67D0IVMhrtKY72UAJNikSIW9yc9l9p9LUUQolEPUC9VYaMZA4utgJ6yEJF1Rbk88LlJu4LUjvySMovGW6tPglgJsejh1iMqnjAJ_KIsLgbC5mJr1x8U7kl6rsPOLB3256p9yc7jkRGwmiQ-UH4-D9Ft0zEckXzUhRfeLuJdmggy_k0bzqsILSuSNVn676jtWz3EWOyXRjObopvIjV62sSlOovEmXvHTF8_xQN6jRZMgzx4HzZ2qA7NyYGsn8SgUHutKqhFlfZY43jzq6FlhHrjaX1zA0vKP8RWbmkMR_Svs1jTeHQY_V16ufwGV-QuMA-5b646345",
+   "name": "float_time",
+   "why": "時間欄位是浮點數"
+  },
+  {
+   "code": "RA1-eNp9VcuSozgQ_BedZbcePIRjYmJPe9nTnicmFDKWG9aAWJB7eqPD_74pgWk3tid8AZGqysrKKn-Qkux-_CDHxrwSSg62ddvRm8HbA6GpoELxglH8ftIF1Jq60YM1QGQpFXkhkyvCm_FE6AepD2RH_mYbTi5U5VQWaZ4-wwhg8oJyLu8yVaY77J07zdlSTrkAboUqq8B30OO5bc3w3wwWGUJm2VNqEmlBnPMkz1cBD4M5en105w5xFANGyeJZnARxMhVzpas4Td3p0bu-twfdmLYnVMoQTPEFWIcUc7B_zIBYoUieJ8lDiK_Lk_VB1SQP1JO1Fsd6GL3u6tfKX0VLASzkkrKqOx_iHc9NQ3ZH04yWko7sOMoIXcj4U8lS5BUFleiUWOflhOZQvLhRvPa2Xa7_GUjLCaEe6j23jQUI52spIZ9uajBH4QKAYm0C4_UvN5zqDm8Jp4X6rGPxba9HazvYltGiYEsNZWXLU-9mYSJdvPuXsmKb2DeYuKBFfuPP26YgdWgIamNMLQ3ZD6Yrq63tYM2o9-Dau8BQ3rQWx6bxL2N0-3uIhbESRbHWac-2jRs90yW0miYUxpMpV_RLgPWloKyON1E6aEoh2aMbrR1ebeBamiEU9hcLqrlDIHjq3K_GHvD9EuTlMuOL3SP8qgYuwcQyZLkbrFMgIPBJ5nc6vddR_TndROUS7SBT-OZOiYPrwDULidK7yYPAegKk8LTkn3Pyu15bNPUy3Uiz9WS11mssmr0bon8kz2WAICAn98PCp9UHoRSPRnuKC3sogSYqYewWN6f9l2t5LSWgWCIeoF5LHYykKxtbAT24ElG1Bfm8cL6J-yKoHXkkxZcMt1afBNCT49FDLEahHvCJPCIs7kbFM_aVi6tLu0R9cx4v5M0059D73oxjIMNhNMj8IHz8mwq3dMRSEeZFqS-87UTb15Dl3M-bDisIrVOp-GzdT7SW7D5iTLLzw9lO8XWkFp42canOIlFi3zDT10_xBb1GC6ZBHpzzGzOUVd1bkHWTGCHUUYoSaoVKO6xxnHzbf3__9rL_jpPexJP17Q1syf9gW74Noziih63Bqsajxfjv0svlf8VBLrU-54a46c95",
+   "name": "nick_xss",
+   "why": "暱稱含 HTML"
+  },
+  {
+   "code": "RA1-eNp9VU2TmzoQ_C86y44--BA-5fQu7_TOqZRKC_JCDIgH8iapLf_3tARmvdiOfbGgNdPT0zN-JyU5fPtGjq15JZRUtnP7yZvR24rQVFCheMEovt_pCupM0-rRGiCylIq8kMkV4c10IvSdNBU5kP_YjpMLVTmVRZqnzzACmLygnMu7TLXpqxfnTku2lFMugNugyjrwHfV07joz_l7AIkPILHtKTSItiHOe5PkmYDWao9dHd-4RRzFglCyexUkQJ1MxV7qJ0za9nrwbBlvp1nQDoVKGYIqvwCakWIL9MCNihSJ5niQPIb4pT9YHVZM8UE-2WhybcfK6b15rfxUtBbCQa8q66X2Idzy3LTkcTTtZSnpy4CgjdCHjTyVLkVcUVKJTYpuXE5pD8eJG8cbbbr3-TyAtZ4R6qPfSNhYgnG-lhHy6bcAchQsAiq0JjNc_3XhqepwSTgv1Ucfq20FP1vawLaNFwdYaytqWp8EtwkS6OPsvZc12sW8wcUGL_Maft01B6tAQ1MaYWhvyMpq-rPe2hzWj3qPr7gJDedNZPDat_zJFt_8KsTBWoii2Or2wfesmz3QJreYJhfFkyhX9FGB7KSir402UDppSSPboRmfHVxu4lmYMhf3LgmquCgRPvfvZ2grvL0FeLjO-2j3Cr2rgEkwsQ5a7wToFAgKvZH6n068mqr-km6lcoh1kCt_cKVG5HlyzkCi9mzwIrGdACk9L_jEnf-u1RVMv8400205WZ73GonlxY_SP5LkMEATk5H5Y-Lz6IJTi0WhPcWEPJdBEJYzd4pa0_3Mtr6UEFEvEA9RrqYORdG1jK6AHVyKqtiKfF853cV8EtSOPpPiU4dbqswB6djx6iMUo1AM-kUeExd2oeMY-c3FNadeob87jQN5Mew69H8w0BTIcRoPMD8LHv6lwS0csFWFelPrE2860fQNZzsOy6bCC0DqVio_WfUdryeE9xiQHP57tHF9HauHXLi7VRSRK7Btm-voqHtBrtGAe5NE5vzNjWTeDBVk3ixFCHaUooVaotMcaD0N_-8HjwcTH2xA7eJN_ZXu-D_M4oZGdwb7GT4sdcEgvlz_30TFD-bbca16eb",
+   "name": "nick_too_long",
+   "why": "暱稱 13 字"
+  },
+  {
+   "code": "RA1-eNp9VcuSmzAQ_BedZa8ePIRPOeWSU86plEoL8kIMyAF589jyv6clMOvFdsoXBK2Znp6e8Rspye7bN7JvzQuhpLKd247eDN5WhKaCCsULRvH7ThdQZ5pWD9YAkaVU5IVMLghvxgOhb6SpyI58ZRtOzlTlVBZpnj7CCGDygnIubzLVpq-enTvM2VJOuQBuhSrrwHfQ46nrzPBnBosMIbPsITWJtCDOeZLnq4DVYPZe792pRxzFgFGyeBQnQZxMxVzpKk7b9Hr07ni0lW5NdyRUyhBM8QXYhBRzsB9mQKxQJM-T5C7EN-XB-qBqkgfqyVqLfTOMXvfNS-0voqUAFnJJWTe9D_H2p7Ylu71pR0tJT3YcZYQuZPyhZCnyioJKdEqs83JCcyheXCneeNst1z8H0nJCqLt6z21jAcL5WkrIp9sGzFG4AKBYm8B4_csNh6bHKeG0UO91LL496tHaHrZltCjYUkNZ2_JwdLMwkS7O_qms2Sb2DSYuaJFf-fO6KUgdGoLaGFNLQ54H05f11vawZtR7cN1NYChvOovXpvVPY3T77xALYyWKYq3TM9u2bvRMl9BqmlAYT6Zc0Q8B1peCsjreROmgKYVk9250dnixgWtphlDYFxZUc1UgeOjdr9ZW-H4O8nKZ8cXuEX5RA5dgYhmy3AzWIRAQ-CTzG51-N1H9Od1E5RztIFP45kaJyvXgmoVE6c3kQWA9AVJ4WvL3Oflfry2aep5upNl6sjrrNRbNsxuifyTPZYAgICe3w8Kn1QehFI9Ge4gLeyiBJiph7Bo3p_3JtbyUElAsEXdQL6UORtK1ja2AHlyJqNqCfFw438R9EdSOPJLiQ4Zrq08C6Mnx6CEWo1B3-EQeERZ3o-IZ-8jFNaVdor46jwN5Ne0p9P5oxjGQ4TAaZL4TPv5NhVs6YqkI86LUB952ou0byHI6zpsOKwitU6l4b913tJbs3mJMsvPDyU7xdaQWnjZxqc4iUWJfMdOXT_GAXqMF0yAPzvmNGcq6OVqQdZMYIdReihJqhUp7rHG8-duEZYR642l9cwNL8k9sy7dhDEf0rzNY03i0GP3dhp_P_wBdAC41-0dc06930",
+   "name": "seed_negative",
+   "why": "種子為負"
+  },
+  {
+   "code": "RA1-eNp9VcuSozgQ_BedZbcePCSf9rSXPe15YkKhBrnNGpAX5J7Z6fC_T0pg2o3tDV8QpKqysrLKH6Qiu2_fyL61b4SS2nV-OwY7BFcTmgsqFNeM4vedLqDONq0ZnAWiyKkotcyuiGDHI6EfpKnJjvzNNpxcqCqp1HmZP8MIYEpNOZd3mQ62r1-9P87Zck65AG6Fqg6R72DGc9fZ4b8ZLAqELIqn1CTSgjjnWVmuAtaD3Qez9-cecRQDRkn9LE6GOIVKufJVnLbpzRj86eRq09ruRKiUMZjiC7CJKeZg_9gBsWKRvMyyh5DQVEcXoqpZGalnay32zTAG0zdvh3AVLQdQyyXloelDjLc_ty3Z7W07Okp6suMoI3ah4E8ly5FXaCrRKbHOywktobi-UbwJrluu_xlJywmhHuo9t41FCOdrKSGfaRswR-ECAL02gQ3mhx-OTY9TxqlWn3Usvj2Z0bketmVUa7bUUB1cdTz5WZhEF-fwUh3YJvUNJtZUlzf-vG0KUseGoDbG1NKQ18H21WHrelgz6T347i4wlLedw2vbhpcxuf1njIWxElqvdXpl29aPgZkKWk0TCuPJnCv6JcD6UlTWpJsoHTSlkOzRjc4Nby5yrewQC_uLRdV8HQkee_-jdTW-X6K8XBZ8sXuCX9XAJZhYxix3g3WMBAQ-yfJOp59NUn9ON1G5JDvIHL65U6L2PbgWMVF-N3kQ2EyAHJ6W_HNO_q_XDk29TDfyYj1ZnQsGi-bVD8k_kpcyQhCQk_th4dPqg1CKJ6M9xcU9lEETlTF2i5vT_suNvJYSUSwTD1BvlYlGMgeXWgE9uBJJtQX5vHC-Sfsiqp14ZPpLhlurTwKYyfHoIRajUA_4JB4Jlnaj4gX7ysU3lVuivvuAA3m37Tn2_mTHMZLhMBpkfhA-_U3FWyZhqYjzotQX3m6iHRrIcj7Nmw4rCK1Tufhs3Xe0luw-UkyyC8PZTfFNohafNmmpziJR4t4x09dP6YBeowXTIA_eh40dqkNzciDrJzFiqL0UFdSKlfZY43jzq4nLCPWm0_rmBpbkf7At38YxHNG_zmJN49Fh9HeZ0JkuSuzCy-U30mAv8Q-3a751dcb",
+   "name": "seed_huge",
+   "why": "種子超過 32 位元"
+  },
+  {
+   "code": "RA1-eNp9VU1zozgU_C86yw6S-BA-7Wkve9rz1JRKATlmDcgLcmZ2Uv7v009g4mB7K5cArX79-rWeP1jFdt--sX1r3xhntev8dgx2CK5mPJNcalEmHH_f-QLqbNOawVkg8ozLolTpFRHseGT8gzU127G_k41gF64LrsqsyJ5hJDBFyYVQd5UOtq9fvT_O1TLBhQRuhaoOpHcw47nr7PDfDJY5KPP8qTSFshAuRFoUK8J6sPtg9v7cg0cnwGhVPuNJwZPrWCtb8bRNb8bgTydXm9Z2J8aVIjItFmBDJWayf-wALmpSFGn6EBKa6ugCuZoWJD1de7FvhjGYvnk7hKtpGYClWkoemj4Q3_7ctmy3t-3oOOvZTqANmkIunlqWoa4sucKk5LquYLyA4-WN401w3XL8TxKtJoR-6Pc8toQgQqythH2mbaAcjUsAynUIbDA__HBsejylgpf6s48ltyczOtcjtgkvy2TpoTq46njyszFRLp7DS3VINnFuCHHJy-Imn7dDQWkaCHpLEr0M5HWwfXXYuh7RjH4PvrsjhvO2c3ht2_AyxrT_JC5cK1mWa59ek23rx5CYCl5NNxTBU5nQ_AvB-hA5a-JJtA6ZSqrk0YnODW-OtFZ2oMb-Ssg1X5PAY-9_tK7G9wvZK1QulrhH-NUNHEKIFVW5u1hHEiDxSRV3Pv1sovtzuUnKJcZBZcjNnRO176E1p0LZ3c2DwWYCZMi0Ep_35P9m7TDUy3Qiy9c3q3PBYNG8-iHmR4lCEQSEgt1fFjGtPhilRQzaUxztoRSe6DRJbnFz2X-FUddWCJWk8gHqrTIUJHNwcRTwQ2gZXVuQzxsXm7gvyO2oIy2_VLiN-mSAmRKPGWIxSv1AT9QRYXE3apEnX7X4pnIL67sPeGDvtj3T7E92HEmMQNBg8wP6-DNFp0zEckn3Resvut0kOzSw5XyaNx1WEEanM_k5uu8YLdt9RE62C8PZTfwmSqP_NnGpziZx5t5xp6-f4gNmTa8b7FOBWUw3evA-bOxQHZqTg2o_uUKceyUr2EYt99jnePOroa2ExuPT-uQG2RR_JFuxpfs4YpCdjZWwzMCXXS6_Ab5eMJc-8ba76e62",
+   "name": "unknown_meta_key",
+   "why": "meta 有不認得的鍵"
+  },
+  {
+   "code": "RA1-eNp9VcuSozgQ_BedZTeSeAif9rSXPe15YkKhBrlhDcgLcs_sdPjfJ0vYtBvbG74gSFVlZWWVP1jFdt--sX1n3xhntev9dgp2DK5mPJNcalEmHL_vfAH1tu3M6CwQecZlUar0igh2OjD-wdqa7djfyUawM9cFV2VWZM8wEpii5EKou0yNHepX7w-XbJngQgK3QlUN8R3NdOp7O_53AcscIfP8KTWFtCAuRFoUq4D1aPfB7P1pQBydAKNV-SxOiji5jrmyVZyuHcwU_PHoatPZ_si4UhRMiwXYUopLsH_siFhUpCjS9CEktNXBBVI1LYh6utZi345TMEP71oSraBmApVpSNu0QKN7-1HVst7fd5Dgb2E6gDOpCLp5KliGvLLlCp-Q6r2C8gOLljeJtcP1y_U8irWaEfqj3pW0JQYRYSwn5TNeCOQqXAJRrE9hgfvjx0A44pYKX-rOOxbdHMzk3wLYJL8tkqaFqXHU4-oswkS7O4aVqkk3sG0xc8rK48edtU5CaGoLakkQvDXkd7VA1WzfAmlHv0fd3gaG87R1e2y68TNHtPykWxkqW5Vqn12Tb-SkkpoJW84TCeCoTmn8JsL5Eypp4E6WDppIqeXSjd-ObI66VHamwvxJSzddE8DD4H52r8f1M8gqVi8XuEX5VA5dgYkVZ7gbrQAQkPqniTqefbVT_km6mco52UBl8c6dE7QdwzSlRdjd5ENjMgAyeVuJzTv6v1w5NPc83snw9Wb0LBovm1Y_RP0oUiiAIKNj9sIh59UEoLaLRnuJoD6XQRKdJcou7pP1XGHUthVBJKh-g3ipDRjKNi62AHkLLqNqCfF642MR9QWpHHmn5JcOt1WcBzOx49BCLUeoHfCKPCIu7UYs8-crFt5Vbor77gAN7t92Jen-000RkBIwGmR-Ej39TdMtELJc0L1p_4e1m2qGFLKfjZdNhBaF1OpOfrfuO1rLdR4zJdmE8uTm-idToaROX6kUkztw7Zvr6KR7Qa7RgHmQfGpp3UoDu75WsIBGVN2B3482vljYQioyn0fuwsWPVtEeH2vwGPhR_JFuxpdmb0LTeYjfj0WHed9n5_BvsuCm--25b15ee0",
+   "name": "wrong_game",
+   "why": "game 不符"
+  },
+  {
+   "code": "RA1-eNp9VU13ozgQ_C86yx598CF82tNe5jTnvDw9BeTAGpAH5CSzef7vWxKYONje5wuCUnd1dXX7k5Rk9_RE7IctCSWV7dx29GbwtiI0FVQoXjCK3zN9IvvWvALUmabVgzVAZCkVeSGTC8Kb8UDoJ2kqsiO_2IaTM1U5lUWap48wApi8oJzLm0y16asX5w5ztpRTLoBboco68B30eOo6M_yZwSJDyCx7SE0iLYhznuT5KmA1mL3Xe3fqEUcxYJQsHsVJECdTMVe6itM2vR69Ox5tpVvTHQmVMgRTfAE2IcUc7B8zIFYokudJchfim_JgfVA1yQP1ZK3FvhlGr_vmtfYX0VIAC7mkrJveh3j7U9uS3d60o6WkJzuOMkIXMv5QshR5RUElOiXWeTmhORQvrhRvvO2W638H0nJCqLt6z21jAcL5WkrIp9sGzFG4AKBYm8B4_e6GQ9PjlHBaqK86Ft8e9WhtD9syWhRsqaGsbXk4ulmYSBdn_6Os2Sb2DSYuaJFf-fO6KUgdGoLaGFNLQ14G05f11vawZtR7cN1NYChvOovXpvU_xuj2jxALYyWKYq3TC9u2bvRMl9BqmlAYT6Zc0W8B1peCsjreROmgKYVk9250dni1gWtphlDYTxZUc1UgeOjde2srfD8HebnM-GL3CL-ogUswsQxZbgbrEAgIfJL5jU4fTVR_TjdROUc7yBS-uVGicj24ZiFRejN5EFhPgBSelvxrTv6v1xZNPU830mw9WZ31GovmxQ3RP5LnMkAQkJPbYeHT6oNQikejPcSFPZRAE5Uwdo2b0_7mWl5KCSiWiDuo11IHI-naxlZAD65EVG1BPi6cb-K-CGpHHknxLcO11ScB9OR49BCLUag7fCKPCIu7UfGMfefimtIuUd-cx4G8mfYUen804xjIcBgNMt8JH_-mwi0dsVSEeVHqG2870fYNZDkd502HFYTWqVR8te4ZrSW7zxiT7PxwslN8HamFp01cqrNIlNg3zPTlUzyg12jBNMiDc35jhrJujhZk3SRGCLWXooRaodIeaxxv_m3CMkK98bS-uYEl-V9sy7dhDEf0rzNY03i0GP1dej7_B4Q6Lhc-87497169",
+   "name": "unknown_kind",
+   "why": "commit 種類不在清單"
+  },
+  {
+   "code": "RA1-eNp9VcuSozgQ_BedZbcePCSf9rSXPe15YkKhBrnNGpAX5J7Z6fC_T0pg2o3tDV8QpKqysrLKH6Qiu2_fyL61b4SS2nV-OwY7BFcTmgsqFNeM4vedLqDONq0ZnAWiyKkotcyuiGDHI6EfpKnJjvytN5pcqCqp1HmZP8awjQCm1JRzeZfpYPv61fvjnC3nlAvgVqjqEPkOZjx3nR3-m8GiQMiiyJ6llUgL4pxnZbkKWA92H8zen3vEUQwYJfWzOBniFCrlyldx2qY3Y_Cnk6tNa7sToVLGYIovwCammIP9YwfEikXyMsseQkJTHV3ggGVlpJ6ttdg3wxhM37wdwlW0HEAtl5SHpg8x3v7ctmS3t-3oKOnJjqOM2IWCP5UsR16hqUSnxDovJ7SE4vpG8Sa4brn-ZyQtJ4R6qPfcNhYhnK-lhHymbcAchQsA9NoENpgffjg2PU4Zp1p91rH49mRG53rYllGt2VJDdXDV8eRnYRJdnMNLdWCb1DeYWFNd3vjztilIHRuC2hhTS0NeB9tXh63rYc2k9-C7u8BQ3nYOr20bXsbk9p8xFsZKaL3W6ZVtWz8GZipoNU0ojCdzruiXAOtLUVmTbqJ00JRCskc3Oje8uci1skMs7C8WVfN1JHjs_Y_W1fh-ifJyWfDF7gl-VQOXYGIZs9wN1jESEPgkyzudfjZJ_TndROWS7CBz-OZOidr34FrERPnd5EFgMwFyeFryzzn5v147NPUy3ciL9WR1Lhgsmlc_JP9IXsoIQUBO7oeFb6LfMehc8WS0p7i4hzJoojLGbnFz2n-5kddSIopl4gHqrTLRSObgUiugB1ciqbYgnxfON2lfRLUTj0x_yXBr9UkAMzkePcRiFOoBn8QjwdJuVLxgX7n4pnJL1HcfcCDvtj3H3p_sOEYyHEaDzA_Cp7-peMskLBVxXpT6wttNtEMDWc6nedNhBaF1KhefrfuO1pLdR4pJdmE4uym-SdTi0yYt1VkkStw7Zvr6KR3Qa7RgGuTB-7CxQ3VoTg5k_SRGDLWXooJasdIeaxxvfjVxGaHedFrf3MCS_A-25ds4hiP611msaTw6jP4uv1x-A6zLLh0-efe583d5",
+   "name": "unknown_task_id",
+   "why": "任務 id 不在清單"
+  },
+  {
+   "code": "RA1-eNp9VU2TmzoQ_C86y44--BA-vdO75PTOqZRKC7IhBuSAvNmXLf_3tARmvdhO-WJBa6anp2d4JyXZfftG9q05EEoq27nt6M3gbUVoKqhQvGAUv-90AXWmafVgDRBZSkVeyOSK8GY8EvpOmorsyH9swwF_Izt-oSqnskjz9BlSkAvNC8q5vMtXm756ce4450w55QK4FaqsA-tBj-euM8P_M1hkCJllTwlKpAV9zpM8XwWsBrP3eu_OPeIoBoySxbM4CeJkKuZKV3Haptejd6eTrXRruhOhUoZgii_AJqSYg_0wA2KFInmeJA8hvimP1nPAkjxQT9Za7Jth9LpvDrW_ipYCWMglZd30PsTbn9uW7PamHS0lfexUFrqQ8aeSpcgrCirRKbHOi37nULy4Ubzxtluu_xtIywmhHuo9t40FCOdrKSGfbhswR-ECgGJtAuP1Lzccmx6nhNNCfdSxuPekR2t7mJfRomBLDWVty-PJzcJEujj7L2XNNrFvMHFBi_zGn7dNQerQENTGmFoa8jKYvqy3toc1o96D6-4CQ3nTWTw2rf8yRre_hVgYLlEUa51e2LZ1o2e6hFbTnMJ4MuWKfgqwvhSU1fEmSgdNKSR7dKOzw8EGrqUZQmFfWVDNVYHgsXe_Wlvh_SXIy2XGF7tH-FUNXIKJZchyN1jHQEDglczvdHprovpzuonKJdpBpvDNnRKV68E1C4nSu8mDwHoCpPC05B9z8rdeWzT1Mt1Is_VkddZrLJoXN0T_SJ7LAEFATu6HhW-C3zHoXPFotKe4sIcSaKISxm5xc9qfXMtrKQHFEvEAdSh1MJKubWwF9OBKRNUW5PPC-Sbui6B25JEUnzLcWn0SQE-ORw-xGIV6wCfyiLC4GxXP2GcurintEvXVeRzIq2nPofcnM46BDIfRIPOD8PFjFW7piKUizItSn3jbibZvIMv5NG86rCC0TqXio3Xf0Vqye48xyc4PZzvF15Fa-LeJS3UWiRL7ipm-voqH-LE7TIM8OOc3Zijr5mRB1k1ihFB7KUqoFSrtscbx5HcTlhHqjaf1zQ0syf9hW74NYziif53BmsZfi9HfpZfLH5T-L18-39569e77",
+   "name": "extra_data_key",
+   "why": "data 多一個鍵"
+  },
+  {
+   "code": "RA1-eNp9VMuSmzAQ_JWUzrKjBw_hSqWSHHLJKedUSqUFeSEGRIS8eWz53zMjMOvFdooLgtZMT0_PPJOS7L59I_vWPBJKPr759G4sfTOE94SmggrFC0bh-U4XTGeaVntrKkKzlIq8kMkZEcx4IPSZNBXZka9sw8mJqpzKIs3TexgBmLygnMurTLXpqwfnDnO2lFMuALdClbXxwXo9HrvO-D8zWGQQMsvuUpOQFohznuT5KmDlzT7ovTv2EEcxwChZ3IuTQJxMxVzpKk7b9HoMbhhspVvTDYRKicEUX4ANppiD_TAeYmGRPE-Sm5DQlAcbUNUkR-rJWot948eg--axDmfRUgAWcklZN33AePtj25Ld3rSjpaQnOw5lYBcyfleyFPKKgkrolFjn5YTmoHhxoXgTbLdc_4yk5YRQN_We28YQwvlaSpBPtw0wh8IFAIq1CUzQv5w_ND2cEk4L9VLH4ttBj9b2YFtGi4ItNZS1LQ-Dm4WJdOEc3pY128S-gYkLWuQX_rxsCqTGhkBtjKmlIQ_e9GW9tT1YM-rtXXcVGJQ3nYXPpg1vx-j23xgLxkoUxVqnB7Zt3RiYLkGrYLG5YDyZckVfBVhfQmV1vAmlA00pJLt1o7P-0SLX0ngs7AtD1VyFBA-9-9XaCv6fUF4uM77YPcLPasAlMLHELFeDdUACAn7J_Eqn301Uf043UTlFO8gUfHOlROV64JphovRq8kBgPQFS8LTkL3Pyv15baOppupFm68nqbNCwaB6cj_6RPJcIgYCcXA8Ln1YfCKV4NNpdHO6hBDRRCWOXuDntT67luRREsUTcQD2WGo2kaxtbAXpwJaJqC_J-4XwT9wWqHXkkxasMl1afBNCT46GHsBiFusEn8oiwuBsVz9hrLq4p7RL1yQU4kCfTHrH3gxlHJMPBaCDzjfCV7dwWb-mIpQLnRalXvO1EOzQgy3GYNx2sIGidSsVL675Da8nuOcYku-CPdoqvIzV828SlOotEiX2CmT7_igfoNbRgGmTvXNgYX9bNYIGsm8TAUHspSlALK-1hjcOXvw0uI6g3ntY3N2BJ_oFt-RbHcIT-dQbWNLxaGP1dejr9A8bZLPQ-862e5e7d",
+   "name": "bad_flag_name",
+   "why": "旗標名不合規則"
+  },
+  {
+   "code": "RA1-eNp9VU2XozYQ_C86y1598CF8yimXnHLet09PBnkgBkRAnt1knv97SgIzHmzn-YKg1F1dXd3-ICU5fP9OTq15I5RUtnP7yZvR24rQVFCheMEofj_oCupM0-rRGiCylIq8kMkN4c10JvSDNBU5kD_ZjpMrVTmVRZqnrzACmLygnMuHTLXpq6Nz5yVbyikXwG1QZR34jnq6dJ0Z_1nAIkPILHtJTSItiHOe5PkmYDWak9cnd-kRRzFglCxexUkQJ1MxV7qJ0za9nrwbBlvp1nQDoVKGYIqvwCakWIL9ZUbECkXyPEmeQnxTnq0PqiZ5oJ5stTg14-R137zV_iZaCmAh15R10_sQ73RpW3I4mXaylPTkwFFG6ELGX0qWIq8oqESnxDYvJzSH4sWd4o233Xr990Bazgj1VO-lbSxAON9KCfl024A5ChcAFFsTGK9_uvHc9DglnBbqs47Vt4OerO1hW0aLgq01lLUtz4NbhIl0cfbfyprtYt9g4oIW-Z0_75uC1KEhqI0xtTbkOJq-rPe2hzWj3qPrHgJDedNZvDat_zZFt_8KsTBWoii2Oh3ZvnWTZ7qEVvOEwngy5Yp-CbC9FJTV8SZKB00pJHt2o7Pjmw1cSzOGwv5gQTVXBYLn3v1sbYXv1yAvlxlf7R7hNzVwCSaWIcvDYJ0DAYFPMn_Q6VcT1V_SzVSu0Q4yhW8elKhcD65ZSJQ-TB4E1jMghacl_5yT_-u1RVOv8400205WZ73Gojm6MfpH8lwGCAJy8jgsfF59EErxaLSXuLCHEmiiEsbucUvav7mWt1ICiiXiCeqt1MFIuraxFdCDKxFVW5GvC-e7uC-C2pFHUnzJcG_1WQA9Ox49xGIU6gmfyCPC4m5UPGNfubimtGvUd-dxIO-mvYTeH52vAxkOo0HmJ-Hj31S4pQczTVgaYV6U-sLbzrR9A1kuw7LpsILQOpWKz9b9QGvJ4SPGJAc_XuwcX0dq4WkXl-oiEiX2HTN9-xQP6DVaMA_y6JzfmbGsm8GCrJvFCKFOUpRQK1TaY43jzb9NWEZkMPG0vbmDJflvbM_3YQwn9K8zWNN4tBj9Q3q9_gcj8i4C-ed0ceffc",
+   "name": "bad_vote_value",
+   "why": "投票值不合規則"
+  },
+  {
+   "code": "RA1-eNp9VU2XozYQ_C86y1598CH5lFMuOeW8b5-eBuSBGJAD8uwm8_zfUxKYmcF2ni8ISt3V1dXtd1KRw_fv5NjZV0JJ7Xq_n4Idg6sJzQUVimtG8ftBV1Bv286MzgJR5FSUWmY3RLDTidB30tbkQP5kO06uVJVU6rzMn2EEMKWmnMu7TI0d6hfvT0u2nFMugNugqibyHc106Xs7_rOARUF3_FlOiZxgzXlWlpto9WiPwRz9ZUAQxYBRUj-LkyFOoYApinwTp2sHMwV_PrvadLY_EyplDKZWUsc2pliC_WVHxIoV8jLLHkJCW51ciJJmZaSebYU4tuMUzNC-NuGmWA6glmvKph1CjHe8dB05HG03OUoGcuAoI7ag4E9bmSOv0FSiTWKblxNaFpTrolivt8H16_XfI2k5I9RDvZeesQjhfCsl5DNdC-YoXACgtw6wwfz046kdcMo41eqjjtW0ZzM5N8CzjGrN1hqqxlWns1-ESXRxDt-qhu1S3-BgTXX5yZyfm4LUsSGojTG1NuRltEPV7N0AXya9R9_fBYbytnd4bbvwbUpW_xVjYaaE1ludXti-81NgpoJW83jCeDLnin4JsL0UlTXpJkoHTSkke3Sjd-Ori1wrO8bC_mBRNV9HgqfB_-xcje_XKC-XBV_tnuA3NXAJJpYxy91gnSIBgU-yvNPpV5vUX9LNVK7JDjKHb-6UqP0ArkVMlN9NHgQ2MyCHpyX_mJP_67VDU6_zjbzYTlbvgsGWefFj8o_kpYwQBOTkflj4vPcglOLJaE9xcQ9l0ERljH3GLWn_5kbeSokolokHqNfKRCOZxqVWQA-uRFJtRT4vnO_SvohqJx6Z_pLhs9VnAczsePQQi1GoB3wSjwRLu1Hxgn3l4tvKrVHffMCBvNnuEnt_ttMUyXAYDTI_CJ_-o-Itk7BUxHlR6gtvN9MOLWS5nJdNhxWE1qlcfLTuB1pLDu8pJjmE8eLm-CZRi0-7tFQXkShxb5jp26d0QK_RgnmQR-_Dzo5V054dyPpZjBjqKEUFtWKlA9Y43vzbxmWEetNpe3MHS_Lf2J7v4xhO6F9vsabx6DD6h_x6_Q8Oay1o-e63fd0f8",
+   "name": "time_backwards",
+   "why": "r 倒退（差 1 毫秒）"
+  },
+  {
+   "code": "RA1-eNp9VU2XozYQ_C86y14k8SF8yimXnHLet09PA_JADMgBeXaTef7vqRaYmcF27IsFpe7q6ur2O6vY4ft3duzsK-Osdr3fT8GOwdWMZ5JLLcqE4_uDr6Detp0ZnQUiz7gsSpXeEMFOJ8bfWVuzA_sz2Ql25brgqsyK7BlGAlOUXAh1l6mxQ_3i_WnJlgkuJHAbVNUQ39FMl7634z8LWOZcJLfPs9wKucFeiLQoNlHr0R6DOfrLgGA6AUar8lmcFHFyDUyeZ5s4XTuYKfjz2dWms_2ZcaUomBYrsKUUS7C_7IhYVKko0vQhJLTVyQWSNi2IeroV5NiOUzBD-9qEm3IZgKVaUzbtECje8dJ17HC03eQ4G9hBoAxqRS6etjRDXllyhXbJbV7BeAHZyzxfr7fB9ev134m0mhH6od5L7xKCCLGVEvKZrgVzFC4BKLdOsMH89OOpHXBKBS_1Rx2rec9mcm6AdxNelslaQ9W46nT2izCRLs7hW9Uku9g3OLnkZfHJpJ-bgtTUkGg6vTbkZbRD1ezdAH9GvUff3wWG8rZ3eGy78G2Klv9FsTBbsiy3Or0k-85PITEVtJrHFMZTmdD8S4DtJVLWxJsoHTSVVMmjG70bXx1xrexIhf2RkGq-JoKnwf_sXI33V5JXqFysdo_wmxq4BBMrynI3WCciIPFKFXc6_Wqj-ku6mco12kFl8M2dErUfwDWnRNnd5EFgMwMyeFqJjzn5v147NPU638jy7WT1Lhhsmxc_Rv8oUSiCIKBg98Mi5v0HobSIRnuKoz2UQhOdxl214pa0fwujbqUQKknlA9RrZchIpnGxFdBDaBlVW5HPCxe7uC9I7cgjLb9k-Gz1WQAzOx49xGKU-gGfyCPC4m7UIk--cvFt5daobz7gwN5sd6Hen-00ERkBo0HmB-HjfxXdMhHLJc2L1l94u5l2aCHL5bxsOqwgtE5n8qN1P9BadniPMdkhjBc3xzeRGv3axaW6iMSZe8NM317FA3qNFsyDPHofdnasmvbsQNbPYlCoo5IV1KJKB6xxPPm3pWWEeuNpe3MHS4rfkr3Y0xhO6F9vsabx02H0D9n1-h9mFy7r-422d05d8",
+   "name": "r_too_large",
+   "why": "r 超過 45 分鐘"
+  },
+  {
+   "code": "RA1-eNp9VcuS4jgQ_BedBa2Hn5z2tJc97XliQqG2RePFtlhb9MxOB_8-WbJx0wY2uCA7VZWVlVX-YBXbffvG9q19Y5zVrvPbMdghuJrxVHFVyFJw_L7zBdTZpjWDs0BkKVd5qZMrwvV4-MFC0zlzPrHd3raju3CJ34wIdjwSpKnZjv0tNpJdeJFzXaZ5-gyjgMlLLqW-43Kwff3q_XHmkyKTAm6Fqg5U0WDGc9fZ4b8ZrDKEzLLkWVqNtChNyiTPVwHrwe6D2fsz1VsIYApdPouTIE5WxFzpKk7b9GYM_nRytWltd2JcawpWLHrtm0nSGOwfOyAWFSnzJHkICU11dIFUTXKinqy12DfDGEzfvB3CVbQUwFIvKQ9NHyje_ty2cws569lOogzqQiafSpYiryq5RqfUOq9kPIfi5Y3iTXDdcv1PIq0nRPFQ77ltgiBSrqWEfKZtwByFKwDKtQlsMD_8cGx6nBLJy-KzjsXZJzM618PYgpelWGqoDq46nvwsTKSLc3ipDmIT-wYTl7zMb_x52xSkpoagNiGKpSGvg-2rw9b1sGbUe_DdXWAobzuHx7YNL2N0-0-KhcFTZbnW6VVsWz8GYSpoNc0wjKdTWfAvAdaXSFkTb6J00NRKi0c3Oje8OeJa2YEK-0uQar4mgsfe_2hdjfcXklfqTC52j_CrGrgEE2vKcjdYRyKg8Erndzr9bKL6c7qJyiXaQafwzZ0Ste_BNaNE6d3kQWAzAVJ4WsvPOfm_XtN-u0w30mw9WZ0LBovm1Q_RP1rmmiAIKNn9sMhp9UGoQkajPcXRHkqgSZEIcYub0_4rjb6WQiiRqAeot8qQkczBxVZAD1moqNqCfF643MR9QWpHHkn5JcOt1ScBzOR49BCLURUP-EQeERZ3YyEz8ZWLbyq3RH33AQf2btsz9f5kx5HISBgNMj8IHz9kdMtELFc0L0XxhfeTjxWcr4tUfbbuO1rLdh8xJtuF4eym-CZSo3-buFRnkThz75jp66t4QK_RgmmQB-_Dxg7VoTk5kPWTGBRqr1UFtajSHmscT341tIxQbzytb25gSfmH2MotjeGI_nUWaxp_HUZ_l14uvwF6mjh9-56b01ed1",
+   "name": "end_not_last",
+   "why": "end 不是最後一個"
+  },
+  {
+   "code": "RA1-eNrtm8uSmzAQRf9Fa9mjBw_hVVbZZJV1KqXSgDwQA3JAnjym_O9pCcx4sJ0v6PLG-Fx1t263tMJvpCS7b9_IvjUvhJLKdm47ejN4WxGaCioULxiFz3e6iDrTtHqwBhSMIkSIECFChAgRIkSIECFChAgRIkSIECFChAgRIkSIECFChAgRIkSIECFChAgRIkSIECHCG5ilVOSFTC4Kb8YDoW-kqciOfGUbTs5U5VQWaZ4-0gjQ5AXlXN681l2bvnp27jBnSznlAnQrVVmHl8MHPZ66zgx_ZrHIIGSWPSxNQloonPMkz1cBq8Hsvd67Uw9xFAONksWjOAnEyVTMla7itE2vR--OR1vp1nRHQqUMwRRfhE1IMQf7YQaIFTbJ8yS5K_FNebA-uJrkofRk7cW-GUav--al9hfTUhAWcklZN70P8fantiW7vWlHS0lPdhy2EbqQ8YeWpZBXFFRCp8Q6Lyc0B8eLK8cbb7tl-edQtJwU6q7fc9tYkHC-thLs020DlcPGBQiK9RAYr3-54dD08JRwWqj3fSxze9SjtT2MLaNFwZY9lLUtD0c3GxPLhWf_VNZsE_sGQ1zQIr-az-umQOrQENgbY2ppyPNg-rLe2h5GM_o9uO4mMDhvOgs_m9Y_jXHaf4dYcKxEUax9embb1o2e6RK8mv4OAYMnU67ohwDrRcFZHVfC1qFMKSS7t6Kzw4sNtZZmCBv7woJrrgoFHnr3q7UV8HOwl8uML-Me5Rc3YBEMsQxZbg7WIRQgAMn8xqffTXR_TjeVco7jIFOYmxsnKtdDrVlIlN6cPDBYT4IUZlry93Pyv15baOp5WpFm65PVWa_honl2Q5wfyXMZJBCQk9vDwqerD4xSPA7aQ124hxLwRCWMXevmtD-5lpetBBVLxB3VS6nDIOnaxlaAH1yJ6NqifLxxvon3RXA71pEUHzJcj_pkgJ4mHnoIF6NQd-qJdURZvBsVz9jHWlxT2iXqq_PwQF5Newq9P5pxDMVwGDSw-U74-J-gsEpHLRXhvCj1oW47le0bsOV0nG86uIKgdSoV7637Dq0lu7cYk-z8cLJTfB1LC9828VKdTaLEvsKZvqD4AL2GFkwHeXDOb8xQ1s3RQrFuMiOE2ktRglthpz1c4_DL3yZcRrDf-LReuYGR5J_Ylm_DMRyhf52Baxq-Wjj6u_R8_gfxsxsP-579214a1",
+   "name": "too_many_commits",
+   "why": "超過 400 個 commit（其餘都合法；沒有數量上限就會被接受）"
+  },
+  {
+   "code": "RA1-eNp9VcuSmzAQ_BedZa8ePIRPOeWSU86plEoL8kIMyAF589jyv6clWNbGdqp8QNCa6enpGb-Rkuy-fSP71rwQSirbue3ozeBtRWgqqFC8YJRst0_4WV8Syr7TBd6ZptWDNcBmKRV5IRPKJoQ344HQN9JUZEe-sg0nZ6pyKos0Tx9hBDB5QTmXyMmuMtWmr56dO8zZUk65AG6FKuvAfNDjqevM8GcGiwwhs-whNYm0IM55kuergNVg9l7v3alHHMWAUbJ4FCdBnEzFXOkqTtv0evTueLSVbk13JFTKEEzxBdiEFHOwH2ZArFAkz5PkLsQ35cH6oGqSB-rJWot9M4xe981L7d9FSwEs5JKybnof4u1PbUt2e9OOlpKe7DjKCF3I-EPJUuQVBZXolFjn5YTmULy4ULzxtluufw6k5YRQd_We28YChPO1lJBPtw2Yo3ABQLE2gfH6lxsOTY9TwmmhPupYfHvUo7U9bMtoUbClhrK25eHoZmEiXZz9U1mzTewbTFzQIr_w52VTkDo0BLUxppaGPA-mL-ut7WHNqPfgupvAUN50Fq9N65_G6PbfIRbGShTFWqdntm3d6JkuodU0qzCeTLmiVwHWl4KyOt5E6aAphWT3bnR2eLGBa2mGUNgXFlRzVSB46N2v1lb4fg7ycpnxxe4R_q4GLsHEMmS5GaxDICDwSeY3Ov1uovpzuonKOdpBpvDNjRKV68E1C4nSm8mDwHoCpPC05B9z8r9eWzT1PN1Is_VkddZrLJpnN0T_SJ7LAEFATm6HhU-rD0IpHo32EBf2UAJNVMLYJW5O-5Nr-V5KQLFE3EG9lDoYSdc2tgJ6cCWiagvyceF8E_dFUDvySIqrDJdWnwTQk-PRQyxGoe7wiTwiLO5GxTN2zcU1pV2ivjqPA3k17Sn0_mjGMZDhMBpkvhM-_mGFWzpiqQjzotQVbzvR9g1kOR3nTYcVhNapVHy07jtaS3ZvMSbZ-eFkp_g6UgtPm7hUZ5Eosa-Y6fdP8YBeowXTIA_O-Y0Zyro5WpB1kxgh1F6KEmqFSnuscbz524RlhHrjaX1zA0vyT2zLt2EMR_SvM1jTeLQY_V16Pv8D3pIwcg-c5f29ad8",
+   "name": "bad_branch",
+   "why": "分支名不合規則"
+  },
+  {
+   "code": "RA1-eNp9VU2XozYQ_C86y1598CH5lFMuOeW8b5-eBuSBGJAD8uwm8_zfUxIM48F2bghK3dXV1c07qcjh-3dy7OwroaR2vd9PwY7B1YTmggrFNaOMkqrR5Addgb1tOzM6C1SRU1FqmQHFIiLY6UToO2lrciB_sh0nV6pKKnVe5s8wAphSU85lysZuMjV2qF-8Py3Zck65AG6DqprIeTTTpe_t-M8CFgVCFsVTahJpQZzzrCw3AevRHoM5-suAOIoBo6R-FidDnEKlXPkmTtcOZgr-fHa16Wx_JlTKGEzxFdjGFEuwv-yIWLFIXmbZQ0hoq5MLUdWsjNSzrRbHdpyCGdrXJnyIlgOo5ZqyaYcQ4x0vXUcOR9tNjpKBHDjKiF0o-FPJcuQVmkp0SmzzckJLKK5vFG-D69frv0fSckaoh3ovbWMRwvlWSshnuhbMUbgAQG9NYIP56cdTO-CUcarVZx2rb89mcm6AbRnVmq01VI2rTme_CJPo4hy-VQ3bpb7BxJrq8saft01B6tgQ1MaYWhvyMtqhavZugDWT3qPv7wJDeds7vLZd-DYlt_-KsTBWQuutTi9s3_kpMFNBq3lKYTyZc0W_BNheisqadBOlg6YUkj260bvx1UWulR1jYX-wqJqvI8HT4H92rsb3a5SXy4Kvdk_wDzVwCSaWMcvdYJ0iAYFPsrzT6Veb1F_SzVSuyQ4yh2_ulKj9AK5FTJTfTR4ENjMgh6cl_5yT_-u1Q1Ov84282E5W74LBonnxY_KP5KWU83Lk5H5Y-Lz6IJTiyWhPcXEPZdBEZYzd4pa0f3MjP0qJKJaJB6jXykQjmcalVkAPrkRSbUU-L5zv0r6Iaicemf6S4dbqswBmdjx6iMUo1AM-iUeCpd2oeMG-cvFt5daobz7gQN5sd4m9P9tpimQ4jAaZH4RPv6p4yyQsFXFelPrC2820QwtZLudl02EFoXUqF5-t-4HWksN7ikkOYby4Ob5J1OLTLi3VRSRK3Btm-uNTOqDXaME8yKP3YWfHqmnPDmT9LEYMdZSiglqx0gFrHG_-beMyQr3ptL25gyX5b2zP93EMJ_Svt1jTeHQY_UN-vf4Hq30vJA-31d5f79c",
+   "name": "bad_chapter",
+   "why": "章節不在清單"
+  },
+  {
+   "code": "RA1-eNqVVU1z2jAQ_S86C6IPf0iceuqlp54zGY2wRexiW9QWSdoO_727sjHEQGcaZjIIP-2-fft2_YcUZPP8THaNfSWUlK716yHYPriS0FRQobhmFD4vdAa1tm5M7ywgspSKXMvkjAh22BP6h1iy-f9__HT5oyqnUqd5uoxcl2RDvrOVICeaa8q5vOFX2a7cer-fOKaccgG4BaqosMreDMe2tf2vCSwyCJllyaO0EtJCuZwneb4IWPZ2F8zOHzuIoxhglNSP4iQQJ1MxV7qI09SdGYI_HFxpGtseCJUSgyk-A2tMMQX7YXuIhUXyPEnuQkJd7F3gAEtypJ4stdjV_RBMV79W4SxaCkAt55RV3QWMtzs2DdnsbDM4SjrsGc2wCxl_KFkKeYWmEjollnk5oTkorq8Ur4Nr5-tfkbQcEequ3lPbGEI4X0oJ8pmmBuZQuACAXprABvPu-33dwSnhVKtLHbPbD2ZwrgOzM6o1m2soKlfsD34SJtKFc3gqKraKfQMTa6rzK39eNwVSY0OgNsbU3JBtb7uiWrsOrBn17n17ExiUt62Dn20Tnobo9g-MBcMotF7qtGXrxg-BmQK0GucajCdTruinAMtLqKyJN6F0oCmFZPdutK5_dci1sD0W9o2har5EgvvOvzeuhOcnlJfLjM92j_CzGnAJTCwxy81g7ZGAgEcyv9Hpo47qT-lGKqdoB5mCb26UKH0HXDNMlN5MHghsRkAKnpb8Mif_6rWDpp7GG2m2nKzWBQOLZuv76B_Jc4kQCMjJ7bDwFfodBp0rHo32EId7KAFNVMLYNW5K-5MbeS4FUSwRd1CvhUEjmcrFVoAeXImo2ox8XDhfxX2Bakceif6U4drqowBmdDz0EBajUHf4RB4RFnej4hn7zMXXhZujvvkAB_JmmyP2_mCHAclwMBrIfCd8fLnhLROxVOC8KPWJtxtphxpkOR6mTQcrCFqnUnFp3Qu0Fl9bGJNsQn90Y3wTqeG3VVyqk0iUuDeY6fOjeIBeQwvGQe69DyvbF1V9cEDWj2JgqJ0UBaiFlXawxuGX3zUuI6g3npY3V2BJ_oWt-RrHcID-tfhqha8ORn-Tnk5_Ae8BPxQ-ce6bb123",
+   "name": "deep_nesting",
+   "why": "data 巢狀過深／欄位不符"
+  }
+ ],
+ "schema": 1,
+ "suspicious": [
+  {
+   "code": "RA1-eNp9VE1zozAM_S8-O6n5TMppT3vZ0547HY8DJriAzRonaaeT_76SoWmCk94w0pOenj4-SUmKlxdSd2JPKKlkb9ajE9bJitAspglllL3Si0MvVMetFGDNM5p-WZ0YW0I_iapIQf6yVUTOdLuh2SN7DPbNM40W0Ruhq50x7Zwhi2i88Cgb5Gb5eOh7YT9mxzj_dlymSiBVkgapKitqx2tz0IDfssf4FPD5NsB3SvPRmWGQFe9EPxCaJFdsFYadg7wJCzFuirk2j4fKgD3dBDnQwk_Cat-M7DHHDDk-B82qI5Dm6rdysr_AfmOPNnmg8CTMpGuSP-DcKKjdfkCEmAURUA7eKUewpiWnUjh-MrZVGl5p2OBeDHyUUsN8sW9BykaW7WCUdhcK8HZPZcNWXn0Yt-fvWDsrdNmspYZRQUBtTR9AKNGil_BbdO5p9JP3jn3IA847tu7M6BgvQRa_GSk24wa4BKCA3KOgdTg-d7x7afcS-ZXCYkl_GApgKiTVanPqZAV2aO1VG7zrlwYAON8TscWkSajHu_L6zSmm9BA-DiYPCqiMBm532gsC8smYX6X4qUMSJgcWINz3XjoOC70z0CUw47mAQBEJZzzyJwVGIvnJB3d9G936zKn-RTyZaafxXY99yXEgeCO9xNnC63GB0UqrfeOQX7bEGFXKi__ROHiQo-gOqP-uM2WLKxTT_A4ff4sRwidHukluo8tpIZ0C0oeBFLXoRgnHjl0J-Qoik-LTByOFswc5BeaeEH6tamVHN5dAiTzC1nyZ_AOUB3GmVbHGuJWwZaMGCSwN3my8FAVJBZN5lcW4VgrYwl0bpKw-4D0I_15iVzAa0S-2jtY49iPo2wtSwKLA-kPE7Hz-DxVY6go-83d89d3e",
+   "expect": {
+    "finds": [
+     "jar",
+     "sudo",
+     "history"
+    ],
+    "first_id": "bc4a0859",
+    "full_hint": false,
+    "fullgame": {
+     "cards": [
+      "K0"
+     ],
+     "checkpoints": [
+      "ckpt/ch0-lamp",
+      "ckpt/ch0-end",
+      "ckpt/ch1-night",
+      "ckpt/ch1-start"
+     ],
+     "demo": false,
+     "dropped_flags": [
+      "flag.demo.finished",
+      "flag.demo.started",
+      "flag.demo.vote_block"
+     ],
+     "flags": [
+      "flag.b0.done",
+      "flag.b0.lost0_created",
+      "flag.b0.read_lost0",
+      "flag.cat_working",
+      "flag.ch0_done",
+      "flag.charter_summary_read",
+      "flag.draft_found",
+      "flag.draft_read",
+      "flag.f1",
+      "flag.gc_name_heard",
+      "flag.handbook_read",
+      "flag.k0",
+      "flag.lamp_lit",
+      "flag.lin_stopped_lamp",
+      "flag.mail_read",
+      "flag.map_seen",
+      "flag.met_harbor",
+      "flag.q1_3_done",
+      "flag.sudo_warned"
+     ],
+     "items": [
+      "F1"
+     ],
+     "level": "suspicious",
+     "level_reasons": [
+      "too_fast"
+     ],
+     "memory": [
+      "[init] 你在試玩時說過：block。"
+     ],
+     "nick": "op-speedy",
+     "perks": [],
+     "quests_done": [
+      "Q0-1",
+      "Q0-2",
+      "Q0-3",
+      "Q0-4",
+      "Q0-5"
+     ],
+     "schema": 1,
+     "seed": 5,
+     "verified": "chain"
+    },
+    "head": "4a0e6d52",
+    "level": "suspicious",
+    "level_reasons": [
+     "too_fast"
+    ],
+    "n_commits": 41,
+    "nick": "speedy",
+    "score": 135,
+    "seconds": 0,
+    "seed": 5,
+    "tasks": [
+     "Q0-1",
+     "Q0-2",
+     "Q0-3",
+     "Q0-4",
+     "Q0-5",
+     "Q1-1",
+     "Q1-3"
+    ],
+    "time_up": false,
+    "title_id": "sprinter",
+    "vote": "block"
+   },
+   "name": "too_fast",
+   "reasons": [
+    "too_fast"
+   ]
+  },
+  {
+   "code": "RA1-eNplzMFuwyAQBNB_mTNYS6soKqf-Qs9RFCG8GBSDLRv3Yvnfs3ZObk-MZh-zwsPebqhufkKtSC0sfkh_YFOkDBHJQ3f1XxgR5iS4tDuoKfNjGWHrtPDJ3BUy7IqW8_A-qyM_js096ZCmueqSulihwL9cKmxZ-l6hc5mFTcNQtZt8TCP3rhuERXb7wJf_dIGuQZqS_FOaOS4h9CzF6I7i72ftI5lvakxDgmYfOTtYI5FZJi_b9gKXOVcd-5d80c727",
+   "expect": {
+    "finds": [],
+    "first_id": "863bf609",
+    "full_hint": false,
+    "fullgame": {
+     "cards": [],
+     "checkpoints": [],
+     "demo": false,
+     "dropped_flags": [
+      "flag.demo.finished",
+      "flag.demo.time_up"
+     ],
+     "flags": [],
+     "items": [],
+     "level": "suspicious",
+     "level_reasons": [
+      "task_order"
+     ],
+     "memory": [],
+     "nick": "op-shuffle",
+     "perks": [],
+     "quests_done": [
+      "Q0-1",
+      "Q0-2"
+     ],
+     "schema": 1,
+     "seed": 5,
+     "verified": "chain"
+    },
+    "head": "9c3af07f",
+    "level": "suspicious",
+    "level_reasons": [
+     "task_order"
+    ],
+    "n_commits": 3,
+    "nick": "shuffle",
+    "score": 70,
+    "seconds": 2,
+    "seed": 5,
+    "tasks": [
+     "Q0-2",
+     "Q0-1"
+    ],
+    "time_up": true,
+    "title_id": "sprinter",
+    "vote": null
+   },
+   "name": "task_order",
+   "reasons": [
+    "task_order"
+   ]
+  },
+  {
+   "code": "RA1-eNpdTruKwzAQ_JetpSCBc3Cq8gupTQgbeWOJ6GFk2RCM__1WLq7wVjPLvDawYPoeKs4fEBv4AQzcldSwCyW0asdAPUQP1mVv6V-15soEVgwLMX2FbD_s0icXpaFZqo_0XCYwbwwznWQPARHMBgPFDKaWhcSBn0dRQ_Lty1xl8qOrXEorpQomLSEIGDG2ASXnKrFY5ycKOGaWOcIWoKjrrt3PL3-S55EGCEv4Mp3woGertE7pm7roi2LRbB1FBKMZEnHgdd__AOEuXdY-1d02aefb",
+   "expect": {
+    "finds": [],
+    "first_id": "a6cbce5d",
+    "full_hint": false,
+    "fullgame": {
+     "cards": [],
+     "checkpoints": [],
+     "demo": false,
+     "dropped_flags": [
+      "flag.demo.finished"
+     ],
+     "flags": [],
+     "items": [],
+     "level": "suspicious",
+     "level_reasons": [
+      "vote_before_night"
+     ],
+     "memory": [],
+     "nick": "op-early",
+     "perks": [],
+     "quests_done": [
+      "Q0-1"
+     ],
+     "schema": 1,
+     "seed": 5,
+     "verified": "chain"
+    },
+    "head": "0e445469",
+    "level": "suspicious",
+    "level_reasons": [
+     "vote_before_night"
+    ],
+    "n_commits": 3,
+    "nick": "early",
+    "score": 60,
+    "seconds": 200,
+    "seed": 5,
+    "tasks": [
+     "Q0-1"
+    ],
+    "time_up": false,
+    "title_id": "sprinter",
+    "vote": "block"
+   },
+   "name": "vote_before_night",
+   "reasons": [
+    "vote_before_night"
+   ]
+  }
+ ]
+}

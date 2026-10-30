@@ -1,0 +1,5 @@
+demo-app/node_modules/
+demo-app/src/data.js
+demo-app/test-results/
+__pycache__/
+*.pyc

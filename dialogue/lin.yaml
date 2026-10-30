@@ -1,0 +1,48 @@
+type: dialogue
+npc: lin
+note: >
+  lin 不會現身，也沒有對話選項。他只留下東西：信、草稿、清單、.bash_history、工單。
+  這個檔把 Ch0–1 裡所有「lin 的文字」登記成節點，方便引擎在 cat 時觸發旗標，也方便寫作者統一檢查口吻。
+  口吻守則：短、溫柔、叮嚀；不解釋自己；P.S. 收尾；同一段文字必須同時成立於「他是 Admin 的徒弟」與「他就是最後一任 Admin」兩種讀法。
+
+nodes:
+  - node: mail_first
+    triggers: [cat_mail, mail]
+    lines:
+      - {text_ref: text/ch0/mail_lin_1.txt}
+    sets: [flag.mail_read]
+
+  - node: first_night
+    file: "~/notes/01-first-night.txt"
+    lines:
+      - {text_ref: text/ch0/first-night.txt}
+    sets: [flag.first_night_read]
+    relic: R0          # Ch0 遺物：可用 ln 引用保存
+
+  - node: draft
+    file: "~/notes/.draft.txt"
+    lines:
+      - {text_ref: text/ch0/draft.txt}
+    sets: [flag.draft_read]
+    note: >
+      引用的是憲章第三條的 v2.4 原文（舊設定），也就是 Ch2 對 sentry 念的口令句。
+      P.S. 的週五修憲是 Rev 5 第九條 + lin 修憲案（art10）的第一個伏筆。
+
+  - node: bash_history
+    file: "~/.bash_history"
+    lines:
+      - {text_ref: text/ch0/bash_history.txt}
+    note: "只有前 20 行；最後三行（git push origin amend/art-10 / cat /var/log/ci/last.txt / sleep 3600）是伏筆。"
+
+  - node: letter_harbor
+    file: "/srv/harbor/for-harbor-master.txt（fsck 復原後）"
+    lines:
+      - {text_ref: text/ch1/letter3141_restored.txt}
+    sets: [flag.letter3141_read]
+
+  - node: lin_ticket
+    file: "/srv/harbor/lin-ticket.md"
+    lines:
+      - {text_ref: text/ch1/lin-ticket.md}
+    sets: [flag.lin_ticket_read]
+    relic: R1          # Ch1 遺物

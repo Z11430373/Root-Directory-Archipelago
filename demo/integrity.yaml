@@ -1,0 +1,63 @@
+type: integrity
+id: demo-integrity
+note: >
+  存檔匯入的安全與誠實規則。兩個不同的問題，不要混在一起：
+  (1) 安全：貼進來的東西可能是惡意或壞掉的（壓縮炸彈、XSS、亂欄位）→ 一律拒絕，這是硬規則。
+  (2) 完整性與可信度：雜湊鏈只能證明「這份存檔沒有被手滑改壞」，不能證明「是真的玩出來的」，
+      因為任何人都能重算雜湊鏈。所以結果只分三級，而且文案不得說「已驗證」「防偽」。
+
+limits:                        # 硬規則：超過就拒絕（CodeError），不是標記
+  max_code_chars: 8000         # 正常約 900–1240；留 6 倍餘裕
+  max_inflated_bytes: 262144   # 解壓後上限 256 KiB（用「帶上限的串流解壓」，不可先全解再量）
+  max_commits: 400             # 黃金路徑約 40–60
+  max_depth: 6                 # JSON 巢狀深度
+  max_string_len: 64
+  max_r_ms: 2700000            # 45 分鐘；超過 15 分鐘硬上限很多，也不合理
+  max_t: 1000000
+  nick_regex: '^[A-Za-z0-9_-]{1,12}$'
+  seed_range: [0, 4294967295]
+  event_regex: '^[A-Za-z0-9_-]{1,24}$'
+  pack_regex: '^[a-z0-9-]{1,32}@[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$'
+  numbers: "只接受整數（不接受浮點、NaN、布林當數字）"
+  meta_keys: [schema, game, demo, demo_id, pack, nick, seed, event, head, commits]   # 其他鍵 → 拒絕
+
+shape:                         # 每種 commit 的 data 形狀（嚴格：多一個鍵就拒絕）
+  flag:         {name: "regex ^flag\\.[a-z0-9_.]{1,40}$"}
+  task:         {id: "demo.yaml content.quick_tasks"}
+  skip:         {id: "demo.yaml content.quick_tasks"}
+  find:         {id: "demo.yaml finds[].id"}
+  item:         {id: "[F1, R0]"}
+  card:         {id: "[K0]"}
+  checkpoint:   {id: "regex ^ckpt/[a-z0-9-]{1,24}$"}
+  choice:       {id: "vote", value: "block|pass"}
+  hint:         {n: "int 1..3", full: "bool（可省略）"}
+  branch.enter: {name: "regex ^[a-z]{1,8}/[a-z0-9-]{1,16}$", from: "regex ^ckpt/..."}
+  branch.exit:  {mode: "merge|abandon"}
+  merge:        {mode: "knowledge", card: "[K0]"}
+  end:          {time_up: bool}
+chapters: [ch0, ch1]
+branches: [main, "regex ^[a-z]{1,8}/[a-z0-9-]{1,16}$"]
+order_rules:
+  - "r 與 t 不可倒退（整份存檔非遞減）"
+  - "end 只能是最後一個 commit，且最多一個"
+
+# ---------------------------------------------------------------------------
+# 可信度（plausibility）：只標記，不拒絕。可疑的存檔仍可匯入正式版，但不給徽章、不上活動排行榜。
+# ---------------------------------------------------------------------------
+plausibility:
+  min_total_seconds_if_finished: 150     # 比最快的合理人類（約 5 分鐘）還快一倍以上
+  task_order: "存檔中出現的快題必須依 Q0-1…Q0-5, Q1-1, Q1-3 的先後（可缺，不可倒序）"
+  vote_needs_night: "非 time_up 的存檔，vote 必須在 flag.gc_name_heard 之後"
+  find_needs_command: "（前端自己負責）發現只能由真的指令觸發；存檔庫無法驗證"
+
+levels:                         # 值班證與統計表只用這三個詞
+  intact:      {text: "完整", when: "雜湊鏈與校驗碼都對，且沒有可疑項"}
+  suspicious:  {text: "可疑", when: "雜湊鏈對，但有 plausibility 項目命中（列出原因）"}
+  broken:      {text: "損毀", when: "雜湊鏈對不上（匯入時 unverified）"}
+wording_rules:
+  - "不得出現「已驗證」「防偽」「官方」這類詞；只說「完整」「可疑」「損毀」"
+  - "排行榜必須註明『自行回報，僅供參考』，除非是 kiosk／主持人現場看著玩的"
+  - "徽章只給 intact；排行榜與名人堂只收 intact；可疑與損毀仍可存檔、可匯入，不影響他自己玩"
+real_anti_cheat: >
+  真正防作弊要有伺服器：伺服器發 nonce、用 HMAC 對事件簽章、或伺服器重放事件。這是正式版線上模式的事，
+  不在試玩版範圍。活動現場的實務辦法：排行榜只收 kiosk 或主持人看著玩的，其餘當作「參加紀錄」。

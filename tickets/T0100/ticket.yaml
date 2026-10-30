@@ -1,0 +1,27 @@
+type: ticket
+id: T0100
+display_id: TICKET-0100
+island: lighthouse
+title: 值班簽到
+severity: 4
+tags: [io]
+story_ref: text/tickets/0100.md
+unlock: [flag.lamp_lit]        # 燈亮之後才出現；選擇性，不是通關必要
+required_for_chapter: false
+judge:
+  oj_problem_id: null           # 接自己的 OJ 時填
+  limits: {time_ms: 1000, memory_mb: 64}
+  language_hint: python3
+  local:
+    tests_dir: tickets/T0100/tests
+    ref_solution: tickets/T0100/ref/sol.py
+    compare: exact_lines         # 逐行比對，行尾空白忽略
+reward: {sectors: 2, keys: 1}
+hints:
+  - {cmd: "man ticket-0100",  cost_keys: 1, text: "輸入一行，輸出一行。你在做的是 echo，只是多了前綴。"}
+  - {cmd: "man -k input",      cost_keys: 2, text: "讀一行字串，去掉行尾換行。"}
+  - {cmd: "man 7 solution",    cost_keys: 3, text: "name = input(); print('值班已登記：' + name)"}
+verdict_texts: {inherit: world}  # AC/WA/TLE/MLE/RE/CE 用第 6 節的世界內說法
+on_ac:
+  dialogue: init.t0100_ac        # INIT 的第一句話（彩蛋）
+  sets: [flag.t0100_done]

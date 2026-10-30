@@ -1,0 +1,16 @@
+type: card
+id: K0
+name: 世界可以被安全地弄壞
+source_branch: B0
+source_type: parallel
+text: |
+  在分支裡，弄壞什麼都不要緊。
+  每一個被刪掉的東西，都有人曾經引用過。
+  （所以刪除之前，先問一句：現在還有誰引用它？）
+credibility: 1.0              # 單人離線；多人離線合併時才會出現 disputed
+effects:
+  - {where: init.dialogue.branch, do: truth_mode}          # INIT 開始在分支裡說真話
+  - {where: ch7.door, do: unlock_peek}                      # Ch7 解鎖「拆門窺看」
+  - {where: init.rm_main, do: offer_branch}                 # 在 main 打 rm -rf 時，INIT 主動提議開分支
+required_for: [ending.fork]
+unlock_flag: flag.k0
