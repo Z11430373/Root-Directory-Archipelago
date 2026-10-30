@@ -59,9 +59,21 @@
 - 單一 Promise queue 序列化計時、輸入與匯出；以完整事件交易結束為自動存檔邊界，避免保存到只有半條事件連鎖的狀態。
 - localStorage 的 `ra.demo.save.v1` 為正規 save 加私有 journal 的 envelope；RA1／下載 JSON 仍只有正規 save。本機操作紀錄不會隨代碼匯出。
 - 手機任務面板預設收合，可鍵盤展開；依 viewport 高度縮排，輸入字級至少 16px，避免 iOS 自動放大輸入。
+- visualViewport 變化透過受 CSP 授權樣式表的 CSSOM 更新高度，不新增 inline style，也不放寬 CSP；實機 iOS 鍵盤仍列為未驗證。
 - kiosk 結尾預設立即清除本機存檔，代碼仍留在 DOM；取消勾選則重新存回。重新開始／120 秒閒置返回歡迎畫面。
 - dark／高對比亮色兩主題；無既有偏好時依 prefers-color-scheme 選擇。未加入圖片、外部字型、QR 或網路服務。
 
 ## F-06：里程碑與時間盒
 - 世界代理以同一組緊密相依 VFS／Shell／日誌測試交付，M2 與 M3 合為一個提交；驗收仍逐項對照 T5–T9，沒有省略日誌案例。
 - 附件未指定各里程碑預期工時，無法客觀計算「超過預期兩倍」；不捏造工時計畫或時間盒超時結論。
+
+## F-07：獨立 QA 回歸（已修正）
+- 問題：點終端機外部未立即補完逐字輸出；縮小 viewport 後，收合列的任務文字要等下一個計時 tick 才更新。
+- 修正：全頁 click capture 補完全部待播文字；跨 760px 斷點同步 refresh 任務列。
+- 驗收：保留 `T12-extra: a click outside the terminal also instantly finishes animated text` 紅測試及主 T12 手機任務列斷言，最終重跑確認，不移除或放寬測試。
+- 結果：最終 262/262、0 失敗、0 跳過；兩項回歸均通過，詳見 `notes/test-results.txt`。
+
+## F-08：驗收環境邊界
+- 實跑：Windows、Node 24.19.0、Python 3.12.10／PyYAML 6.0.3、Chrome 156.0.8078.74；file:// 與隔離 localhost 自簽 HTTPS。
+- 未實跑：Safari／iOS、Firefox、Edge、各瀏覽器前一版本、Node 18 實機及輔助科技／真實軟鍵盤。這些不得由 Chrome 測試推稱通過。
+- 原始 tools/validate.py 在 Windows 有混合子程序編碼問題：UTF-8 執行時快題通過、工單解碼失敗；系統編碼時工單通過、快題解碼失敗。這是來源工具跨平台問題，未修改工具，也不以它取代 T1–T12 的 JS 驗收。

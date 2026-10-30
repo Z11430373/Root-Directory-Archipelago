@@ -9,7 +9,14 @@ const cfg=DATA.yaml['demo/demo.yaml'];
 const runMode=['kiosk','host'].includes(new URLSearchParams(location.search).get('mode'))?new URLSearchParams(location.search).get('mode'):'self';
 const app=document.querySelector('#app');
 const compact=matchMedia('(max-width: 760px)');
-compact.addEventListener('change',()=>{const panel=document.querySelector('.task-panel');if(panel)panel.open=!compact.matches;});
+compact.addEventListener('change',()=>{const panel=document.querySelector('.task-panel');if(panel)panel.open=!compact.matches;if(engine)refresh();});
+// Mutate the already-authorized stylesheet through CSSOM, not inline style
+// attributes, so the hashed CSP remains strict even with the mobile keyboard.
+const viewportStyle=Array.from(document.styleSheets[0].cssRules).find(rule=>rule.selectorText===':root')?.style;
+function viewportHeight(){viewportStyle?.setProperty('--viewport-height',`${window.visualViewport?.height||window.innerHeight}px`);}
+window.visualViewport?.addEventListener('resize',viewportHeight);
+window.addEventListener('resize',viewportHeight);
+viewportHeight();
 let engine=null, terminal=null, journal=[], baseSave=null, baseBroken=false, restoring=false;
 let history=[],historyIndex=0,historyDraft='', serial=Promise.resolve(),tickPending=false;
 let lastWall=performance.now(),lastActivity=performance.now(),endedShown=false,clearKiosk=true;
@@ -28,6 +35,7 @@ function enqueue(fn) {
 function activity() { lastActivity=performance.now(); }
 for(const event of ['keydown','pointerdown','input']) document.addEventListener(event,activity,{passive:true});
 document.addEventListener('keydown',()=>terminal?.finish(),{capture:true});
+document.addEventListener('click',()=>terminal?.finish(),{capture:true});
 
 function applyPreferences() {
   const theme=['dark','contrast'].includes(prefs.theme)?prefs.theme:matchMedia('(prefers-color-scheme: light)').matches?'contrast':'dark';
@@ -88,7 +96,7 @@ function createGame() {
   hintState=el('p',{id:'hint-state',class:'hint-state'},'提示 ○ ○ ○');
   findCount=el('strong',{id:'discoveries'},'0 / 12');
   saveStatus=el('p',{id:'save-status',class:'save-status','data-head':''},'尚未開始');
-  const panel=el('details',{class:'task-panel',open:!compact.matches},el('summary',{},'值班面板'),el('div',{class:'panel-content'},el('p',{class:'eyebrow'},'CURRENT TASK'),taskTitle,taskPrompt,hintState,button('下一階提示',()=>quickCommand('hint'),{class:'hint-button'}),el('div',{class:'panel-stats'},el('span',{},'發現'),findCount),el('div',{class:'panel-save'},el('span',{},'本機存檔'),saveStatus),el('p',{class:'quiet'},'Tab 補全 · ↑↓ 歷史',el('br'), 'hint 提示 · skip 兩次跳題'),runMode==='host'?el('p',{class:'mode-notice'},'主持人共享模式：點燈後直接投票。此紀錄不供正式版個人匯入。'):null));
+  const panel=el('details',{class:'task-panel',open:!compact.matches},el('summary',{id:'panel-summary'},'值班面板'),el('div',{class:'panel-content'},el('p',{class:'eyebrow'},'CURRENT TASK'),taskTitle,taskPrompt,hintState,button('下一階提示',()=>quickCommand('hint'),{class:'hint-button'}),el('div',{class:'panel-stats'},el('span',{},'發現'),findCount),el('div',{class:'panel-save'},el('span',{},'本機存檔'),saveStatus),el('p',{class:'quiet'},'Tab 補全 · ↑↓ 歷史',el('br'), 'hint 提示 · skip 兩次跳題'),runMode==='host'?el('p',{class:'mode-notice'},'主持人共享模式：點燈後直接投票。此紀錄不供正式版個人匯入。'):null));
   const chips=el('nav',{class:'chips','aria-label':'指令快捷按鈕'},...cfg.ui.command_chips.map(command=>button(command,()=>{
     if(command==='hint'||command==='save')quickCommand(command);
     else {input.value=command+' ';input.focus();}
@@ -136,7 +144,10 @@ async function resumeLocal() {
     if(!baseBroken)S.seal(engine.save);
     if((engine.save.head||null)!==(envelope.save.head||null))throw new Error('本機重播的鏈尾不同。請改用存檔代碼或 JSON。');
     output('[系統] 已從本機操作紀錄還原。\n','system');
-  } finally {restoring=false;lastWall=performance.now();activity();input.disabled=false;refresh();}
+  } catch(error) {
+    await resetWelcome(false);
+    throw error;
+  } finally {restoring=false;lastWall=performance.now();activity();if(engine){input.disabled=false;refresh();}}
   if(engine.ended)await showExport(true);else input.focus();
 }
 function promptText() {
@@ -192,6 +203,7 @@ function refresh() {
   const n=engine.ladders[guideKey]||0;
   hintState.textContent='提示 '+Array.from({length:3},(_,i)=>i<n?'●':'○').join(' ');
   taskTitle.textContent=engine.ended?'值班登記完成':engine.inputMode==='choice'?'02:00 的訪客':quest?`${quest.id} ${quest.title}`:'下一步';
+  document.querySelector('#panel-summary').textContent=compact.matches?`值班面板 · ${taskTitle.textContent}`:'值班面板';
   taskPrompt.textContent=engine.inputMode==='input'?(engine.mode[2].expect_input.store?'輸入暱稱，開始第一夜。':'輸入口令；也可以輸入指令查閱檔案。'):engine.inputMode==='choice'?'輸入 block 或 pass。':quest?.prompt||'輸入 hint，查看下一步。';
   findCount.textContent=`${engine.finds.size} / ${cfg.finds.length}`;
   saveStatus.dataset.head=engine.save?.head||'';
@@ -240,9 +252,11 @@ async function showExport(ended) {
   const status=el('p',{id:'copy-status',role:'status',class:'quiet'});
   const cardText=await S.card(engine.save);
   const cardArea=el('textarea',{readonly:true,rows:8,class:'card-text','aria-label':'值班證純文字',hidden:true});cardArea.value=cardText;
+  const rawArea=el('textarea',{id:'raw-save',readonly:true,rows:6,'aria-label':'原始 JSON 存檔'});rawArea.value=JSON.stringify(engine.save,null,2);
   const dialog=el('dialog',{'aria-label':ended?'值班結束與存檔':'儲存值班紀錄'});
   const tools=el('div',{class:'export-tools'},el('p',{class:'eyebrow'},ended?'SHIFT COMPLETE':'SAVE YOUR SHIFT'),el('h2',{},ended?'把這一夜留著。':'保存你的進度'),el('details',{open:true},el('summary',{},'這份代碼包含什麼'),el('p',{class:'quiet'},cfg.save.privacy+'不含裝置資訊；不會上傳。')),warning?el('p',{role:'alert',class:'error-message'},warning):null,runMode==='host'||engine.event==='host-led'?el('p',{class:'mode-notice'},'主持人共享紀錄，不供正式版個人匯入。'):null,el('label',{for:'save-code'},'存檔代碼'),textarea,
     el('div',{class:'export-actions'},button('複製代碼',()=>copyText(code,textarea,status),{id:'copy-code',disabled:!code}),button('複製值班證',async()=>{cardArea.hidden=false;await copyText(cardText,cardArea,status);},{id:'copy-card'}),runMode==='kiosk'?null:button('下載 JSON',downloadSave,{id:'download-save'})),cardArea,status,
+    warning?el('details',{open:true},el('summary',{},'保留原始 JSON（代碼無法匯出）'),rawArea,button('複製原始 JSON',()=>copyText(rawArea.value,rawArea,status))):null,
     el('p',{class:'quiet'},'「完整」僅表示資料未損毀，不代表真實遊玩的證明。'),
     runMode==='kiosk'?el('label',{class:'clear-choice'},el('input',{id:'clear-local',type:'checkbox',checked:true,onChange:event=>{clearKiosk=event.target.checked;persist();}}),' 清除本機存檔（預設清除）'):null,
     ended?button('重新開始',()=>enqueue(()=>resetWelcome(runMode==='kiosk'?clearKiosk:true)).catch(()=>{}),{id:'restart',class:'primary'}):button('回到終端機',()=>{dialog.close();dialog.remove();input.focus();},{id:'close-save'}));

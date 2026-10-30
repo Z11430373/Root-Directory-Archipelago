@@ -65,6 +65,9 @@ test('T12: offline file + HTTPS, safety, keyboard, mobile, resume, kiosk, export
   assert.equal(await page.locator('html').getAttribute('data-font'),'large');
   await page.setViewportSize({width:360,height:740});
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth<=innerWidth));
+  assert.equal(await page.locator('.task-panel').getAttribute('open'),null);
+  assert.ok((await page.locator('#panel-summary').textContent()).includes('Q0-2'));
+  assert.ok(await page.locator('#command-input').evaluate(node=>parseFloat(getComputedStyle(node).fontSize)>=16));
   await page.getByRole('button',{name:'填入 ls -a',exact:true}).click();
   assert.equal(await page.locator('#command-input').inputValue(),'ls -a ');
   // Complete the remaining digger commands with the supplied timing.

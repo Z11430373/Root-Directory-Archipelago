@@ -37,3 +37,19 @@ test('M0: compiler refuses missing content and changed B0 fixed text (isolated c
     await assert.rejects(compileData(scratch),/B0 fixed text mismatch/);
   } finally { await rm(scratch,{recursive:true,force:true}); }
 });
+test('T12 accessibility: both themes have at least 4.5:1 text contrast', async () => {
+  const css=await readFile(new URL('../src/ui/theme.css',import.meta.url),'utf8');
+  function luminance(hex) {
+    let text=hex.slice(1);if(text.length===3)text=[...text].map(c=>c+c).join('');
+    const channels=[0,2,4].map(i=>parseInt(text.slice(i,i+2),16)/255).map(c=>c<=.04045?c/12.92:((c+.055)/1.055)**2.4);
+    return channels[0]*.2126+channels[1]*.7152+channels[2]*.0722;
+  }
+  for(const selector of [':root',':root[data-theme=contrast]']) {
+    const block=css.slice(css.indexOf(selector+'{')+selector.length+1).split('}')[0];
+    const colors=Object.fromEntries([...block.matchAll(/--([a-z]+):(#[0-9a-f]+)/g)].map(m=>[m[1],m[2]]));
+    for(const fg of ['ink','muted','accent','amber'])for(const bg of ['bg','surface','raised']){
+      const a=luminance(colors[fg]),b=luminance(colors[bg]);
+      assert.ok((Math.max(a,b)+.05)/(Math.min(a,b)+.05)>=4.5,`${selector}: ${fg} on ${bg}`);
+    }
+  }
+});
