@@ -6,7 +6,9 @@
   "scripts": {
     "data": "node build.mjs --data-only",
     "build": "node build.mjs",
-    "test": "node --test"
+    "pretest": "node build.mjs",
+    "test": "node --test",
+    "test:browser": "node --test test/browser.test.mjs test/ui-extra.test.mjs"
   },
   "devDependencies": {
     "esbuild": "^0.25.0",

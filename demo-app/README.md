@@ -13,6 +13,8 @@ npm test
 
 Windows 若 PowerShell 阻擋 npm.ps1，改用 `npm.cmd`。Node 18+；Python 互通測試需要 Python 3 與 PyYAML。
 
+`npm test` 的 pretest 會重新編譯資料及 HTML，避免測到過期產物。
+
 來源資料在本目錄的上一層，維持唯讀。建置會檢查全部 `content_ref`、`text_ref` 與 B0 固定文案，再將原始資料、JavaScript 與 CSS 嵌入一個 HTML。正式產物不包含測資或測試工具。
 
 ## 介面驗收（選用 Playwright）
@@ -22,9 +24,11 @@ Playwright 不屬於正式產物，亦不必加入 app 的依賴。環境有 Chr
 - `RA_PLAYWRIGHT`：Playwright 的 `index.mjs` 檔案 URL。
 - `RA_CHROME`：Chrome / Chromium 執行檔絕對路徑。
 - `RA_TLS_KEY`、`RA_TLS_CERT`：僅供 localhost HTTPS 測試的私鑰／憑證路徑。
-- 執行 `node --test test/browser.test.mjs`。
+- 執行 `npm run test:browser`，或設好變數後執行 `npm test`（同時驗收全部核心）。
 
 未提供瀏覽器工具時，T12 會明確標記為跳過，而非宣稱通過。TLS 測試使用隔離的瀏覽器 context 容許 localhost 自簽憑證，不變更系統安全設定。
+
+本次完整驗收：262/262 通過，0 失敗、0 跳過；逐項紀錄在 `notes/test-results.txt`。跨瀏覽器／真人驗證邊界見 `REPORT.md`。
 
 ## 三種跑法
 
