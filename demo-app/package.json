@@ -1,0 +1,15 @@
+{
+  "name": "root-archipelago-first-night",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "data": "node build.mjs --data-only",
+    "build": "node build.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "js-yaml": "^4.1.0"
+  }
+}
