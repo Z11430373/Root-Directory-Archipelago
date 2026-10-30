@@ -10,8 +10,14 @@
 - T3：通過，`T3 <case>: clean CodeError rejection`，30 案均拒絕；本輪 zip_bomb 5.73ms。
 - T4：通過，`T4 tampered JSON file: broken, unverified, no badge`。
 - 存檔補充：`test/save.test.mjs` 共 129/129 通過；12 份 JS 匯出與 Python 的資料及值班證逐字一致。
-- T5–T11：核心代理實作及整合中，尚未宣稱通過。
-- T12：先建立測試腳本，等待核心閘門通過後實作／驗收介面。
+- T5：通過，`T5: expression cases and errors match the Python reference`（25 一致＋6 必錯）。
+- T6：通過，`T6 ch0/ch1: exact files, directories, UTF-8 hashes`。
+- T7：通過，`T7 c0/c1/c1L-*` 全 71 案 stdout／rc 逐字一致，沒有略過日誌案例。
+- T8：通過，`T8: complete Python log SHA-256, manifest, first/last lines`；完整日誌與 manifest 相同，另驗證三組 seed。
+- T9：通過，`T9 <quest> pass/fail` 七題全部既有樣本；含其他 check 型別補測。
+- T10：通過，`T10: digger/newbie/edge/timeup says, every commit including id, and summary`。
+- T11：通過，`T11: four JS codes import intact in JS and in Python check_codes.py`；四份代碼在 `notes/codes.txt`。
+- T12：通過第一輪，`T12: offline file + HTTPS, safety, keyboard, mobile, resume, kiosk, exports and themes`，Chrome 156，5.69 秒；仍進行獨立 QA 與最終重建驗收。
 
 ## 我做的決定（沒有寫在規格裡的）
 

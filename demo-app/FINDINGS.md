@@ -35,3 +35,33 @@
 - F-S09：保持 addCommit 不更新 head 的參考契約，整合持久化與評估前明確 seal。
 
 以上未改原始測資；T1–T4 與額外邊界測試 129/129 通過。
+
+## F-W01–F-W05：虛擬世界的對照範圍
+- W-01：T6 參考產生器會刪除 Ch0 空 `/lost+found`；遵循測資，分支 create_file 時重建父目錄。
+- W-02：採嚴格 T8，日誌 SHA-256 與整份 manifest 完全一致，未降級不變量。
+- W-03：只開放試玩版 29 個命令與 flow 明訂的 merge 別名；不開放正式版工單、fsck、B1。
+- W-04：試玩版日誌以字串儲存，管線為惰性迭代；正式版 120 萬行惰性生成與 2 秒效能未實作／未驗證，不屬附件試玩範圍。
+- W-05：實作必要 BRE 子集；非必要的重複群組保守拒絕，不宣稱完整 bash/GNU grep 相容或完整 ReDoS 防護。
+- 詳細 API、位置與影響見 `notes/world.md`。
+
+## F-E01–F-E09：流程參考與字面規格的差異
+- E-01：task/skip 先於 on_done 效果寫入，依 Python／測資。
+- E-02：合併順序依實際 rules／測資為 card → flags → merge → branch.exit。
+- E-03：CHOICE 與 INPUT 不發 idle 提示，依 Python；CHOICE 可手動 hint。
+- E-04：補齊 Python headless 未顯示的台詞、條件、插值、延遲訊息，不改 says/commit 軌跡。
+- E-05：離開分支恢復進分支前 cwd，依 Python；非字面固定回 ~。
+- E-06：host 點燈完成 map／checkpoint 後直接投票，省略 branch_offer／B0／Ch1；event=host-led，介面明示共享紀錄不供正式版個人匯入。未新增存檔欄位，未捏造任務完成。
+- E-07／E-08：RA1 原格式不含任意檔案修改、cwd、指令歷史、口令 INPUT、無 commit 指令時鐘及 skip/delayed 狀態。貼碼僅重建可推知事件狀態，保守重建分支 lost0；匯入後顯示限制。本機另存 journal 精準重播，不更改正規 save 格式。
+- E-09：依 flow 開放 CHOICE 與結束後 save/help，避免 Python 的無效選項行為阻礙存檔；不額外推進世界時間。
+- 詳細位置、影響與測試見 `notes/engine.md`。
+
+## F-05：介面與本機儲存的實際策略
+- 單一 Promise queue 序列化計時、輸入與匯出；以完整事件交易結束為自動存檔邊界，避免保存到只有半條事件連鎖的狀態。
+- localStorage 的 `ra.demo.save.v1` 為正規 save 加私有 journal 的 envelope；RA1／下載 JSON 仍只有正規 save。本機操作紀錄不會隨代碼匯出。
+- 手機任務面板預設收合，可鍵盤展開；依 viewport 高度縮排，輸入字級至少 16px，避免 iOS 自動放大輸入。
+- kiosk 結尾預設立即清除本機存檔，代碼仍留在 DOM；取消勾選則重新存回。重新開始／120 秒閒置返回歡迎畫面。
+- dark／高對比亮色兩主題；無既有偏好時依 prefers-color-scheme 選擇。未加入圖片、外部字型、QR 或網路服務。
+
+## F-06：里程碑與時間盒
+- 世界代理以同一組緊密相依 VFS／Shell／日誌測試交付，M2 與 M3 合為一個提交；驗收仍逐項對照 T5–T9，沒有省略日誌案例。
+- 附件未指定各里程碑預期工時，無法客觀計算「超過預期兩倍」；不捏造工時計畫或時間盒超時結論。
