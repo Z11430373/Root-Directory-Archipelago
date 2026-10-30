@@ -105,3 +105,31 @@
 - 使用者明示「僅供參考」並要求代理搜尋。已完成引擎與遊戲兩組調查，官方來源與不確定項目各自保留，主架構師採用界線見 `notes/REFERENCE_DECISIONS.md`。
 - just-bash 是模擬 shell，PocketTerm 有同名 SSH 工具須排除；真命令名稱／作者宣傳不等於真 Bash 或 Linux VM。Sudo Sanctuary 的指令實作未證實，terrr 授權文字有矛盾，部分作品未查得完整重用授權。
 - 研究只借鑑設計與架構概念，沒有加入外部程式／依賴、放寬 CSP、改資料或改測資；外部相容性未實跑，不宣稱已符合本案驗收。
+
+## F-13：第三輪 Shell 語意與讀檔時間點
+- 獨立找碴基線9項測試為5紅、4綠，保留原斷言。詳細輸入、GNU oracle、來源規則與實際結果見 `notes/ROUND3_SHELL.md`；修復／限制見 `notes/ROUND3_SHELL_FIX.md`。
+- R3-S01：無效 glob 範圍是未匹配的 literal，不讓 JS RegExp SyntaxError 逸出。
+- R3-S02：管線命令啟動不再完全依賴下游讀取；無輸出副作用與重導向 writer 得以完成，普通上游只預拉一個輸出 chunk，保留 head 提早停止與 iterator 清理。pipeline cwd 隔離但檔案系統共享；不宣稱模擬真 OS process／fd／SIGPIPE 或競態排程。
+- R3-S03：Engine 使用 Shell 讀取當下的 `readEvents.same_inode`，不在整段命令結束後重新解析可能重綁的 pathname。每次真讀取均保留快照，legacy reads 仍去重；重綁後沒有再讀不得發現新檔，確實再讀則兩份發現都不遺漏。
+- R3-S04：sort／cut 逐來源切行，不把第一檔的未換行末行黏到下一檔；cat 保留原始串接、不插入換行。
+- R3-S05：以明確 ASCII 空白切 shell token，NBSP／全形空白等仍屬 word data；既有單行 parser 的貼上 newline 行為未在本輪擴充。
+- 原105項 world、11項 engine、9項新找碴與16項補充控制的定向回歸141/141通過；最終全部測試另見0.3.0紀錄，T10同ID契約不放寬。
+
+## F-14：第三輪 UI／無障礙局部修復
+- 單一整合議題登錄與證據：`notes/ROUND3_UI_A11Y.md`。八個原紅斷言保留；額外控制驗證錯誤修正、檔案欄位、鍵盤離開、增量文字與資源清理。
+- R3-UI01／02：空的 finish 不再捲動；讀歷史時新提示不強拉底部，送出新指令明確恢復跟隨。
+- R3-UI03–08：原生 details 的滑鼠／鍵盤一致、控制邊界≥3:1、手機推薦44px hit area、動態 reduced-motion、分模式輸入名稱與 keyboard-help、錯誤欄位標記／描述／焦點。
+- 目標為 WCAG 2.2 AA 局部檢視，44px／部分偏好改善屬額外推薦或AAA，不混稱AA必要條件。固定時間規則的2.2.1例外未確認；沒有讀屏／跨瀏覽器實測，不宣稱全站符合性認證。
+- 交叉review再抓到R3-UI09：低至360×280的viewport切Server後輸入欄被workspace裁切，中心命中grep快捷鍵。新增未聚焦／未程式捲動輸入欄的真幾何紅測試，再加workspace最小高度與Server手機300px最小遊戲高度，容許低高度時垂直頁面捲動，不靠scrollIntoView在測試中掩蓋排版。
+- 第二次完整候選的既有T12抓到斷點resize後details的open延遲；保留原即時斷言，除media change外也由resize更新，並用lastCompact避免高度改變／重複事件重設使用者開合。主代理新控制原以setViewportSize返回當作resize已送達，獨立探查證明未mock clock也不成立；僅校正新控制setup為原生resize事件屏障，事件microtask立即檢查相同斷言，不等DOM變成預期值、不改原T12。第三次失敗紀錄另存。
+
+## F-15：第三輪狀態交易、時鐘准入與跨分頁保全
+- 原始獨立證據：`notes/ROUND3_STATE.md`，6項測試為2綠、4紅；原斷言保留。修復API與21項控制證據：`notes/ROUND3_STATE_FIX.md`。
+- R3-STATE-01：Engine start／feed／advance建立最外層完整交易；失敗回復VFS、共用flags、once、save／commits、時鐘、timers、branch與transcript，成功才發布輸出。UI在成功後發布候選journal，失敗不能被下一次autosave當已提交步驟。
+- R3-STATE-02：活動存檔的極限r/t與已錯過結尾timer的狀態，在獨立候選中明確拒絕續玩；有效指令／渡海先檢查+30／+600世界時間。已結束的合法極限存檔仍可讀；長休眠仍保留完整elapsed與原960秒結尾，不增加上限、不截斷舊時間或改鏈。
+- R3-STATE-03：`src/ui/session-storage.js`保護**完整envelope字串**而非只head；同步load固定待重播版本，autosave不得重新load替舊狀態背書。Web Locks內最後compare+write／clear，storage event僅失效、不自動採納。失去所有權的頁面停止寫入並提示，仍可匯出自己記憶體中的可攜紀錄。
+- restart／kiosk清除也走guard；primary拒絕清除時不再刪recovery；recovery key另有自己的guard，保留其他分頁的新備份。kiosk勾選變化經queue序列化，不繞過await。
+- Web Locks是合作中的同版頁面保護；無Web Locks時為同步compare+mutation的best-effort，不宣稱跨process全域原子，也不宣稱多個storage key的清除是跨key交易。仍需跨瀏覽器實測；舊版不合作writer或手動清除網站資料不在此鎖保證內。
+- 首次完整候選363項362過／1敗（`notes/test-results-v0.3-first.txt`）：起始recovery baseline過早，擋住同分頁後來寫入的前次私人副本清除。保留原kiosk斷言，改為primary清除成功後、明確隱私cleanup的一次baseline；已觀察外部分頁recovery變更則不再採納，普通tick不反覆reload解衝突。補上外部分頁新recovery不可清除的反向控制；這不把多key操作誇稱原子交易。
+- 清除recovery在取得自己的lock後，經precondition再次檢查primary ownership；新增等待鎖期間主存檔被換走的控制，原recovery bytes保持不變。一般clear的CAS沒有放寬。
+- 第三輪最終與相同條件重跑皆366/366、0 fail、0 skip，T10／T11與原kiosk隱私斷言全部通過；記錄見`notes/test-results-v0.3.txt`與`notes/test-results-v0.3-repeat.txt`。原資料與全部原測試檔的Git差異皆為空，不把修測試setup混稱更改來源oracle。

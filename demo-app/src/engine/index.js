@@ -111,6 +111,8 @@ export class Engine {
     this.ladderIds = this.flow.guidance.flatMap(guide => guide.ladder === 'quest_ladder'
       ? Object.keys(this.quests).map(id => `q.${id}`) : [guide.id]);
     this.budgetNotices = new Set();
+    this._transaction = null;
+    this.outputError = null;
   }
 
   get inBranch() { return this.branch !== 'main'; }
@@ -123,8 +125,91 @@ export class Engine {
   output(text, kind = 'dialogue') {
     if (!text) return;
     text = String(text);
-    this.outputs.push({ text, kind });
-    this.onOutput(text, kind);
+    const entry = { text, kind };
+    this.outputs.push(entry);
+    if (this._transaction) this._transaction.push(entry);
+    else this.publishOutput(entry);
+  }
+  publishOutput({ text, kind }) {
+    // Publication happens after commit. A UI observer cannot roll back text
+    // already seen by another observer, nor make a committed feed reject.
+    try { this.onOutput(text, kind); }
+    catch (error) { this.outputError = error; }
+  }
+  snapshotTransaction() {
+    const before = { ...this }, undo = [];
+    const immutable = new Set(['cfg', 'flow', 'nodes', 'quests', 'whitelist', 'ladderIds', 'manifest', 'man']);
+    for (const [key, value] of Object.entries(before)) {
+      if (!value || typeof value !== 'object' || immutable.has(key) || key === '_transaction') continue;
+      if (key === 'vfs' || key === 'main_snapshot') continue;
+      if (value instanceof Set) {
+        const entries = [...value];
+        undo.push(() => { value.clear(); for (const entry of entries) value.add(entry); });
+      } else if (Array.isArray(value)) {
+        // Existing history/output/trace entries are immutable. Never serialize
+        // old multi-megabyte stdout or copy a growing transcript every tick.
+        const length = value.length;
+        if (['history', 'outputs', 'trace'].includes(key)) undo.push(() => { value.length = length; });
+        else {
+          const entries = value.slice();
+          undo.push(() => { value.length = 0; for (const entry of entries) value.push(entry); });
+        }
+      } else {
+        // Runtime records are shallow immutable values (mode nodes, delayed
+        // payloads and existing commits are never edited by feed/advance).
+        const properties = { ...value };
+        if (key === 'save') {
+          const commits = value.commits, entries = commits.slice();
+          undo.push(() => { commits.length = 0; for (const entry of entries) commits.push(entry); });
+        }
+        undo.push(() => {
+          for (const name of Object.keys(value)) if (!Object.hasOwn(properties, name)) delete value[name];
+          Object.assign(value, properties);
+        });
+      }
+    }
+    for (const world of new Set([before.vfs, before.main_snapshot])) {
+      if (!world) continue;
+      const snapshot = world.clone();
+      // Restore the original VFS identity, hard-link inode graph and flags
+      // reference, including worlds temporarily replaced by a branch/ferry.
+      undo.push(() => { Object.assign(world, snapshot); });
+    }
+    return () => {
+      for (const restore of undo) restore();
+      for (const key of Object.keys(this)) if (!Object.hasOwn(before, key)) delete this[key];
+      Object.assign(this, before);
+    };
+  }
+  async transaction(operation) {
+    if (this._transaction) return operation(); // feed -> advance uses one snapshot.
+    const rollback = this.snapshotTransaction(), pending = [];
+    this._transaction = pending;
+    let result;
+    try {
+      result = await operation();
+      this.checkClocks();
+    } catch (error) {
+      rollback();
+      throw error;
+    }
+    this._transaction = null;
+    for (const entry of pending) this.publishOutput(entry);
+    return result;
+  }
+  checkClocks() {
+    const limits = DATA.yaml['demo/integrity.yaml'].limits;
+    if (!Number.isSafeInteger(this.world_t) || this.world_t < 0 || this.world_t > limits.max_t ||
+      (!this.ended && this.t0 !== null && (!Number.isSafeInteger(this.rMs()) || this.rMs() < 0 || this.rMs() > limits.max_r_ms))) {
+      throw new S.CodeError('時間已達存檔安全上限；本次操作未套用，請保留目前存檔。');
+    }
+  }
+  advanceWorld(seconds) {
+    const next = this.world_t + seconds;
+    if (!Number.isSafeInteger(next) || next > DATA.yaml['demo/integrity.yaml'].limits.max_t) {
+      throw new S.CodeError('世界時間已達存檔安全上限；本次操作未套用，請保留目前存檔。');
+    }
+    this.world_t = next;
   }
   vars(extra = {}) {
     return { nick: this.nick || '', branch: this.branch, tries: this.tries, n: this.branchCommits(), name: '', suggest: '', ...extra };
@@ -146,6 +231,9 @@ export class Engine {
   ev(source) { return evaluate(source, this.env()); }
 
   async start() {
+    return this.transaction(() => this.startSession());
+  }
+  async startSession() {
     if (this.started) return this;
     this.started = true;
     this.queue.push(['session.start', {}]);
@@ -154,6 +242,9 @@ export class Engine {
   }
   async commit(kind, data) {
     if (!this.save || this.ended) return;
+    this.checkClocks();
+    const last = this.save.commits.at(-1);
+    if (last && (this.rMs() < last.r || this.world_t < last.t)) throw new S.CodeError('存檔時間不可倒退；本次操作未套用。');
     // Repeated checkpoints carry no new state. All first occurrences, including
     // flags/tasks/end, have a reserved slot and are never discarded here.
     const key = eventKey(kind, data);
@@ -205,9 +296,9 @@ export class Engine {
         await this.commit(kind === 'give' ? 'item' : kind, { id: value });
       }
     } else if (kind === 'world') {
+      this.advanceWorld(600);
       this.world = value;
       this.vfs = createWorld(value, this.seed, this.flags);
-      this.world_t += 600;
       this.T('world', value);
     } else if (kind === 'print') {
       const name = /^git\s+tag\s+(\S+)/.exec(payload.raw || '')?.[1] || '';
@@ -428,8 +519,12 @@ export class Engine {
   }
 
   async advance(dt) {
+    return this.transaction(() => this.advanceClock(dt));
+  }
+  async advanceClock(dt) {
     if (typeof dt !== 'number' || !Number.isFinite(dt) || dt < 0) throw new RangeError('dt 必須是非負秒數');
     const end = this.now + dt;
+    if (!Number.isFinite(end)) throw new RangeError('時鐘超出有限秒數範圍');
     // Schedule exact boundaries rather than missing thresholds with fractional UI ticks.
     while (!this.ended && this.t0 !== null) {
       const pending = [];
@@ -459,6 +554,9 @@ export class Engine {
   }
 
   async feed(raw, dt = 0) {
+    return this.transaction(() => this.feedInput(raw, dt));
+  }
+  async feedInput(raw, dt = 0) {
     await this.advance(dt);
     raw = String(raw).trim();
     if (!raw) {
@@ -517,17 +615,20 @@ export class Engine {
   }
 
   async feedCommand(raw) {
-    this.world_t += 30;
+    this.advanceWorld(30);
     this.commandCount++;
     const result = await this.execute(raw);
     const history = { raw, output: result.stdout || '', rc: result.rc, cwd: this.vfs.cwd };
     this.history.push(history);
     const seen = new Set();
-    for (const read of result.reads || []) {
+    const hasSnapshots = Array.isArray(result.readEvents);
+    for (const read of (hasSnapshots ? result.readEvents : result.reads) || []) {
       const path = typeof read === 'string' ? read : read.path;
       const paths = [path, ...(typeof read === 'object' ? read.same_inode || [] : [])];
       // Shell may report an alias; known source paths still count as reading it.
-      if (typeof this.vfs.sameInodePaths === 'function') paths.push(...this.vfs.sameInodePaths(path));
+      // A pathname may have been removed/rebound later in the same script.
+      // Never resolve it again when Shell supplied the read-time inode snapshot.
+      if (!hasSnapshots && typeof read === 'string' && typeof this.vfs.sameInodePaths === 'function') paths.push(...this.vfs.sameInodePaths(path));
       for (const p of paths) if (p && !seen.has(p)) {
         seen.add(p);
         this.queue.push(['file.read', { path: p, branch: this.branch }]);
@@ -672,6 +773,10 @@ export class Engine {
     // publishing any restored state, rather than failing after a future command
     // has changed flags/VFS or trimming the caller's existing hash chain.
     if (!restored.canSpendCommits(0)) throw new S.CodeError('存檔剩餘事件空間不足，無法安全續玩；請保留原始存檔，紀錄未被修改。');
+    if (!restored.ended && (restored.world_t > DATA.yaml['demo/integrity.yaml'].limits.max_t - 30 ||
+      restored.now >= 960 || (restored.now >= 900 && !restored.flags.has('flag.demo.in_vote')))) {
+      throw new S.CodeError('存檔時間已達安全續玩界線；請保留原始存檔，紀錄未被修改。');
+    }
     Object.assign(this, restored);
     return this;
   }

@@ -1,6 +1,6 @@
 {
   "name": "root-archipelago-first-night",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,7 +8,7 @@
     "build": "node build.mjs",
     "pretest": "node build.mjs",
     "test": "node --test --test-concurrency=2",
-    "test:browser": "node --test --test-concurrency=2 test/browser.test.mjs test/ui-extra.test.mjs test/styles.test.mjs test/critique.test.mjs test/session-hardening.test.mjs"
+    "test:browser": "node --test --test-concurrency=2 test/browser.test.mjs test/ui-extra.test.mjs test/styles.test.mjs test/critique.test.mjs test/session-hardening.test.mjs test/round3-ui.test.mjs test/round3-state.test.mjs test/round3-session-browser.test.mjs"
   },
   "devDependencies": {
     "esbuild": "^0.25.0",

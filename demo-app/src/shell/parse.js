@@ -27,7 +27,9 @@ export function tokenize(raw) {
       } else text += ch;
       continue;
     }
-    if (/\s/.test(ch)) { finish(); continue; }
+    // Bash blanks are ASCII, not JavaScript's Unicode whitespace class.
+    // Keep the line-oriented parser's existing treatment of pasted newlines.
+    if (ch === ' ' || ch === '\t' || ch === '\n') { finish(); continue; }
     if (ch === '#' && !started) break;
     if (ch === "'" || ch === '"') {
       flushPart(); quote = ch; started = true; mode(ch !== "'"); continue;

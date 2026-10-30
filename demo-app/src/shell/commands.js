@@ -25,6 +25,11 @@ function* sources(operands, input, ctx, errorRC = 1) {
 function* joinedSources(operands, input, ctx) {
   for (const src of sources(operands, input, ctx)) yield* src.chunks;
 }
+function* sourceLines(operands, input, ctx) {
+  // Text tools terminate an incomplete last line at each file boundary. cat,
+  // in contrast, must keep using joinedSources for byte-preserving concatenation.
+  for (const src of sources(operands, input, ctx)) yield* lines(src.chunks);
+}
 function splitOptions(args, allowed) {
   let options = '', operands = [], stop = false;
   for (const arg of args) {
@@ -257,7 +262,7 @@ function* sort(args, input, ctx) {
     const compared = (useNumeric ? num(ka) - num(kb) : compareBytes(ka, kb)) || (stable ? 0 : compareBytes(a, b));
     return useReverse ? -compared : compared;
   };
-  const all = [...lines(joinedSources(operands, input, ctx))].map(withoutNewline).sort(compare);
+  const all = [...sourceLines(operands, input, ctx)].map(withoutNewline).sort(compare);
   let previous;
   for (const line of all) { if (!unique || previous === undefined || compare(previous, line)) yield line + '\n'; previous = line; }
 }
@@ -303,7 +308,7 @@ function* cut(args, input, ctx) {
     return [Number(match[1] || 1), part.includes('-') ? Number(match[2] || Infinity) : Number(match[1])];
   });
   const keep = i => ranges.some(([a, b]) => i >= a && i <= b);
-  for (const raw of lines(joinedSources(operands, input, ctx))) {
+  for (const raw of sourceLines(operands, input, ctx)) {
     const line = withoutNewline(raw);
     if (fields !== null && !line.includes(delimiter)) { if (!suppress) yield line + '\n'; continue; }
     const values = fields !== null ? line.split(delimiter) : Array.from(line);

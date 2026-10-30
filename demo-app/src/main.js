@@ -1,28 +1,47 @@
 import {DATA} from './data.js';
 import {Engine} from './engine/index.js';
 import * as S from './save/index.js';
-import {readLocal,writeLocal,clearLocal,PREFS_KEY,RECOVERY_KEY,checkJournal,appendAdvance} from './storage.js';
+import {readLocal,writeLocal,PREFS_KEY,RECOVERY_KEY,checkJournal,appendAdvance} from './storage.js';
 import {el,button,copyText} from './ui/dom.js';
 import {Terminal} from './ui/terminal.js';
 import {sanitizePreferences,resolvePreferences,styleDescription} from './ui/preferences.js';
+import {createSessionStorage} from './ui/session-storage.js';
 
 const cfg=DATA.yaml['demo/demo.yaml'];
 const runMode=['kiosk','host'].includes(new URLSearchParams(location.search).get('mode'))?new URLSearchParams(location.search).get('mode'):'self';
 const app=document.querySelector('#app');
 const compact=matchMedia('(max-width: 760px)');
-compact.addEventListener('change',()=>{const panel=document.querySelector('.task-panel');if(panel)panel.open=!compact.matches;if(engine)refresh();});
+let lastCompact=compact.matches;
+function updateCompact() {
+  if(lastCompact===compact.matches)return;
+  lastCompact=compact.matches;
+  const panel=document.querySelector('.task-panel');
+  if(panel){panel.open=!lastCompact;if(engine)refresh();}
+}
+compact.addEventListener('change',updateCompact);
 // Mutate the already-authorized stylesheet through CSSOM, not inline style
 // attributes, so the hashed CSP remains strict even with the mobile keyboard.
 const viewportStyle=Array.from(document.styleSheets[0].cssRules).find(rule=>rule.selectorText===':root')?.style;
-function viewportHeight(){viewportStyle?.setProperty('--viewport-height',`${window.visualViewport?.height||window.innerHeight}px`);}
+function viewportHeight(){viewportStyle?.setProperty('--viewport-height',`${window.visualViewport?.height||window.innerHeight}px`);updateCompact();}
 window.visualViewport?.addEventListener('resize',viewportHeight);
 window.addEventListener('resize',viewportHeight);
 viewportHeight();
 let engine=null, terminal=null, journal=[], baseSave=null, baseBroken=false, restoring=false;
 let history=[],historyIndex=0,historyDraft='', serial=Promise.resolve(),tickPending=false;
 let lastWall=performance.now(),lastActivity=performance.now(),endedShown=false,clearKiosk=true;
-let saved=readLocal(),prefs=sanitizePreferences(readLocal(PREFS_KEY));
+let kioskRecoveryBaseline=false,kioskRecoveryDone=false;
+const sessionStore=createSessionStorage(),recoveryStore=createSessionStorage({key:RECOVERY_KEY});
+const initialLocal=sessionStore.load(),initialRecovery=recoveryStore.load();
+let localWritable=initialLocal.ok,recoveryWritable=initialRecovery.ok;
+let saved=initialLocal.ok?initialLocal.value:null,prefs=sanitizePreferences(readLocal(PREFS_KEY));
 let input,log,prompt,taskTitle,taskPrompt,hintState,clock,saveStatus,findCount,game,welcome,welcomeError;
+const conflictMessage='另一分頁已更新存檔，已停止本頁自動存檔；可先用 save 匯出本頁進度，再重新載入。';
+function saveMessage(text) {if(saveStatus&&saveStatus.textContent!==text)saveStatus.textContent=text;}
+window.addEventListener('storage',event=>{
+  try {if(event.storageArea!==globalThis.localStorage)return;}catch{return;}
+  sessionStore.observe(event);recoveryStore.observe(event);
+  if(sessionStore.conflicted)saveMessage(conflictMessage);
+});
 
 function enqueue(fn) {
   const operation=serial.then(fn);
@@ -62,12 +81,17 @@ function shell() {
   app.replaceChildren();
   const header=el('header',{class:'masthead'},el('a',{href:'#',class:'wordmark',onClick:event=>event.preventDefault()},'ROOT / ARCHIPELAGO'),el('span',{class:'edition'},'試玩版〈第一夜〉'),el('span',{class:'offline'},'● 離線・不收集資料'),settings());
   welcomeError=el('p',{id:'welcome-error',role:'status',class:'error-message'});
-  const code=el('textarea',{id:'import-code',rows:3,spellcheck:'false','aria-label':'貼上存檔代碼或 JSON',placeholder:'RA1-…',maxlength:1_048_576});
-  const file=el('input',{type:'file',accept:'.json,.rasave.json,text/plain',id:'import-file','aria-label':'匯入自己的存檔檔案'});
+  const code=el('textarea',{id:'import-code',rows:3,spellcheck:'false','aria-label':'貼上存檔代碼或 JSON','aria-describedby':'welcome-error',placeholder:'RA1-…',maxlength:1_048_576});
+  const file=el('input',{type:'file',accept:'.json,.rasave.json,text/plain',id:'import-file','aria-label':'匯入自己的存檔檔案','aria-describedby':'welcome-error'});
+  const clearImportError=event=>{event.target.removeAttribute('aria-invalid');welcomeError.textContent='';};
+  code.addEventListener('input',clearImportError);
   file.addEventListener('change',()=>enqueue(async()=>{
     const selected=file.files[0]; if(!selected) return;
-    if(selected.size>262144) throw new Error('存檔檔案過大');
-    await importSave(await selected.text());
+    file.removeAttribute('aria-invalid');
+    try {
+      if(selected.size>262144) throw new Error('存檔檔案過大');
+      await importSave(await selected.text(),file);
+    } catch(error) {file.setAttribute('aria-invalid','true');file.focus();throw error;}
   }).catch(()=>{}));
   welcome=el('main',{id:'welcome',class:'welcome'},
     el('section',{class:'welcome-story'},el('p',{class:'eyebrow'},'ROOT ARCHIPELAGO / DEMO 01'),el('h1',{},'根目錄群島',el('span',{},'第一夜')),el('p',{class:'pitch'},cfg.pitch),el('div',{class:'start-actions'},button('開始值班 →',()=>enqueue(()=>startNew()).catch(()=>{}),{id:'new-game',class:'primary'}),saved?button('繼續上次的存檔',()=>enqueue(()=>resumeLocal()).catch(()=>{}),{id:'continue-game'}):null),el('p',{class:'quiet'},'約 15 分鐘　／　原生 JavaScript　／　所有指令都在模擬世界執行'),el('p',{id:'style-description',class:'quiet'},styleDescription(document.documentElement.dataset.style))),
@@ -81,13 +105,13 @@ function createGame() {
   terminal?.destroy();
   game.replaceChildren();
   welcome.hidden=true; game.hidden=false;
-  endedShown=false; clearKiosk=true;
+  endedShown=false; clearKiosk=true;kioskRecoveryBaseline=false;kioskRecoveryDone=false;
   clock=el('span',{id:'clock',class:'clock','aria-label':'值班經過時間'},'00:00');
   const bar=el('div',{class:'terminal-bar'},el('span',{class:'window-dots','aria-hidden':'true'},'● ● ●'),el('span',{id:'host-label'},'lighthouse / main'),clock);
   log=el('div',{id:'terminal',class:'terminal',role:'log','aria-live':'polite','aria-relevant':'additions text','aria-label':'終端機輸出',tabindex:'0'});
   terminal=new Terminal(log);
   prompt=el('label',{id:'prompt',for:'command-input',class:'prompt'},'暱稱 > ');
-  input=el('input',{id:'command-input',type:'text',autocomplete:'off',autocapitalize:'off',autocorrect:'off',spellcheck:'false',maxlength:4096,'aria-label':'終端機輸入',disabled:true});
+  input=el('input',{id:'command-input',type:'text',autocomplete:'off',autocapitalize:'off',autocorrect:'off',spellcheck:'false',maxlength:4096,'aria-label':'輸入暱稱','aria-describedby':'keyboard-help',disabled:true});
   const form=el('form',{class:'command-form'},prompt,input,el('button',{type:'submit','aria-label':'執行指令',class:'execute'},'↵'));
   form.addEventListener('submit',event=>{
     event.preventDefault();
@@ -100,13 +124,14 @@ function createGame() {
   taskPrompt=el('p',{id:'task-prompt'});
   hintState=el('p',{id:'hint-state',class:'hint-state'},'提示 ○ ○ ○');
   findCount=el('strong',{id:'discoveries'},'0 / 12');
-  saveStatus=el('p',{id:'save-status',class:'save-status','data-head':''},'尚未開始');
+  saveStatus=el('p',{id:'save-status',class:'save-status',role:'status','data-head':''},'尚未開始');
   const panel=el('details',{class:'task-panel',open:!compact.matches},el('summary',{id:'panel-summary'},'值班面板'),el('div',{class:'panel-content'},el('p',{class:'eyebrow'},'CURRENT TASK'),taskTitle,taskPrompt,hintState,button('下一階提示',()=>quickCommand('hint'),{class:'hint-button'}),el('div',{class:'panel-stats'},el('span',{},'發現'),findCount),el('div',{class:'panel-save'},el('span',{},'本機存檔'),saveStatus),el('p',{class:'quiet'},'Tab 補全 · ↑↓ 歷史',el('br'), 'hint 提示 · skip 兩次跳題'),el('p',{id:'session-mode-notice',class:'mode-notice',hidden:true})));
   const chips=el('nav',{class:'chips','aria-label':'指令快捷按鈕'},...cfg.ui.command_chips.map(command=>button(command,()=>{
     if(command==='hint'||command==='save')quickCommand(command);
     else {input.value=command+' ';input.focus();}
   },{'aria-label':command==='hint'?'執行 hint':command==='save'?'執行 save':`填入 ${command}`})));
-  game.append(el('section',{class:'workspace'},el('section',{class:'terminal-window'},bar,log,form),panel),chips,el('div',{class:'game-footer'},el('span',{},'模擬 Shell，不會更動你的電腦。'),el('span',{},runMode.toUpperCase())));
+  const keyboardHelp=el('p',{id:'keyboard-help',class:'keyboard-help'},'Tab 補全 · ↑↓ 歷史 · Shift+Tab 離開輸入欄 · 終端機輸出可用 PageUp／PageDown 捲動');
+  game.append(el('section',{class:'workspace'},el('section',{class:'terminal-window'},bar,log,form),panel),chips,keyboardHelp,el('div',{class:'game-footer'},el('span',{},'模擬 Shell，不會更動你的電腦。'),el('span',{},runMode.toUpperCase())));
   history=[];historyIndex=0;historyDraft='';
 }
 function output(text,kind) { terminal?.write(text,kind,restoring); }
@@ -118,7 +143,14 @@ async function startNew() {
   await engine.start();lastWall=performance.now();activity();
   refresh();input.disabled=false;input.focus();
 }
-async function importSave(text) {
+async function importSave(text,field=document.querySelector('#import-code')) {
+  try {await importCandidate(text);}
+  catch(error) {
+    if(field){field.setAttribute('aria-invalid','true');field.focus();}
+    throw error;
+  }
+}
+async function importCandidate(text) {
   const save=text.trimStart().startsWith('{')?await S.importFile(text):await S.importCode(text);
   const [level]=await S.level(save);
   // Admission can reject a shape-valid older save that has no continuation
@@ -128,11 +160,13 @@ async function importSave(text) {
   engine=candidate;engine.onOutput=output;
   output(`[系統] 存檔完整性：${{intact:'完整',suspicious:'可疑',broken:'損毀'}[level]}。\n`,'system');
   output('[系統] 代碼保留事件進度，不包含任意 Shell 檔案修改、工作目錄與未記錄的輸入。\n','system');
-  lastWall=performance.now();activity();persist();refresh();input.disabled=false;
+  lastWall=performance.now();activity();await persist();refresh();input.disabled=false;
   if(engine.ended)await showExport(true);else input.focus();
 }
 async function resumeLocal() {
-  const envelope=readLocal();
+  const read=sessionStore.load();localWritable=read.ok;
+  if(!read.ok)throw new Error('本機存檔無法安全讀取；原始資料未覆寫，請保留備份或使用代碼。');
+  const envelope=read.value;
   if(!envelope)throw new Error('找不到可繼續的本機存檔。請貼上存檔代碼。');
   if(!envelope.save) {await importSave(JSON.stringify(envelope));return;}
   try {
@@ -175,10 +209,10 @@ function echoInput(raw) {
   if(engine.inputMode!=='input'){history.push(raw);historyIndex=history.length;}
 }
 async function feedInput(raw) {
-  terminal.finish();echoInput(raw);
-  journal.push({type:'input',raw,dt:0});
+  terminal.follow();terminal.finish();echoInput(raw);
   await engine.feed(raw,0);
-  persist();refresh();
+  journal.push({type:'input',raw,dt:0});
+  await persist();refresh();
   if(engine.ended&&!endedShown)await showExport(true);
   else if(/^save(?:\s|$)/.test(raw.trim())&&engine.save)await showExport(false);
 }
@@ -190,22 +224,51 @@ function quickCommand(raw) {
 }
 async function syncClock() {
   const now=performance.now(),dt=Math.max(0,(now-lastWall)/1000);lastWall=now;
-  if(engine&&!engine.ended){appendAdvance(journal,dt);await engine.advance(dt);}
+  if(engine&&!engine.ended){
+    const next=journal.slice();
+    if(next.length)next[next.length-1]={...next[next.length-1]};
+    appendAdvance(next,dt);
+    await engine.advance(dt);
+    journal=next;
+  }
 }
-function persist() {
+async function persist() {
   if(!engine?.save)return;
   if(!baseBroken)S.seal(engine.save);
   try {
     S.checkShape(engine.save);
     if(!checkJournal(journal))throw new Error('操作紀錄超出本機儲存範圍');
   } catch {
-    saveStatus.textContent='目前紀錄未自動存入；請使用 save 保留進度';
+    saveMessage('目前紀錄未自動存入；請使用 save 保留進度');
     return;
   }
-  if(runMode==='kiosk'&&engine.ended&&clearKiosk){clearLocal();clearLocal(RECOVERY_KEY);saveStatus.textContent='已清除本機存檔';return;}
-  const ok=writeLocal({version:1,runMode:engine.runMode,save:engine.save,baseSave,journal});
-  saved=ok?readLocal():saved;
-  saveStatus.textContent=ok?'● 已自動存檔':'未能自動存檔，請保留代碼';
+  if(!localWritable){saveMessage('未能安全讀取原始存檔，未覆寫；請使用 save 保留進度');return;}
+  if(runMode==='kiosk'&&engine.ended&&clearKiosk){
+    const removed=await sessionStore.clear();
+    if(removed.ok){
+      const recovery=await clearKioskRecovery();
+      saveMessage(recovery.ok?'已清除本機存檔':'已清除本機存檔；救援備份未清除，請檢查儲存權限或其他分頁');
+    }else saveMessage(removed.reason==='conflict'?conflictMessage:'未能清除本機存檔，請檢查儲存權限');
+    return;
+  }
+  const result=await sessionStore.write({version:1,runMode:engine.runMode,save:engine.save,baseSave,journal});
+  saved=result.ok?readLocal():saved;
+  saveMessage(result.ok?'● 已自動存檔':result.reason==='conflict'?conflictMessage:'未能自動存檔，請保留代碼');
+}
+async function clearKioskRecovery() {
+  // This explicit privacy cleanup adopts its recovery baseline once, only after
+  // primary cleanup succeeded. Never reacquire a baseline invalidated by an
+  // external storage event, nor adopt it afresh on every idle autosave tick.
+  if(!sessionStore.check().ok||recoveryStore.conflicted)return {ok:false};
+  if(kioskRecoveryDone)return {ok:true};
+  if(!kioskRecoveryBaseline){
+    kioskRecoveryBaseline=true;
+    const read=recoveryStore.load();
+    recoveryWritable=read.ok||read.reason==='invalid'||read.reason==='too_large';
+  }
+  const result=recoveryWritable?await recoveryStore.clear({precondition:()=>sessionStore.check().ok}):{ok:false};
+  if(result.ok)kioskRecoveryDone=true;
+  return result;
 }
 function refresh() {
   if(!engine||!input)return;
@@ -221,6 +284,7 @@ function refresh() {
   const guide=engine.currentLadder();
   const quest=engine.quests[engine.active];
   const enteringNick=engine.inputMode==='input'&&engine.mode[2].expect_input.store==='player.nick';
+  input.setAttribute('aria-label',enteringNick?'輸入暱稱':engine.inputMode==='input'?'輸入口令或 Shell 指令':engine.inputMode==='choice'?'選擇 block 或 pass':'輸入 Shell 指令');
   for(const control of game.querySelectorAll('.hint-button,[aria-label="執行 hint"],[aria-label="執行 save"]'))control.disabled=enteringNick;
   const guideKey=guide?.ladder==='quest_ladder'?`q.${engine.active}`:guide?.id;
   const n=engine.ladders[guideKey]||0;
@@ -274,9 +338,9 @@ function showRecovery(envelope) {
     runMode==='kiosk'||!valid?null:button('下載已保存的 JSON',()=>downloadJSON(envelope.save,`${envelope.save.nick}.rasave.json`),{id:'download-recovery-save'}),
     el('details',{},el('summary',{},'或複製原始操作紀錄'),original,button('複製原始紀錄',()=>copyText(original.value,original,status)),status),
     button('只還原已保存事件（不含檔案改動）',()=>enqueue(async()=>{
-      const backup=writeLocal(envelope,RECOVERY_KEY);
-      if(!backup)throw new Error('無法保留救援備份；請先下載或複製原始紀錄，再從 JSON 匯入。');
-      await importSave(JSON.stringify(envelope.save));
+      const backup=recoveryWritable&&sessionStore.check().ok?await recoveryStore.write(envelope):{ok:false};
+      if(!backup.ok)throw new Error('無法保留救援備份，或另一分頁已更新；請先下載或複製原始紀錄，再從 JSON 匯入。');
+      await importSave(JSON.stringify(envelope.save),null);
     }).catch(()=>{}),{id:'restore-events',disabled:!valid}));
   document.querySelector('.welcome-import').append(panel);
 }
@@ -301,16 +365,20 @@ async function showExport(ended) {
     el('div',{class:'export-actions'},button('複製代碼',()=>copyText(code,textarea,status),{id:'copy-code',disabled:!code}),button('複製值班證',async()=>{cardArea.hidden=false;await copyText(cardText,cardArea,status);},{id:'copy-card'}),runMode==='kiosk'?null:button('下載 JSON',downloadSave,{id:'download-save'})),cardArea,status,
     warning?el('details',{open:true},el('summary',{},'保留原始 JSON（代碼無法匯出）'),rawArea,button('複製原始 JSON',()=>copyText(rawArea.value,rawArea,status))):null,
     el('p',{class:'quiet'},'「完整」僅表示資料未損毀，不代表真實遊玩的證明。'),
-    runMode==='kiosk'?el('label',{class:'clear-choice'},el('input',{id:'clear-local',type:'checkbox',checked:true,onChange:event=>{clearKiosk=event.target.checked;persist();}}),' 清除本機存檔（預設清除）'):null,
+    runMode==='kiosk'?el('label',{class:'clear-choice'},el('input',{id:'clear-local',type:'checkbox',checked:true,onChange:event=>{clearKiosk=event.target.checked;if(clearKiosk){kioskRecoveryBaseline=false;kioskRecoveryDone=false;}enqueue(()=>persist()).catch(()=>{});}}),' 清除本機存檔（預設清除）'):null,
     ended?button('重新開始',()=>enqueue(()=>resetWelcome(runMode==='kiosk'?clearKiosk:true)).catch(()=>{}),{id:'restart',class:'primary'}):button('回到終端機',()=>{dialog.close();dialog.remove();input.focus();},{id:'close-save'}));
   dialog.append(el('section',{id:ended?'end-screen':'export-content',class:'export-layout'},card,tools));
   dialog.addEventListener('cancel',event=>{if(ended)event.preventDefault();else{dialog.remove();input.focus();}});
   document.body.append(dialog);dialog.showModal();
-  persist();refresh();document.querySelector('#copy-code').focus();
+  await persist();refresh();document.querySelector('#copy-code').focus();
 }
 async function resetWelcome(clear=true) {
   document.querySelector('dialog')?.remove();terminal?.destroy();terminal=null;engine=null;
-  if(clear){clearLocal();if(runMode==='kiosk')clearLocal(RECOVERY_KEY);}saved=readLocal();journal=[];baseSave=null;history=[];
+  if(clear&&localWritable){
+    const removed=await sessionStore.clear();
+    if(removed.ok&&runMode==='kiosk')await clearKioskRecovery();
+  }
+  saved=readLocal();journal=[];baseSave=null;history=[];
   shell();lastWall=performance.now();activity();document.querySelector('#new-game').focus();
 }
 
@@ -320,7 +388,7 @@ setInterval(()=>{
   tickPending=true;
   enqueue(async()=>{
     if(runMode==='kiosk'&&performance.now()-lastActivity>=120000){await resetWelcome(true);return;}
-    await syncClock();persist();refresh();
+    await syncClock();await persist();refresh();
     if(engine?.ended&&!endedShown)await showExport(true);
   }).catch(()=>{}).finally(()=>{tickPending=false;});
 },250);
