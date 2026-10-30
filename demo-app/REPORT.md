@@ -69,7 +69,7 @@ timeup 的 16:00 是資料規定的投票寬限，不是改成 16 分鐘遊戲�
 
 ## FINDINGS
 
-詳見 `FINDINGS.md`：F-01–F-11、F-S01–S09、F-W01–W05、F-E01–E09；附各代理筆記與精準位置。
+詳見 `FINDINGS.md`：F-01–F-12、F-S01–S09、F-W01–W05、F-E01–E09；附各代理筆記與精準位置。
 
 關鍵限制：RA1 只有事件，不包含任意 Shell 檔案修改／cwd／未記錄輸入；貼碼復原可推知的事件進度，本機 journal 才能精準續玩。原資料保持原樣：以 `git diff --exit-code b2d742a -- <原始資料目錄>` 確認無變更。
 
@@ -93,3 +93,11 @@ timeup 的 16:00 是資料規定的投票寬限，不是改成 16 分鐘遊戲�
 - 來源 `tools/validate.py` 在 Windows 有混合子程序編碼問題：兩種編碼執行分別通過快題／工單，但單次完整驗證未綠；未改工具。這不是 T1–T12 的失敗。
 - BRE 是必要子集，不是完整 GNU grep；重複群組保守拒絕。存檔完整性不是遊玩真實性的證明，純前端不能防作弊。
 - QA-01 與手機任務列回歸已關閉；第二輪 CRIT-01–05 及低優先模式邊界 CRIT-06 都已有通過的回歸斷言，沒有未列入 FINDINGS 的已知阻塞問題。
+
+## 使用者補充的參考研究（不變更本輪程式）
+
+- 兩位獨立研究代理已完成 just-bash／PocketTerm 與 10 款終端遊戲的官方來源查證；完整記錄在 `notes/ENGINE_REFERENCES.md`、`notes/GAME_REFERENCES.md`，主架構師取捨在 `notes/REFERENCE_DECISIONS.md`。
+- just-bash 是未來可評估的 adapter 候選；PocketTerm 更適合作 UX 參考。兩者未經本案單檔、file://、CSP、T7／T10 同 ID 驗收，不當作立即替換品。
+- 優先借鏡 Teach Terminal 的可收合教學、GameShell 的目標／檢查／復原分工、clmystery 的調查動機，以及 cmdchallenge 的鍵盤規則。不抄劇情、題庫或素材。
+- Sudo Sanctuary 的真 Bash 未證實；免費遊玩、公開 repo、MIT 宣告／授權檔不完整等狀況皆分開記錄，不擅自推論可直接搬碼。
+- 本輪僅查閱文件與少量原始碼，沒有安裝／執行外部引擎、移植程式或素材，沒有新增依賴或網路功能；研究候選不代表後續實作承諾。

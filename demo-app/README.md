@@ -50,3 +50,11 @@ Playwright 不屬於正式產物，亦不必加入 app 的依賴。環境有 Chr
 - 加 `?mode=host`：主持人帶領，放大字級，點燈後直接進投票；共享紀錄不作個人正式版匯入用途。
 
 詳見 `ARCHITECTURE.md`、`FINDINGS.md` 與驗收結論 `REPORT.md`。
+
+## 外部專案參考（僅研究，未移植）
+
+- [主架構師取捨摘要](notes/REFERENCE_DECISIONS.md)
+- [just-bash／PocketTerm：官方來源、授權與整合成本](notes/ENGINE_REFERENCES.md)
+- [10 款終端遊戲：執行路線與可借鑑互動](notes/GAME_REFERENCES.md)
+
+結論是先借鑑教學／鍵盤 UX，不直接換引擎或增加依賴。這些外部專案沒有在本案安裝或實跑。
