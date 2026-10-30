@@ -6,7 +6,7 @@
   "scripts": {
     "data": "node build.mjs --data-only",
     "build": "node build.mjs",
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test"
   },
   "devDependencies": {
     "esbuild": "^0.25.0",

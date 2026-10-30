@@ -1,0 +1,12 @@
+export { CodeError } from './errors.js';
+export { canonical } from './canonical.js';
+export { crc32 } from './crc32.js';
+export { commitId, verifyChain } from './hash.js';
+export { newSave, addCommit, seal, pack, unpack } from './state.js';
+export { checkShape } from './validate.js';
+export { importCode, exportCode, inflateBounded } from './codec.js';
+export { importFile, toFullgame } from './import.js';
+export { plausibility, level } from './integrity.js';
+export { fold } from './fold.js';
+export { score } from './score.js';
+export { card, fmtTime } from './card.js';
