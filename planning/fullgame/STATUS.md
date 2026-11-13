@@ -19,10 +19,10 @@
 
 ## 來源入口
 
-- [原始碼指南](../../SOURCE_GUIDE.md)：模組責任、三種保存、最近一輪驗證界線。
+- [原始碼指南](../../docs/SOURCE_GUIDE.md)：模組責任、三種保存、最近一輪驗證界線。
 - [試玩 README](../../demo-app/README.md)：Bash 模式、快捷鍵、可中斷命令與已知限制。
 - [歷史回報](../../demo-app/REPORT.md)：v0.3.0 當時的 366/366 紀錄與未驗範圍。
-- [SOURCE_GUIDE](../../SOURCE_GUIDE.md)「註解整理驗證」記錄 Bash 整合前的一輪 323 通過、43 跳過；[BASH_TERMINAL](../../demo-app/notes/BASH_TERMINAL.md)「前次」記 390/390，「最新：原生 Bash 對照後修正」記 391/391。這些是不同變更／條件的既有紀錄，本輪只回查文件，未重跑遊戲測試。
+- [SOURCE_GUIDE](../../docs/SOURCE_GUIDE.md)「註解整理驗證」記錄 Bash 整合前的一輪 323 通過、43 跳過；[BASH_TERMINAL](../../demo-app/notes/BASH_TERMINAL.md)「前次」記 390/390，「最新：原生 Bash 對照後修正」記 391/391。這些是不同變更／條件的既有紀錄，本輪只回查文件，未重跑遊戲測試。
 - [劇本](../../SCRIPT.md)、[原始規劃附件](source/《根目錄群島》完整版規劃書.original.md)、[細部來源表](SOURCE_MAP.md)。
 
 本輪開始時 Git 已有大量修改與未追蹤工作；不拿其差異當本輪成果。只把 `planning/fullgame/` 文件交付列入本輪變更。

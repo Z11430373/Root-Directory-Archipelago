@@ -10,7 +10,7 @@
 - [原規劃 §4、WP5](../source/《根目錄群島》完整版規劃書.original.md) 指定 `git log/blame/bisect`、`diff` 與 Ch6 仿 Git。
 - [憲章](../../../world/charter.yaml) `patch_author`、`lin_touches_article_7`、`pending_amendment` 已知：Rev 5 提交者 lin，v4.7 的第七條最後修改歸屬 lin；條文作者 kestrel；草案被 CI 擋下。Rev 是憲章版次，v4.7 是世界版本標籤，不是 object ID。
 - [SCRIPT 附錄](../../../SCRIPT.md) 與 [cast](../../../world/cast.yaml) 可驗以上事實；Ch6 完整查證流程、F8 差異檔正文與取得條件仍待作者。不能由 blame 推斷動機，更不能用 bisect 找「壞人」。
-- **現況**：[Engine.execute](../../../demo-app/src/engine/index.js) 把 `git` 留給 flow；[demo flow](../../../demo/flow.yaml) 只有 B0 等故事指令，未提供 repository object model、blame 或 bisect。[SOURCE_GUIDE](../../../SOURCE_GUIDE.md) 的 Python/Bash 參考不是 Git 參考實作。
+- **現況**：[Engine.execute](../../../demo-app/src/engine/index.js) 把 `git` 留給 flow；[demo flow](../../../demo/flow.yaml) 只有 B0 等故事指令，未提供 repository object model、blame 或 bisect。[SOURCE_GUIDE](../../../docs/SOURCE_GUIDE.md) 的 Python/Bash 參考不是 Git 參考實作。
 
 | 所有者角色 | 責任／交付 |
 | --- | --- |

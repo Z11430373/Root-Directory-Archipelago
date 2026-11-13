@@ -8,12 +8,12 @@
 
 2026-11-03 補齊一般風格：所有瀏覽器新遊戲、事件匯入與續玩後的新輸入均採 Bash，兩種風格只改呈現器；legacy 僅供歷史重播。一般輸入也共用續行判斷、Bash 補全與草稿取消。主提示符改 `$`，遊戲問答用冒號，`>` 僅作真正 PS2 與重導向運算子；詳見主線紀錄。
 
-2026-11-02 前輪 `npm.cmd test`：**526/526 通過，0 failed／cancelled／skipped**（359.50 秒），同次 pretest 重建正式離線 HTML **2,307,259 bytes**。原始輸出見 [前輪全套日誌](../demo-app/notes/test-results-bash-integration-final.txt)。反方 M1–M5 已結案，原生對照暫存環境亦已修復；完整失敗與修復歷史保留，不將各輪測試數累加。
+2026-11-02 前輪 `npm.cmd test`：**526/526 通過，0 failed／cancelled／skipped**（359.50 秒），同次 pretest 重建正式離線 HTML **2,307,259 bytes**。原始輸出見 [前輪全套日誌](../demo-app/notes/logs/test-results-bash-integration-final.txt)。反方 M1–M5 已結案，原生對照暫存環境亦已修復；完整失敗與修復歷史保留，不將各輪測試數累加。
 
 - [引擎實作／固定 hooks／狀態與決定性](ENGINE_IMPLEMENTATION.md)
 - [真終端／行編輯／CSP／已知邊界](TERMINAL_IMPLEMENTATION.md)
 - [獨立原生 Bash 對照](BASH_CONFORMANCE.md)
-- [反方重現、辯論與增量複驗](INTEGRATION_REVIEW.md)
+- [反方重現、辯論與增量複驗](SHELL_INTEGRATION_REVIEW.md)
 - [Python 參考工具跨平台修復](VALIDATOR_PORTABILITY.md)
 - [終端保真計畫：全螢幕程式、真指令、雙向模式切換](PLAN-terminal-fidelity.md)
 - [真 Linux／真 links 執行環境取捨（ADR-002）](ADR-002-real-linux-terminal.md)
@@ -78,12 +78,12 @@ node references/bash-gap-probe.mjs 'C:/Program Files/Git/bin/bash.exe'
 - 根專案沒有另外產生交付副本；先前另建資料夾的方案已撤回。
 - 已取消包裝任務的清理已確認：`tools/package_project.py`、`DELIVERY.md` 均不存在；該代理的 `TemporaryDirectory` fixture 已刪除，批准暫存目錄下無 `package-fixtures-*` 殘留，沒有程序外環境變更。
 - Python 資料驗證代理亦已清除本輪暫存快照並核對已知 fixture 路徑不存在；新 shell 未保留測試環境覆寫，未安裝套件或修改全域設定。詳見其結果文件第 7 節。
-- 本輪 app 修正為未知指令的 stderr／退出碼／重導向語意；`npm.cmd test` 已重新建置並完成 **391/391 通過，0 失敗、0 跳過**，77.68 秒，輸出留在 `demo-app/notes/test-results-bash-research-fix.txt`。PowerShell 的輸出編碼與 `RA_*` 只設於該執行程序。
+- 本輪 app 修正為未知指令的 stderr／退出碼／重導向語意；`npm.cmd test` 已重新建置並完成 **391/391 通過，0 失敗、0 跳過**，77.68 秒，輸出留在 `demo-app/notes/logs/test-results-bash-research-fix.txt`。PowerShell 的輸出編碼與 `RA_*` 只設於該執行程序。
 - 主線收尾再次以 `Test-Path` 獨立核對 6 個原 clone 路徑與兩個搬移後暫存根目錄，8 項皆為 `false`；亦確認無 `ra-bash-gap-*` 探針目錄殘留，`git diff --check` 通過。此確認只涵蓋本輪列明路徑；平台管理的工具／會話紀錄予以保留。
 
 ## 其他驗證狀態
 
-初輪 8 項 demo 跨平台問題保留在 `demo-app/notes/test-results-project-data.txt`。後續已修正參考工具的 LF、POSIX／宿主路徑映射、空目錄與對照契約；Windows 與既有 Linux 容器的 root、demo validator 均為 **0 錯誤／0 警告**，83 個資料檔案雜湊未變。主線 Windows 原始輸出見 `demo-app/notes/test-results-validators-current.txt`；Linux 版本、bind-mount 環境限制、通過方式與清理證據見 `VALIDATOR_PORTABILITY.md`。
+初輪 8 項 demo 跨平台問題保留在 `demo-app/notes/logs/test-results-project-data.txt`。後續已修正參考工具的 LF、POSIX／宿主路徑映射、空目錄與對照契約；Windows 與既有 Linux 容器的 root、demo validator 均為 **0 錯誤／0 警告**，83 個資料檔案雜湊未變。主線 Windows 原始輸出見 `demo-app/notes/logs/test-results-validators-current.txt`；Linux 版本、bind-mount 環境限制、通過方式與清理證據見 `VALIDATOR_PORTABILITY.md`。
 
 ## 正式依賴操作
 

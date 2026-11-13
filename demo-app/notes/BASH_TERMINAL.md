@@ -73,18 +73,18 @@ Worker 完成後才把 VFS 結果套回 live world。Ctrl+C 終止 Worker 並讓
 
 **修復：** 所有瀏覽器新輸入固定 Bash，顯示風格不再選擇 interpreter；歷史重播仍逐筆依 tag，缺 tag 保留 legacy，並且不改寫原紀錄。一般風格 Enter 共用 Bash 完整性判斷，增加指令補全與 Ctrl+C 草稿取消，保留原任務面板／按鈕／DOM 輸出。主命令／啟動器使用 `$`，遊戲問答用冒號；真正 Bash 續行仍使用標準 PS2 `>`，重導向運算子 `>` 的語意亦保留。
 
-**回歸：** 新增一般風格 6 案與無須切畫面的舊檔／缺 tag 重播 3 案。首次定向 18 案為 17 pass、1 fail；唯一失敗是測試 helper 的 `screenText` 會 trim 行尾空格，卻以 `^> ` 比較續行提示。改讀未 trim 的真實 cell rows，沒有改程式行為或移除 PS2 斷言。首次輸出保留於 [test-results-bash-normal-ui.txt](test-results-bash-normal-ui.txt)，修正後重跑見 [test-results-bash-normal-ui-verified.txt](test-results-bash-normal-ui-verified.txt)。
+**回歸：** 新增一般風格 6 案與無須切畫面的舊檔／缺 tag 重播 3 案。首次定向 18 案為 17 pass、1 fail；唯一失敗是測試 helper 的 `screenText` 會 trim 行尾空格，卻以 `^> ` 比較續行提示。改讀未 trim 的真實 cell rows，沒有改程式行為或移除 PS2 斷言。首次輸出保留於 [test-results-bash-normal-ui.txt](logs/test-results-bash-normal-ui.txt)，修正後重跑見 [test-results-bash-normal-ui-verified.txt](logs/test-results-bash-normal-ui-verified.txt)。
 
 ### 2026-11-10：雙風格全套失敗診斷與修復
 
-一般風格新增案例與重播定向驗收為 **18/18 通過**；接續第一次雙風格全套為 **535 tests，531 pass、2 fail、2 cancelled、0 skipped**（494.59 秒），原始輸出保留於 [test-results-bash-both-styles-final.txt](test-results-bash-both-styles-final.txt)。四個案例均保留，未以這次結果宣稱全套通過。
+一般風格新增案例與重播定向驗收為 **18/18 通過**；接續第一次雙風格全套為 **535 tests，531 pass、2 fail、2 cancelled、0 skipped**（494.59 秒），原始輸出保留於 [test-results-bash-both-styles-final.txt](logs/test-results-bash-both-styles-final.txt)。四個案例均保留，未以這次結果宣稱全套通過。
 
 - **T12 的本機 Worker 誤報：** 一般風格改用隔離 Worker 後，原測試把所有非 document 請求都當外部資源，因 `blob:null/...` 失敗。分類現在與既有終端測試一致，區分 CSP 允許的本機 Blob Worker 與外部請求；外部請求、console／page error、CSP 違規的零容忍斷言保留。
-- **終端讀取成本：** 真 Chrome 逐步量測 golden edge，單是 `saveCode → terminalText` 的完整往返回捲花 **30,216 ms**，其中可及性同步約 29 秒。證據見 [test-results-bash-console-profile.txt](test-results-bash-console-profile.txt)。這是測試觀察成本，不是測到 Bash 指令執行 30 秒。改成從真字元格向前讀到最新完整 RA1 即停，不再讀無關舊故事；完整 transcript helper 仍讀取每一頁，返回底部時改用真歷史 End 鍵。原四條 golden 的完整 commit ID 比對未刪除，沒有加長測試時限。
+- **終端讀取成本：** 真 Chrome 逐步量測 golden edge，單是 `saveCode → terminalText` 的完整往返回捲花 **30,216 ms**，其中可及性同步約 29 秒。證據見 [test-results-bash-console-profile.txt](logs/test-results-bash-console-profile.txt)。這是測試觀察成本，不是測到 Bash 指令執行 30 秒。改成從真字元格向前讀到最新完整 RA1 即停，不再讀無關舊故事；完整 transcript helper 仍讀取每一頁，返回底部時改用真歷史 End 鍵。原四條 golden 的完整 commit ID 比對未刪除，沒有加長測試時限。
 - **行編輯觀察：** 同一個已完成的貼上輸出只取一次完整 snapshot，同時驗第一／第二行，避免重複回捲。新增真瀏覽器案例，驗代碼完整性與讀完後底部／中間回捲位置均精確還原；不暴露 app、xterm 或 interpreter 私有狀態。
-- **跨分頁逾時：** 原案例單獨逐步重現未失敗；舊頁的兩次檔案指令及 save 均完成，存檔衝突警示有效，Web Locks 無 held／pending。原始觀察見 [test-results-bash-session-diagnosis.txt](test-results-bash-session-diagnosis.txt)，不能據先前逾時宣稱已證實 runtime 死鎖。測試操作前現在明確切至要輸入的分頁；背景 idle、storage event 與完整舊檔保護斷言不變。
+- **跨分頁逾時：** 原案例單獨逐步重現未失敗；舊頁的兩次檔案指令及 save 均完成，存檔衝突警示有效，Web Locks 無 held／pending。原始觀察見 [test-results-bash-session-diagnosis.txt](logs/test-results-bash-session-diagnosis.txt)，不能據先前逾時宣稱已證實 runtime 死鎖。測試操作前現在明確切至要輸入的分頁；背景 idle、storage event 與完整舊檔保護斷言不變。
 
-首次修復後定向重跑 **5 案，4 pass、1 fail**，保留於 [test-results-bash-both-styles-repairs.txt](test-results-bash-both-styles-repairs.txt)：T12／HTTPS、golden edge、跨分頁保護與新增回捲位置案例均通過。edge 的完整遊戲與逐筆 commit ID 驗證為 **55.01 秒**，原 90 秒限時未變。
+首次修復後定向重跑 **5 案，4 pass、1 fail**，保留於 [test-results-bash-both-styles-repairs.txt](logs/test-results-bash-both-styles-repairs.txt)：T12／HTTPS、golden edge、跨分頁保護與新增回捲位置案例均通過。edge 的完整遊戲與逐筆 commit ID 驗證為 **55.01 秒**，原 90 秒限時未變。
 
 剩餘失敗定位為 Ctrl+L 的觀察競態：xterm 清畫面仍在 write queue 時，測試開始掃舊 buffer，接著 buffer 被正常清空，舊回捲位置自然不能還原。現在先從實際字元格確認「畫面只剩目前提示符」，再斷言完整輸出已空、head 不變、歷史可重取及 Shift+Tab 可離開。不是放寬回捲還原斷言，也未更改正式 app 的 Ctrl+L 行為。
 
@@ -100,7 +100,7 @@ Worker 完成後才把 VFS 結果套回 live world。Ctrl+C 終止 Worker 並讓
 | 正式產物 | `demo-app/dist/index.html`，**2,307,259 bytes** |
 | SHA-256 | `a1f60bd2d1d5f0a5e6f4189940a3bb3367ca054d2294f6244692bfbc87b6c8bb` |
 
-完整原始輸出：[test-results-bash-integration-final.txt](test-results-bash-integration-final.txt)。這是同一原專案、同一次完整執行的結果，包含原生對照、核心、真 Chrome／HTTPS、四條完整遊戲走法、CSP、取消及重播競態；不加總前輪或各代理的重複案例。第一次失敗全套與定向修復日誌仍保留於下方。
+完整原始輸出：[test-results-bash-integration-final.txt](logs/test-results-bash-integration-final.txt)。這是同一原專案、同一次完整執行的結果，包含原生對照、核心、真 Chrome／HTTPS、四條完整遊戲走法、CSP、取消及重播競態；不加總前輪或各代理的重複案例。第一次失敗全套與定向修復日誌仍保留於下方。
 
 環境為 Windows、Node 24.19.0、既有 Git Bash 5.3.15、本機 Chrome 與外部 Playwright；`RA_PLAYWRIGHT`、`RA_CHROME`、`RA_TLS_KEY`、`RA_TLS_CERT` 僅在測試程序設定。正式 HTML 可離線開啟，沒有這些測試工具的執行期依賴。
 
@@ -110,7 +110,7 @@ Windows／既有 Linux 容器的兩套 Python validator 另皆為 **0 錯誤、0
 
 ### 新引擎整合的失敗紀錄與修復
 
-第一次全套結果保留於 [test-results-bash-integration.txt](test-results-bash-integration.txt)：525 tests，517 pass、6 fail、2 cancelled（案例逾時）、0 skipped。沒有刪除或跳過失敗案例。
+第一次全套結果保留於 [test-results-bash-integration.txt](logs/test-results-bash-integration.txt)：525 tests，517 pass、6 fail、2 cancelled（案例逾時）、0 skipped。沒有刪除或跳過失敗案例。
 
 #### 重現
 
@@ -129,7 +129,7 @@ Windows／既有 Linux 容器的兩套 Python validator 另皆為 **0 錯誤、0
 
 原有 F2／不同寬度／儲存與剪貼簿禁用測試全部保留；另有函式 PS2 單元與真終端 state/reload 案例，以及 9 項真 digest 閘 replay 切換／取消案例。
 
-修復後重建正式 HTML，針對 `browser.test.mjs`、`styles.test.mjs`、`console.test.mjs` 執行 **31/31 通過、0 failed／cancelled／skipped**（337.14 秒）。涵蓋 file／HTTPS、被封鎖的儲存／剪貼簿、F2、多行函式、完整四條遊戲走法與手機尺寸；原始輸出見 [test-results-bash-ui-fixes.txt](test-results-bash-ui-fixes.txt)。這是定向重跑，最終全套另列，不將重複案例加總。
+修復後重建正式 HTML，針對 `browser.test.mjs`、`styles.test.mjs`、`console.test.mjs` 執行 **31/31 通過、0 failed／cancelled／skipped**（337.14 秒）。涵蓋 file／HTTPS、被封鎖的儲存／剪貼簿、F2、多行函式、完整四條遊戲走法與手機尺寸；原始輸出見 [test-results-bash-ui-fixes.txt](logs/test-results-bash-ui-fixes.txt)。這是定向重跑，最終全套另列，不將重複案例加總。
 
 ### 原生對照環境修復
 
@@ -137,13 +137,13 @@ Windows／既有 Linux 容器的兩套 Python validator 另皆為 **0 錯誤、0
 
 ### 前輪基線：原生 Bash 對照後修正
 
-原生 Bash 探針確認未知指令的錯誤輸出誤走 stdout，已修正為 stderr 並保留退出碼 127；新增 `test/bash-compat.test.mjs` 驗直接執行、重導向、管線及 `$?`。再次 `npm.cmd test` 重建產物為 **574,510 bytes**，單次全套 **391/391 通過，0 失敗、0 跳過**（77.68 秒），原始輸出見 [test-results-bash-research-fix.txt](test-results-bash-research-fix.txt)。
+原生 Bash 探針確認未知指令的錯誤輸出誤走 stdout，已修正為 stderr 並保留退出碼 127；新增 `test/bash-compat.test.mjs` 驗直接執行、重導向、管線及 `$?`。再次 `npm.cmd test` 重建產物為 **574,510 bytes**，單次全套 **391/391 通過，0 失敗、0 跳過**（77.68 秒），原始輸出見 [test-results-bash-research-fix.txt](logs/test-results-bash-research-fix.txt)。
 
 這仍是遊戲契約測試；一般 Bash 語法尚有缺口。原生對照、6 個 GitHub 專案的 clone 研究與清理紀錄見根目錄 `references/README.md`。
 
 ### 前次：操作模式完整整合
 
-完整專案整合後執行 `npm.cmd test`，由 pretest 重新建置 574,508 bytes 的 `dist/index.html`，**單次完整測試 390/390 通過，0 失敗、0 跳過**，耗時 65.44 秒。原始輸出保存在 [test-results-bash-integrated.txt](test-results-bash-integrated.txt)。測試範圍如下：
+完整專案整合後執行 `npm.cmd test`，由 pretest 重新建置 574,508 bytes 的 `dist/index.html`，**單次完整測試 390/390 通過，0 失敗、0 跳過**，耗時 65.44 秒。原始輸出保存在 [test-results-bash-integrated.txt](logs/test-results-bash-integrated.txt)。測試範圍如下：
 
 | 範圍 | 通過數 | 結果 |
 | --- | ---: | --- |

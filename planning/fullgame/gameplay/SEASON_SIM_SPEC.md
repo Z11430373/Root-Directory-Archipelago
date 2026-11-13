@@ -6,7 +6,7 @@
 
 ## 1. 來源、範圍與責任
 
-依 [DECISIONS](../DECISIONS.md) D03–D09、D13、D15–D18；授權／受理／收據沿[REPLAY_SPEC](../engineering/REPLAY_SPEC.md)。D18已裁定毫秒時間、一grant一proof、同turn批次聚合；數值平衡仍為提案。來源：[原規劃 §5、M7、WP7](../source/《根目錄群島》完整版規劃書.original.md)、[world](../../../world/world.yaml)、[SCRIPT](../../../SCRIPT.md)、[charter](../../../world/charter.yaml)、[fragments](../../../world/fragments.yaml)、[ENGINE_REQS](../../../ENGINE_REQS.md)、[SOURCE_GUIDE](../../../SOURCE_GUIDE.md)。
+依 [DECISIONS](../DECISIONS.md) D03–D09、D13、D15–D18；授權／受理／收據沿[REPLAY_SPEC](../engineering/REPLAY_SPEC.md)。D18已裁定毫秒時間、一grant一proof、同turn批次聚合；數值平衡仍為提案。來源：[原規劃 §5、M7、WP7](../source/《根目錄群島》完整版規劃書.original.md)、[world](../../../world/world.yaml)、[SCRIPT](../../../SCRIPT.md)、[charter](../../../world/charter.yaml)、[fragments](../../../world/fragments.yaml)、[ENGINE_REQS](../../../docs/ENGINE_REQS.md)、[SOURCE_GUIDE](../../../docs/SOURCE_GUIDE.md)。
 
 **保留的來源值／待平衡**：每島 **8×8＝64 區塊**、完整度 **0–100**、GC 每日 **02:00**、每隊每週一次 **8 小時維護窗**、**12 週／4 陣營**。這些是來源設計，不是已驗證的公平參數；陣營正式名稱、島數、對戰／投票細則待作者與產品確認。世界曆賽季 5 的日期不自動變成日後線上活動日期。
 

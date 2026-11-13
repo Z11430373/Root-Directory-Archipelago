@@ -4,9 +4,9 @@
 產物：`dist/index.html`（343,097 bytes，343.1 KB／335.1 KiB，單一離線檔案）
 
 **驗收結果：T1–T11 全數通過，T12 在現有 Chrome 環境通過。完整 366 tests、366 pass、0 fail、0 skip，33.58 秒。**
-完整逐項名稱與耗時：`notes/test-results-v0.3.txt`。0.2.0 的292項與首版262項另保留於`notes/test-results-v0.2.txt`／`notes/test-results.txt`，不能代替新找碴案例。Safari／iOS／Firefox／Edge、真人與讀屏器仍未驗證，不推稱全平台、完整WCAG符合性或「完美」。
+完整逐項名稱與耗時：`notes/logs/test-results-v0.3.txt`。0.2.0 的292項與首版262項另保留於`notes/logs/test-results-v0.2.txt`／`notes/logs/test-results.txt`，不能代替新找碴案例。Safari／iOS／Firefox／Edge、真人與讀屏器仍未驗證，不推稱全平台、完整WCAG符合性或「完美」。
 
-同一環境、相同產物再次完整重跑：**366/366、0 fail、0 skip，33.08秒**，見`notes/test-results-v0.3-repeat.txt`。兩次通過不是全平台穩定性的證明；兩次皆保留原T12，沒有放寬時限或斷言。
+同一環境、相同產物再次完整重跑：**366/366、0 fail、0 skip，33.08秒**，見`notes/logs/test-results-v0.3-repeat.txt`。兩次通過不是全平台穩定性的證明；兩次皆保留原T12，沒有放寬時限或斷言。
 
 ## 本輪更新：第三輪找碴、修復與交叉否證
 
@@ -14,7 +14,7 @@
 - **Shell 5項**：無效glob例外、管線上游副作用／重導向、read-time inode歸屬、sort／cut多檔未換行邊界、Unicode空白；9項原找碴＋16項補充控制全過。重綁後未讀不給發現，確實再讀則不遺漏；head仍可提早停止。不是完整Bash／process／fd相容實作。
 - **狀態3項**：失敗feed／advance完整回滾且成功才發布輸出／journal；r/t安全准入與執行期界線；完整envelope的跨分頁防覆寫／防誤刪。原6項＋22項控制全過，另有4項真瀏覽器跨分頁／重試控制。
 - **UI 9項＋控制**：PageUp連續閱讀、閒置輸出不拉走歷史位置、details輸入機制一致、控制邊界對比、手機推薦44px、動態reduced-motion、輸入名稱與鍵盤說明、匯入錯誤焦點／ARIA；交叉review再抓到低高度Server輸入欄裁切並保留紅→綠測試。12項UI與5項Terminal控制全過。
-- 第一次全套363項只剩kiosk清除舊救援副本；修成primary ownership確認後的一次性privacy cleanup，已觀察另一頁recovery變更時拒清。第二次364項抓到斷點通知排程；第三次366項發現主代理新控制把CDP返回誤當原生resize已送達。獨立代理以未mock clock時序否證此oracle，只校正新控制的事件屏障，**不改原T12或八項原UI斷言、不在產品加入輪詢**。三次失敗逐項輸出保留於`notes/test-results-v0.3-first.txt`／`-second.txt`／`-third.txt`。
+- 第一次全套363項只剩kiosk清除舊救援副本；修成primary ownership確認後的一次性privacy cleanup，已觀察另一頁recovery變更時拒清。第二次364項抓到斷點通知排程；第三次366項發現主代理新控制把CDP返回誤當原生resize已送達。獨立代理以未mock clock時序否證此oracle，只校正新控制的事件屏障，**不改原T12或八項原UI斷言、不在產品加入輪詢**。三次失敗逐項輸出保留於`notes/logs/test-results-v0.3-first.txt`／`-second.txt`／`-third.txt`。
 - 實作與證據：`notes/ROUND3_SHELL.md`／`ROUND3_SHELL_FIX.md`、`ROUND3_STATE.md`／`ROUND3_STATE_FIX.md`、單一整合`ROUND3_UI_A11Y.md`，彙總於`FINDINGS.md` F-13–F-15。
 - Web Locks優先；fallback只有best-effort同步CAS，多key清除不是跨key交易。WCAG 2.2 AA只是本輪局部檢視目標；44px是額外推薦／AAA，固定15／16分鐘規則的2.2.1例外尚未確認。
 
@@ -50,7 +50,7 @@
 最終執行方式（在 `demo-app/`，先設定 README 的四個瀏覽器／TLS 環境變數）：
 
 ```text
-npm.cmd test -- --test-reporter=spec --test-reporter-destination=notes/test-results-v0.3.txt
+npm.cmd test -- --test-reporter=spec --test-reporter-destination=notes/logs/test-results-v0.3.txt
 python -X utf8 ../demo/tools/check_codes.py notes/codes.txt
 ```
 

@@ -11,9 +11,9 @@
 | [save/hash.js](../../../demo-app/src/save/hash.js) | schema 1 commitId 是 `sha256((parent ?? '') + canonical(body))` 的前 4 bytes／8 個小寫 hex；body 為 branch/chapter/kind/data/t/r；這只是完整性檢查 |
 | [save/validate.js](../../../demo-app/src/save/validate.js) | 只接受 schema 1、封閉事件／data keys 與八碼 hash；形狀通過不等於可重放 |
 | [save/import.js](../../../demo-app/src/save/import.js)、[demo/import_rules.yaml](../../../demo/import_rules.yaml) | 形式合法但鏈損毀仍可在離線流程標示處理；`verified: chain` 是歷史投影名稱，不能當競技已驗證 |
-| [SOURCE_GUIDE.md](../../../SOURCE_GUIDE.md) §3、[storage.js](../../../demo-app/src/storage.js) | RA1 不保存任意 Shell 檔案／cwd／完整輸入；本機 envelope 額外有 baseSave／journal／runMode，兩者能力不同 |
+| [SOURCE_GUIDE.md](../../../docs/SOURCE_GUIDE.md) §3、[storage.js](../../../demo-app/src/storage.js) | RA1 不保存任意 Shell 檔案／cwd／完整輸入；本機 envelope 額外有 baseSave／journal／runMode，兩者能力不同 |
 | [save/integrity.js](../../../demo-app/src/save/integrity.js) | too_fast／題序／投票時機是合理性警示；不是人類身分或作弊證明 |
-| [ENGINE_REQS.md](../../../ENGINE_REQS.md) §5、[FINDINGS.md](../../../demo-app/FINDINGS.md) F-W02、F-10 | 同存檔跨宿主須一致；現有測資對日誌採嚴格比對；舊浮點 journal 分組可能影響時間與 hash，不能擅自整數化修舊鏈 |
+| [ENGINE_REQS.md](../../../docs/ENGINE_REQS.md) §5、[FINDINGS.md](../../../demo-app/FINDINGS.md) F-W02、F-10 | 同存檔跨宿主須一致；現有測資對日誌採嚴格比對；舊浮點 journal 分組可能影響時間與 hash，不能擅自整數化修舊鏈 |
 
 完整SHA-256與canonical依SAVE §4：stateHash=H("state",state)、effectsHash=H("effects",effects)、commitId=H("commit",record去掉commitId)，皆64小寫hex。ENGINE定reducer／交易，PACK定內容版本。本稿不新增根schema；actorId→profile.playerId、runId→lineageId。外部資料只走實際已登錄入口；ReplayAssessment按§3.1仍未開放system.fact，M7賽季結果依D25是獨立服務讀模型，不混入主線state。
 

@@ -71,12 +71,12 @@
 - 問題：點終端機外部未立即補完逐字輸出；縮小 viewport 後，收合列的任務文字要等下一個計時 tick 才更新。
 - 修正：全頁 click capture 補完全部待播文字；跨 760px 斷點同步 refresh 任務列。
 - 驗收：保留 `T12-extra: a click outside the terminal also instantly finishes animated text` 紅測試及主 T12 手機任務列斷言，最終重跑確認，不移除或放寬測試。
-- 結果：最終 262/262、0 失敗、0 跳過；兩項回歸均通過，詳見 `notes/test-results.txt`。
+- 結果：最終 262/262、0 失敗、0 跳過；兩項回歸均通過，詳見 `notes/logs/test-results.txt`。
 
 ## F-08：驗收環境邊界
 - 實跑：Windows、Node 24.19.0、Python 3.12.10／PyYAML 6.0.3、Chrome 156.0.8078.74；file:// 與隔離 localhost 自簽 HTTPS。
 - 未實跑：Safari／iOS、Firefox、Edge、各瀏覽器前一版本、Node 18 實機及輔助科技／真實軟鍵盤。這些不得由 Chrome 測試推稱通過。
-- 原始 tools/validate.py 在 Windows 的混合子程序編碼問題，已於完整專案整合時以明示 UTF-8 修正，另修復 F2 搜尋的 Bash 路徑與退出碼檢查；root validator 最終 0 錯誤／0 警告。demo validator 仍有 8 項跨平台路徑／換行／對照資料問題，未重建黃金測資掩蓋失敗；詳見 `notes/test-results-project-data.txt`。兩者均不取代 app 的 JS／瀏覽器驗收。
+- 原始 tools/validate.py 在 Windows 的混合子程序編碼問題，已於完整專案整合時以明示 UTF-8 修正，另修復 F2 搜尋的 Bash 路徑與退出碼檢查；root validator 最終 0 錯誤／0 警告。demo validator 仍有 8 項跨平台路徑／換行／對照資料問題，未重建黃金測資掩蓋失敗；詳見 `notes/logs/test-results-project-data.txt`。兩者均不取代 app 的 JS／瀏覽器驗收。
 
 ## F-09：新增 Server 終端風格
 - 使用者要求保留原風格並新增更接近 Ubuntu Server 主控台的外觀。新增獨立 `data-style`（islands／server），不把風格與可及性主題混成同一個選項。
@@ -130,6 +130,6 @@
 - R3-STATE-03：`src/ui/session-storage.js`保護**完整envelope字串**而非只head；同步load固定待重播版本，autosave不得重新load替舊狀態背書。Web Locks內最後compare+write／clear，storage event僅失效、不自動採納。失去所有權的頁面停止寫入並提示，仍可匯出自己記憶體中的可攜紀錄。
 - restart／kiosk清除也走guard；primary拒絕清除時不再刪recovery；recovery key另有自己的guard，保留其他分頁的新備份。kiosk勾選變化經queue序列化，不繞過await。
 - Web Locks是合作中的同版頁面保護；無Web Locks時為同步compare+mutation的best-effort，不宣稱跨process全域原子，也不宣稱多個storage key的清除是跨key交易。仍需跨瀏覽器實測；舊版不合作writer或手動清除網站資料不在此鎖保證內。
-- 首次完整候選363項362過／1敗（`notes/test-results-v0.3-first.txt`）：起始recovery baseline過早，擋住同分頁後來寫入的前次私人副本清除。保留原kiosk斷言，改為primary清除成功後、明確隱私cleanup的一次baseline；已觀察外部分頁recovery變更則不再採納，普通tick不反覆reload解衝突。補上外部分頁新recovery不可清除的反向控制；這不把多key操作誇稱原子交易。
+- 首次完整候選363項362過／1敗（`notes/logs/test-results-v0.3-first.txt`）：起始recovery baseline過早，擋住同分頁後來寫入的前次私人副本清除。保留原kiosk斷言，改為primary清除成功後、明確隱私cleanup的一次baseline；已觀察外部分頁recovery變更則不再採納，普通tick不反覆reload解衝突。補上外部分頁新recovery不可清除的反向控制；這不把多key操作誇稱原子交易。
 - 清除recovery在取得自己的lock後，經precondition再次檢查primary ownership；新增等待鎖期間主存檔被換走的控制，原recovery bytes保持不變。一般clear的CAS沒有放寬。
-- 第三輪最終與相同條件重跑皆366/366、0 fail、0 skip，T10／T11與原kiosk隱私斷言全部通過；記錄見`notes/test-results-v0.3.txt`與`notes/test-results-v0.3-repeat.txt`。原資料與全部原測試檔的Git差異皆為空，不把修測試setup混稱更改來源oracle。
+- 第三輪最終與相同條件重跑皆366/366、0 fail、0 skip，T10／T11與原kiosk隱私斷言全部通過；記錄見`notes/logs/test-results-v0.3.txt`與`notes/logs/test-results-v0.3-repeat.txt`。原資料與全部原測試檔的Git差異皆為空，不把修測試setup混稱更改來源oracle。

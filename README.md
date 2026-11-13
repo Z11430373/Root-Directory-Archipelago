@@ -3,7 +3,7 @@
 燈塔島〈值班第一天〉與日誌港〈日誌港〉的完整劇本資料：檔案系統內容、lin 的信與 `.bash_history`、十個快題、兩張 OJ 工單、兩條分支與兩張知識卡、日誌產生器與驗證器。
 文字給人讀的版本在 **SCRIPT.md**；給引擎讀的版本是各 YAML。
 
-程式維護入口見 [SOURCE_GUIDE.md](SOURCE_GUIDE.md)：系統依賴、呼叫／資料流、存檔差異與資源清理責任。
+程式維護入口見 [SOURCE_GUIDE.md](docs/SOURCE_GUIDE.md)：系統依賴、呼叫／資料流、存檔差異與資源清理責任。
 
 ## 完整專案與遊玩入口
 
@@ -22,8 +22,8 @@
 | 路徑 | 內容 |
 |---|---|
 | `SCRIPT.md` | 劇本全文（由資料檔自動展開），含憲章修訂史附錄 |
-| `ENGINE_REQS.md` | 引擎必須支援的指令、check 型別、效能與決定性要求 |
-| `AGENT_CHECKLIST.md` | 交給代理的驗收清單與回報格式 |
+| `docs/ENGINE_REQS.md` | 引擎必須支援的指令、check 型別、效能與決定性要求 |
+| `docs/AGENT_CHECKLIST.md` | 交給代理的驗收清單與回報格式 |
 | `world/world.yaml` | 世界曆、GC、MOTD 條件行、資源起始值 |
 | `world/charter.yaml` | **島嶼憲章 Rev 1–5**、傳說人物、現行版全文、lin 的未完成修憲案、舊設定保留清單 |
 | `world/cast.yaml` | 角色（INIT、lin、GC、harbor-master、貓、ada、bo）與各自的祕密守則 |
@@ -39,6 +39,8 @@
 | `tools/` | `gen_logs.py`（日誌產生器）、`make_tests.py`、`validate.py`、`build_script_md.py` |
 | `demo-app/` | 群島／Bash 終端應用程式、原始碼、完整測試、建置工具與離線產物 |
 | `references/` | Bash 對照探針、開源原始碼研究、整合建議與研究副本清理紀錄 |
+| `docs/` | `ENGINE_REQS.md`、`AGENT_CHECKLIST.md`、`SOURCE_GUIDE.md`（原本放在根目錄） |
+| `planning/fullgame/` | 完整版規劃文件包（文件索引見該資料夾 README；`source/` 是原稿與待整併的作者後續稿） |
 
 ## 一鍵檢查
 ```

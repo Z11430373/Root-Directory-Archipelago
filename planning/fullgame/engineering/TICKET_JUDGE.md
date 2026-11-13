@@ -11,8 +11,8 @@
 | [T0100 metadata](../../../tickets/T0100/ticket.yaml)、[題面](../../../text/tickets/0100.md) | 選擇性工單；1000 ms／64 MB；原獎勵 2 sectors + 1 key；`on_ac` 設 `flag.t0100_done` |
 | [T0427 metadata](../../../tickets/T0427/ticket.yaml)、[題面](../../../text/tickets/0427.md) | Ch1 必要工單；2000 ms／256 MB；N ≤ 1,200,000、不同 IP ≤ 200,000；12 sectors + 1 key；`on_ac` 設 `flag.t0427_done` |
 | [SCRIPT.md](../../../SCRIPT.md) s0.6、s0.8、s1.5、s1.9、多人模式 | 原離港條件是 `flag.f2 and flag.t0427_done and flag.b1.done`；原文有收費提示、OJ 收據與五組本地測資的構想；INIT 點燈時已說「值班已登記」，選擇性 T0100 又說「沒有登記，燈就不算亮」，是敘事定義矛盾，待作者裁決 |
-| [ENGINE_REQS.md](../../../ENGINE_REQS.md) §7 | 原本要求逐行比對、行尾空白忽略；`oj_problem_id` 目前為 null，不代表已有橋接服務 |
-| [SOURCE_GUIDE.md](../../../SOURCE_GUIDE.md)、[quests.js](../../../demo-app/src/quests.js)、[FINDINGS.md](../../../demo-app/FINDINGS.md) F-W03 | 現行是快題只讀判定；正式工單、Python runtime、完整 B1 尚未開放 |
+| [ENGINE_REQS.md](../../../docs/ENGINE_REQS.md) §7 | 原本要求逐行比對、行尾空白忽略；`oj_problem_id` 目前為 null，不代表已有橋接服務 |
+| [SOURCE_GUIDE.md](../../../docs/SOURCE_GUIDE.md)、[quests.js](../../../demo-app/src/quests.js)、[FINDINGS.md](../../../demo-app/FINDINGS.md) F-W03 | 現行是快題只讀判定；正式工單、Python runtime、完整 B1 尚未開放 |
 | [tools/validate.py](../../../tools/validate.py) `check_tickets` | 在開發機跑可信參考程式與錯解；預設 subprocess timeout 為 10 秒、未實施工單記憶體沙箱；不能當成玩家 Python 判題器或完整上限驗收 |
 | [T0100 ref](../../../tickets/T0100/ref/sol.py)、[T0427 ref](../../../tickets/T0427/ref/sol.py) | T0100 會 strip 名字兩端空白，與題面／提示的邊界語意有缺口；T0427 參考解整份 read，不據此宣稱 120 萬行記憶體達標 |
 

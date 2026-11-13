@@ -102,7 +102,7 @@ Python 是語意參考，不代表每個安全細節與 JS 相同；例如 JS �
 
 - 群島與 Bash 終端共用同一套 Engine、存檔與資料；代理成果已整合進本資料夾。
 - 操作模式整合時 `npm.cmd test` 為 390/390；原生 Bash 對照後修正 stderr，最新完整執行 **391/391 通過，0 失敗、0 跳過**（77.68 秒），包含實際 Chrome、離線與 HTTPS。
-- 操作契約與驗收見 `demo-app/notes/BASH_TERMINAL.md`；兩次原始輸出分別為 `demo-app/notes/test-results-bash-integrated.txt`、`test-results-bash-research-fix.txt`。
+- 操作契約與驗收見 `demo-app/notes/BASH_TERMINAL.md`；兩次原始輸出分別為 `demo-app/notes/logs/test-results-bash-integrated.txt`、`test-results-bash-research-fix.txt`。
 - 原始碼、劇本、測資、文件與建置產物均整合在原專案資料夾，維持既有相對路徑。
-- 根目錄資料 validator 已修復 Windows UTF-8 與搜尋路徑，0 錯誤／0 警告；demo validator 仍有 8 項未解問題，詳見 `demo-app/notes/test-results-project-data.txt`。
+- 根目錄資料 validator 已修復 Windows UTF-8 與搜尋路徑，0 錯誤／0 警告；demo validator 仍有 8 項未解問題，詳見 `demo-app/notes/logs/test-results-project-data.txt`。
 - Bash 行為缺口、開源來源研究與臨時副本清理紀錄集中在 `references/README.md`；遊戲測試通過不代表完整 Bash 相容。

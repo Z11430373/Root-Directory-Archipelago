@@ -15,7 +15,7 @@
 | `build.mjs` 將 JS、CSS、資料、Worker 嵌入單檔 HTML，CSP `connect-src 'none'`。 | 保留單檔活動發行；靜態站／Service Worker 是另一發行 adapter，非引擎必要依賴。 |
 | `loggen.js` 先實體化日誌，`shell/commands.js` 的 sort 收集全部行。 | 百萬行惰性資料與外部排序另做 spike；目前沒有完成或性能通過的證據。 |
 
-現況來源另見 [`SOURCE_GUIDE.md`](../../../SOURCE_GUIDE.md)、[`demo-app/ARCHITECTURE.md`](../../../demo-app/ARCHITECTURE.md)、[`ENGINE_REQS.md`](../../../ENGINE_REQS.md)。原規劃的「schema 2 只加欄位」已由 D09 改為明確新格式；Python／GNU 對照只對已宣告語意有效，不覆蓋新版時間、分支或遊戲 extension。
+現況來源另見 [`SOURCE_GUIDE.md`](../../../docs/SOURCE_GUIDE.md)、[`demo-app/ARCHITECTURE.md`](../../../demo-app/ARCHITECTURE.md)、[`ENGINE_REQS.md`](../../../docs/ENGINE_REQS.md)。原規劃的「schema 2 只加欄位」已由 D09 改為明確新格式；Python／GNU 對照只對已宣告語意有效，不覆蓋新版時間、分支或遊戲 extension。
 
 ### 1.1 模組邊界（建議目錄，尚未建立）
 

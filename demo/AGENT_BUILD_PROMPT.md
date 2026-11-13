@@ -20,7 +20,7 @@
 | `demo/integrity.yaml` | 匯入的安全規則與可信度分級（硬規則） |
 | `demo/tools/savelib.py` | 存檔格式的**參考實作**（Python）。格式以它為準 |
 | `demo/tools/flow_sim.py` | 流程的**參考實作**（Python，headless）。行為以它為準 |
-| `ENGINE_REQS.md` | 指令語意與快題 check 型別 |
+| `docs/ENGINE_REQS.md` | 指令語意與快題 check 型別 |
 | `demo/DESIGN_DECISIONS.md` | 已定的預設值（D1–D14）與誠實的極限 |
 | `demo/testvectors/*.json` | 對照答案（見 §8） |
 

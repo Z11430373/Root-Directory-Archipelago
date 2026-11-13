@@ -21,7 +21,7 @@
 
 **Python 實作已依主線要求凍結。** 主線獨立 Windows 重跑亦為兩個 validator exit 0、
 0 錯誤／0 警告、83 檔 SHA-256 不變；原始輸出已唯讀核對：
-[test-results-validators-current.txt](../demo-app/notes/test-results-validators-current.txt)。
+[test-results-validators-current.txt](../demo-app/notes/logs/test-results-validators-current.txt)。
 本 owner 已收尾，沒有待完成的 Linux 作業；收尾清理與環境紀錄見文件末端。
 
 以下至「第二階段」標題前，保留第一階段的診斷與當時範圍限制，7 FAIL 是歷史基線。
@@ -166,7 +166,7 @@ POSIX 虛擬鍵與可靠的 Bash 實體路徑轉換；不應直接重寫 golden�
    `git diff -- demo/tools/validate_demo.py`。目標檔先前只有使用者新增的說明註解。
 2. 讀取 validator、testvectors、conformance、flow_sim、validate_flow、savelib 的相關實作，
    以及 root validator 的 materialize/run。紀錄實際位於
-   `demo-app/notes/test-results-project-data.txt`；第一次讀根目錄 `notes/...` 不存在。
+   `demo-app/notes/logs/test-results-project-data.txt`；第一次讀根目錄 `notes/...` 不存在。
 3. 第一次執行未加 Git Bash PATH，在快題階段因找不到 bash（WinError 2）退出。
    加上上述程序環境後完整重現 8 錯誤、0 警告，exit 1。
 4. 第一組唯讀探針：`TV.check(existing)`、`TV.check(TV.build())`、完整遞迴 diff、

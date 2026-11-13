@@ -19,7 +19,7 @@
 | 證據 ID | 已讀來源與定位 | 可支持的事實／限制 |
 | --- | --- | --- |
 | E01 | [原規劃](../source/《根目錄群島》完整版規劃書.original.md) §1–9 | 願景與歷史範圍；衝突由 D01–D20 取代，非實測 |
-| E02 | [SOURCE_GUIDE](../../../SOURCE_GUIDE.md) §2–4 | 交易、三種保存、資源生命週期；RA1 與本機 envelope 不同 |
+| E02 | [SOURCE_GUIDE](../../../docs/SOURCE_GUIDE.md) §2–4 | 交易、三種保存、資源生命週期；RA1 與本機 envelope 不同 |
 | E03 | [README](../../../demo-app/README.md)「操作模式」「三種跑法」 | 模式／主題／字級獨立，Bash 快捷鍵，活動限制 |
 | E04 | [main.js](../../../demo-app/src/main.js) `settings`、`switchSurface`、`createGame`、`refreshConsole` | 同 Engine 切換、草稿與歷史保留；Bash 無側欄／存檔 dialog |
 | E05 | [main.js](../../../demo-app/src/main.js) `importCandidate`、`resumeLocal`、`persist`、`showRecovery` | 候選准入後替換；重播失敗保留原始 envelope；跨頁停止寫入 |

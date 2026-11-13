@@ -1,6 +1,6 @@
 # 第一夜：整合契約
 
-劇本資料包為唯讀來源，不修改現有 YAML、text 或黃金測資。整合驗證曾修正 `tools/validate.py` 的 Windows 子程序編碼與路徑處理，範圍與結果記於 `notes/test-results-project-data.txt`。
+劇本資料包為唯讀來源，不修改現有 YAML、text 或黃金測資。整合驗證曾修正 `tools/validate.py` 的 Windows 子程序編碼與路徑處理，範圍與結果記於 `notes/logs/test-results-project-data.txt`。
 
 ## 分工
 - 主架構師：package.json、build.mjs、src/data.js（產生）、src/main.js、src/ui/、整合與 REPORT.md / FINDINGS.md。

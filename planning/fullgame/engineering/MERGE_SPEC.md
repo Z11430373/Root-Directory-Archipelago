@@ -12,7 +12,7 @@
 | [demo/import_rules.yaml](../../../demo/import_rules.yaml) | 匯入白名單、K0、同暱稱詢問後 import_as_peer、不覆寫；原檔沒有穩定 actor identity |
 | [save/import.js](../../../demo-app/src/save/import.js) | `toFullgame` 只作資料投影，不是正式多人匯入或線上同步服務 |
 | [save/validate.js](../../../demo-app/src/save/validate.js) | schema 1 僅接受封閉事件，merge 只允許 K0；不能把新增欄位塞進舊鏈 |
-| [SOURCE_GUIDE.md](../../../SOURCE_GUIDE.md) §3 | 試玩可攜檔不含任意檔案／cwd／完整指令；分支 VFS 隔離但 flags 共用是現況，不是正式故事分支保證 |
+| [SOURCE_GUIDE.md](../../../docs/SOURCE_GUIDE.md) §3 | 試玩可攜檔不含任意檔案／cwd／完整指令；分支 VFS 隔離但 flags 共用是現況，不是正式故事分支保證 |
 | [ui/session-storage.js](../../../demo-app/src/ui/session-storage.js)、[FINDINGS.md](../../../demo-app/FINDINGS.md) F-15 | 目前以完整 envelope 字串守護本地寫入；相同 head 不代表任意檔案或 journal 相同 |
 
 完整讀取歷史規劃的 WP4，不沿用「不論順序整張存檔結果相同」的過強說法。本文已對齊 `ENGINE_CONTRACT.md` §8 與 `SAVE_SCHEMA_2.md` §4：外部 DTO 的 actorId→`state.profile.playerId`、runId→`state.lineageId`；共用 EvidenceRecord 精確使用核心六欄，演算法固定 `evidenceId=H("evidence", EvidenceRecord 去掉 evidenceId)`。以下不另定存檔根格式；需要新增的是明列的外部 fact blob registry，不是另一組 identity 或 hash 規則。

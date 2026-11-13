@@ -6,7 +6,7 @@
 
 ## 1. 現況邊界與相容策略
 
-已讀 `demo-app/src/shell/{parse,exec,commands,bre}.js`、`src/vfs.js`、`src/engine/index.js`、`src/ui/shell-job.js` 及 [`ENGINE_REQS.md`](../../../ENGINE_REQS.md)。現有 parser／commands 是原生 JS；`build.mjs` 包入單檔 HTML；TS 命令 registry 尚待實作。
+已讀 `demo-app/src/shell/{parse,exec,commands,bre}.js`、`src/vfs.js`、`src/engine/index.js`、`src/ui/shell-job.js` 及 [`ENGINE_REQS.md`](../../../docs/ENGINE_REQS.md)。現有 parser／commands 是原生 JS；`build.mjs` 包入單檔 HTML；TS 命令 registry 尚待實作。
 
 | 現況事實 | 不能據此宣稱 |
 | --- | --- |

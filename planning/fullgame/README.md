@@ -52,6 +52,7 @@
 | [ISSUE_REGISTER](reviews/ISSUE_REGISTER.md) | 上輪 R01–R12 的單一問題登錄與處理狀態 | 整合 |
 | [VERIFICATION](reviews/VERIFICATION.md) | 實際文件檢查結果、原稿雜湊與剩餘限制 | 整合 |
 | [原稿](source/《根目錄群島》完整版規劃書.original.md)／[故事聖經](source/《根目錄群島》故事聖經.md)／[來源說明](source/README.md) | 原附件與聖經封存 | 唯讀來源 |
+| [規劃書＋附錄 A](source/《根目錄群島》完整版規劃書.with-appendix-A.md)／[解除兩大阻塞](source/解除兩大阻塞.md) | 作者後續稿，含台帳尚無的決策；尚未併入本包（見來源說明） | 待整併來源 |
 
 ## 使用規則
 

@@ -14,7 +14,7 @@
 | M7／1.2 | 賽季、OJ 橋接，依 [SEASON_SIM_SPEC](SEASON_SIM_SPEC.md) | 不以 C1 全十四包作 M7 唯一解鎖前提 |
 | 2.x | 獨立完整管線接力、MUD／偵探／機房經營／課堂模式候選 | 沒有正文／需求的模式只留範圍，不能借「已有管線」宣稱可做完整 relay |
 
-來源：[原規劃 §2、§6、§7](../source/《根目錄群島》完整版規劃書.original.md)、[SCRIPT Ch0/Ch1 的多人描述](../../../SCRIPT.md)、[ENGINE_REQS](../../../ENGINE_REQS.md)、[SOURCE_GUIDE](../../../SOURCE_GUIDE.md)、[world](../../../world/world.yaml)、[cast](../../../world/cast.yaml)、[charter](../../../world/charter.yaml)、[fragments](../../../world/fragments.yaml)、[B0/B1](../../../branches/B1.yaml)、[K1](../../../cards/K1.yaml)。
+來源：[原規劃 §2、§6、§7](../source/《根目錄群島》完整版規劃書.original.md)、[SCRIPT Ch0/Ch1 的多人描述](../../../SCRIPT.md)、[ENGINE_REQS](../../../docs/ENGINE_REQS.md)、[SOURCE_GUIDE](../../../docs/SOURCE_GUIDE.md)、[world](../../../world/world.yaml)、[cast](../../../world/cast.yaml)、[charter](../../../world/charter.yaml)、[fragments](../../../world/fragments.yaml)、[B0/B1](../../../branches/B1.yaml)、[K1](../../../cards/K1.yaml)。
 
 **現況**：repo 沒有可製作的七案七夜完整 YAML；只有 K1 `effects.where=blue.night2` 註記與 B1 collateral 概念。此已知指向保留，**不把下方某個 proposal 偷換成正式第二夜**。完整故事聖經連結正文未取得。真實案件、未知角色、GC 後期對話皆不補造。
 

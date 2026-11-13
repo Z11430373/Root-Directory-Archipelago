@@ -12,7 +12,7 @@
 
 ### 主架構師最終回歸紀錄（非改寫首輪 QA 結果）
 
-重建 `dist/index.html` 後，主架構師以瀏覽器環境變數啟用全部測試，執行 `npm.cmd test -- --test-reporter=spec --test-reporter-destination=notes/test-results.txt`：**262/262 通過，0 失敗、0 跳過**。本檔 9 項補充測試全部通過；外部點擊案例 629.58ms。QA-01 已關閉。完整證據在 `notes/test-results.txt`，原紅測試未修改斷言。
+重建 `dist/index.html` 後，主架構師以瀏覽器環境變數啟用全部測試，執行 `npm.cmd test -- --test-reporter=spec --test-reporter-destination=notes/logs/test-results.txt`：**262/262 通過，0 失敗、0 跳過**。本檔 9 項補充測試全部通過；外部點擊案例 629.58ms。QA-01 已關閉。完整證據在 `notes/logs/test-results.txt`，原紅測試未修改斷言。
 
 | 新增測試（名稱前綴均為 `T12-extra:`） | 結果與證據 |
 |---|---|
