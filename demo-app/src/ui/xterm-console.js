@@ -13,6 +13,18 @@ const THEMES={
 const plain=text=>String(text).replace(/[\x00-\x1f\x7f-\x9f]/g,'');
 
 /**
+ * Colorize a bash-style prompt: `user@host:path$ ` gets per-segment colors.
+ * Other formats (e.g. `口令: `, `archipelago$ `) are returned with flat green.
+ */
+function colorizePrompt(promptText) {
+  // Match `user@host:path$ ` or `user@host(branch):path$ ` patterns
+  const match=/^([^@\s]+@[^:\s]+)(:[^\$#\n]+)([\$#] )$/.exec(promptText);
+  if(!match) return '\x1b[32m'+plain(promptText)+RESET;
+  const [,userhost,colonPath,dollar]=match;
+  return '\x1b[1;32m'+plain(userhost)+RESET+plain(colonPath[0])+'\x1b[1;34m'+plain(colonPath.slice(1))+RESET+plain(dollar);
+}
+
+/**
  * xterm 6 creates three dynamic style nodes during open(). A nonce belongs only
  * to those styles. The temporary factory also covers Viewport's mainDocument,
  * which 6.0.0 does not reliably obtain from documentOverride. Never left patched.
@@ -64,7 +76,17 @@ export class XtermConsoleView {
     this.subscriptions=[this.xterm.onData(data=>{
       if((this.inKeyPress||this.inKeyDown)&&data.charCodeAt(0)>=32&&!data.startsWith('\x1b'))this.keyPressEmitted=true;
       const candidates=this.editor.input(data);
-      if(candidates.length)this.write(candidates.join('  ')+'\n','system',true);
+      if(candidates.length>1){
+        // bash-like columnar display
+        const maxLen=Math.max(...candidates.map(c=>c.length));
+        const colW=maxLen+2;
+        const cols=Math.max(1,Math.floor(this.xterm.cols/colW));
+        const lines=[];
+        for(let i=0;i<candidates.length;i+=cols){
+          lines.push(candidates.slice(i,i+cols).map(c=>c.padEnd(colW)).join('').trimEnd());
+        }
+        this.write(lines.join('\n')+'\n','dialogue',true);
+      }
     }),this.xterm.onScroll(()=>{
       if(!this.writing)this.followOutput=this.xterm.buffer.active.viewportY>=this.xterm.buffer.active.baseY;
     })];
@@ -153,7 +175,13 @@ export class XtermConsoleView {
     if(!this.anchor)return;
     const {marker,column}=this.anchor,buffer=this.xterm.buffer.active;
     const row=marker.isDisposed?-1:marker.line-buffer.baseY;
-    await this.bytes(RESET+`\x1b[${Math.max(0,row)+1};${row<0?1:Math.min(column,this.xterm.cols-1)+1}H\x1b[J`);
+    if(row<0){
+      // Prompt scrolled out of view; just reset and let renderEditor write a fresh prompt
+      marker.dispose();this.anchor=null;
+      await this.bytes(RESET);
+      return;
+    }
+    await this.bytes(RESET+`\x1b[${row+1};${Math.min(column,this.xterm.cols-1)+1}H\x1b[J`);
     marker.dispose();this.anchor=null;
   }
   async renderEditor() {
@@ -166,8 +194,8 @@ export class XtermConsoleView {
     const cursor=this.secret?0:search?text.length:this.editor.end;
     const prefix=search?`(reverse-i-search) '${plain(search.query)}': `:this.promptText;
     const clipped=clipAroundCursor(text.slice(0,cursor),text.slice(cursor),this.xterm.cols,this.xterm.rows);
-    const continuation=value=>value.replace(/\t/g,'    ').replace(/\n/g,'\r\n\x1b[32m> '+RESET);
-    await this.bytes(leading+'\x1b[32m'+(clipped.leftClipped?'… ':plain(prefix))+RESET+continuation(clipped.before));
+    const continuation=value=>value.replace(/\t/g,'    ').replace(/\n/g,'\r\n\x1b[90m> '+RESET);
+    await this.bytes(leading+(clipped.leftClipped?'\x1b[32m… '+RESET:colorizePrompt(prefix))+continuation(clipped.before));
     // Resolve deferred right-margin wrapping before capturing the insertion cell.
     if(buffer.cursorX>=this.xterm.cols)await this.bytes(' \b');
     const cursorMarker=this.xterm.registerMarker(0),column=buffer.cursorX;
@@ -177,6 +205,8 @@ export class XtermConsoleView {
     cursorMarker.dispose();
     this.status.hidden=!search&&!this.busy;
     if(search)this.status.textContent=`歷史搜尋：${search.query} · ${search.match??'找不到符合的命令'} · Enter 採用 / Esc 返回`;
+    // Ensure the prompt line is always visible after render
+    if(this.followOutput) this.xterm.scrollToBottom();
   }
   requestRender() {
     if(this.renderPending||this.destroyed)return;

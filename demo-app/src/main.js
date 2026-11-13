@@ -200,7 +200,7 @@ function mountConsole() {
 function createConsoleWelcome() {
   consoleView?.destroy();terminal?.destroy();game.replaceChildren();
   welcome.hidden=true;game.hidden=false;history=[];historyIndex=0;lastConsoleTask='';
-  mountConsole();consoleView.setPrompt('archipelago$ ','輸入工作階段指令');
+  mountConsole();consoleView.setPrompt(promptText(),'輸入工作階段指令');
   terminal.write(`根目錄群島 / 第一夜\nBash 終端（模擬）· 離線工作階段\n\n遊戲啟動器\n  game start          開始值班\n${saved?'  game resume         繼續本機紀錄\n':''}  game import <RA1-…> 匯入存檔代碼（也接受 JSON）\n  game help           Bash 操作與遊戲命令說明\n  game mode islands   返回群島模式（或按 F2）\n\n`,'system',true);
   consoleView.focus();
 }
@@ -350,7 +350,7 @@ async function resumeLocal() {
 }
 /** refresh/echoInput 呼叫；無參數 → 依暱稱/口令/投票/主機/分支/cwd 產生提示符，唯讀。 */
 function promptText() {
-  if(!engine)return 'archipelago$ ';
+  if(!engine)return 'guest@archipelago:~$ ';
   if(isConsole()&&engine.ended)return 'archipelago:finished$ ';
   if(engine.inputMode==='input')return engine.mode[2].expect_input.store?'暱稱: ':'口令: ';
   if(engine.inputMode==='choice')return 'block / pass: ';

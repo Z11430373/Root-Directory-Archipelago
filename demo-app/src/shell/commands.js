@@ -453,7 +453,7 @@ export function runCommand(name, args, input, ctx) {
         case 'hint': case 'skip': case 'save': case 'help': case 'merge': break;
         default:
           ctx.state.rc = 127;
-          yield `bash: ${name}: command not found`;
+          yield `bash: ${name}: command not found\n`;
       }
     } catch (e) { ctx.error(e.message, name === 'grep' || name === 'ls' ? 2 : 1); }
   })();
