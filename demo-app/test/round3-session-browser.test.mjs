@@ -1,3 +1,8 @@
+/**
+ * 跨分頁/交易 UI 回歸：依賴 dist、選用 Playwright/RA_CHROME；同 context 分頁共享儲存才有競態意義。
+ * 命名 callback 回傳 Promise，驗同 head 檔案修改、舊 kiosk 清除與失敗後重試；不直接改 app 私有狀態。
+ * browser hooks 管生命週期，context helper 註冊 t.after 關閉所有頁並驗錯誤；缺工具 skip。
+ */
 import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
 let chromium;
@@ -6,22 +11,27 @@ const skip=!chromium||!process.env.RA_CHROME?'Optional browser tools unavailable
 let browser;
 before(async()=>{if(!skip)browser=await chromium.launch({executablePath:process.env.RA_CHROME,headless:true});});
 after(async()=>{await browser?.close();});
+/** 案例/pair 呼叫；TestContext → 共享儲存的隔離 context，蒐所有頁面錯誤並於 t.after 關閉。 */
 async function context(t){
   const c=await browser.newContext({viewport:{width:1280,height:800},reducedMotion:'reduce'}),errors=[];
   c.on('page',p=>{p.on('pageerror',e=>errors.push(e.message));p.on('console',m=>{if(m.type()==='error')errors.push(m.text());});});
   t.after(async()=>{await c.close();assert.deepEqual(errors,[]);});return c;
 }
+/** 案例/pair 呼叫；context/網址 query → 凍結時鐘 page，頁面由所屬 context 的 t.after 清理。 */
 async function open(c,query=''){
   const p=await c.newPage();p.setDefaultTimeout(8000);
   const epoch=new Date('2026-10-30T17:00:00Z');await p.clock.install({time:epoch});await p.clock.pauseAt(new Date(+epoch+1000));
   await p.goto(new URL('../dist/index.html',import.meta.url).href+query);await p.locator('#new-game').waitFor();return p;
 }
-async function send(p,raw){await p.locator('#command-input').fill(raw);await p.locator('#command-input').press('Enter');await p.locator('#command-input:enabled').waitFor();}
+/** 明確切到要操作的真分頁再提交；背景 idle／storage 事件仍由各案自行觸發。 */
+async function send(p,raw){await p.bringToFront();await p.locator('#command-input').fill(raw);await p.locator('#command-input').press('Enter');await p.locator('#command-input:enabled').waitFor();}
+/** 跨頁案例呼叫；TestContext/舊頁 query → {a,b}，a 建檔、b 明示續玩，兩頁基準刻意形成先後關係。 */
 async function pair(t,query=''){
   const c=await context(t),a=await open(c,query);await a.locator('#new-game').click();await send(a,'pairqa');await send(a,'echo ALPHA > notes/a.txt');
   const b=await open(c);await b.locator('#continue-game').click();await b.locator('#command-input:enabled').waitFor();
   return {a,b};
 }
+/** 案例呼叫；page → Promise<完整本機 envelope>，唯讀共享儲存，避免只憑 head 遺漏檔案紀錄。 */
 const saved=p=>p.evaluate(()=>JSON.parse(localStorage.getItem('ra.demo.save.v1')));
 
 test('R3 session control: same-head file-only changes are protected from an older tab and its export',{skip,timeout:30000},async t=>{

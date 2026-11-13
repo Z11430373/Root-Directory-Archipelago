@@ -1,0 +1,40 @@
+tools/validate.py
+  ok   引用檢查完成：2 章、3 對話檔、10 快題、2 工單、2 知識卡、2 分支
+  ok   僅被設定、沒被條件使用的旗標（純紀錄，可用於成就）：flag.appeal_day_seen, flag.asked_charter, flag.b0.lost0_created, flag.b1.collateral, flag.cat_working, flag.charter_summary_read, flag.draft_found, flag.draft_read, flag.first_night_read, flag.fsck_done, flag.gc_name_heard, flag.handbook_read, flag.harbor_softened, flag.heard_cake, flag.heard_cat, flag.heard_drinks, flag.heard_friday, flag.heard_pudding, flag.heard_slipper, flag.heard_tower, flag.heard_wang, flag.letter3141_read, flag.lin_stopped_lamp, flag.lin_ticket_read, flag.met_harbor, flag.q1_4_done, flag.t0100_done, flag.tower_topic_open
+  ok   旗標檢查：使用 18、設定 46
+  ok   劇透護欄：掃描 25 個文字檔與全部對話、快題
+  ok   碎片與憲章檢查完成（Rev 1–5、v2.4 原句保留、F1/F2 位置正確）
+  ok   日誌產生器（縮小版）：9781 行，404=184，最忙一天=24/Nov/2031(547)，GC 探測=31
+  ok   快題：reference 全數通過 check，negative_references 全數被擋下
+  ok   T0427 大測資（30 萬行）參考解答 0.37s，與 shell 管線一致
+  ok   工單：參考解答 AC，已知錯解被指定測資擋下
+
+結果：0 項錯誤，0 項警告
+
+exit=0
+
+demo/tools/validate_demo.py
+  ok   引用：7 段、22 個節拍；試玩專用對話 44 節點
+  ok   時間預算（秒）：fast=369 median=787 slow=1283（上限 480 / 840 / 1300，另留探索 90）
+  ok   指令白名單：29 個，涵蓋劇本需要的 14 個
+  ok   試玩規模日誌 3315 行：404=78，最忙一天=24/Nov/2031，GC 探測=31；Q0-*、Q1-1、Q1-3 標準答案通過
+  ok   匯入規則：帶 21 個旗標、5 題、1 張卡；試玩專用旗標 ['flag.demo.finished', 'flag.demo.in_vote', 'flag.demo.started', 'flag.demo.time_up', 'flag.demo.used_full_hint', 'flag.demo.vote_block', 'flag.demo.vote_pass']
+  ok   golden fast   代碼 1044 字元，41 個 commit，6:45，135 分，稱號「快手值班員」
+  ok   golden median 代碼 1108 字元，44 個 commit，12:42，135 分，稱號「守夜人」
+  ok   golden slow   代碼  960 字元，36 個 commit，14:30，60 分，稱號「守夜人」
+  ok   golden digger 代碼 1236 字元，53 個 commit，13:50，170 分，稱號「拆門者」
+  ok   存檔：截斷、改字元、亂字串都會被擋；換行貼上可容忍；竄改的存檔檔案會標記 unverified 且不給徽章
+  ok   活動統計：60 位合成玩家 → 完成率 90%，中位數 11:12，block/pass = 40/17，要用完整提示的比例 27%
+  ok   劇透護欄：試玩版文字通過
+  ok   跨語言測資新鮮度：僅 truncated_zlib 壓縮表示不同；各自 CRC 正確，截斷狀態與部分解壓 bytes 相同
+  ok   跨語言測資：接受 9／可疑 3／必拒 30 全部符合
+  ok   引擎一致性測資：71 個指令案例（真 bash 重跑一致）、7 個快題判定
+  ok   Bash provenance: GNU bash, version 5.3.15(2)-release (x86_64-pc-cygwin) (golden: GNU bash, version 5.2.21(1)-release (x86_64-pc-linux-gnu))
+  ok   流程規格：50 條規則（走法覆蓋 50 條）、9 個引導階梯、3+1 條走法的存檔都是『完整』；代碼長度 digger=997, newbie=972, edge=901, timeup=792
+  ok   流程走法測資（walkthrough.json、expr.json）與參考模擬器重跑一致
+
+結果：0 項錯誤，0 項警告
+
+exit=0
+
+Data files: 83; SHA-256 unchanged: True

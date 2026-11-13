@@ -1,3 +1,8 @@
+/**
+ * T12 追加互動 QA：依賴 dist/index.html、選用 Playwright/RA_CHROME 與 Node zlib（只讀 RA1 payload）。
+ * 每個命名案例 callback 回傳 Promise，以 DOM 操作驗鍵盤/本機重播/主持/動畫；不 import 私有 Engine 造結果。
+ * 全域 browser 在 hooks 開關，open 以 t.after 關 context 並驗錯誤；時鐘真正 pause 保持 commit ID 可比對。
+ */
 import test, {before, after} from 'node:test';
 import assert from 'node:assert/strict';
 import {inflateSync} from 'node:zlib';
@@ -18,10 +23,12 @@ before(async () => {
 });
 after(async () => { await browser?.close(); });
 
+/** 案例宣告呼叫；名稱/測試 callback → undefined，以共同 skip/timeout 註冊，不執行或弱化案例。 */
 function uiTest(name, fn) {
   test(`T12-extra: ${name}`, {skip, timeout:45_000}, fn);
 }
 
+/** 案例呼叫；TestContext/模式/動態偏好 → page，建立 context 並凍結時鐘；t.after 負責 close/蒐錯斷言。 */
 async function open(t, {mode, reducedMotion='reduce'}={}) {
   const context = await browser.newContext({viewport:{width:1280,height:800}, reducedMotion});
   const page = await context.newPage();
@@ -44,16 +51,19 @@ async function open(t, {mode, reducedMotion='reduce'}={}) {
   return page;
 }
 
+/** 其他 helper 呼叫；page → Promise<void>，等真實輸入框 enabled，避免送入尚未提交的交易。 */
 async function ready(page) {
   await page.locator('#command-input:enabled').waitFor();
 }
 
+/** 案例呼叫；page/暱稱 → Promise<void>，按開始再送暱稱，建立該頁 Engine 與存檔。 */
 async function start(page, nick='extraqa') {
   await page.locator('#new-game').click();
   await ready(page);
   await send(page, nick);
 }
 
+/** 案例/helper 呼叫；page/文字 → 本次新增且非回顯的輸出字串，會經表單改遊戲/本機紀錄。 */
 async function send(page, text) {
   const lines = page.locator('#terminal > .terminal-line');
   const from = await lines.count();
@@ -68,12 +78,14 @@ async function send(page, text) {
       .map(node => node.textContent).join(''), from);
 }
 
+/** 案例/匯出 helper 呼叫；page → 非空八碼 head，讀 DOM 並斷言，不改進度。 */
 async function head(page) {
   const value = await page.locator('#save-status').getAttribute('data-head');
   assert.match(value, /^[0-9a-f]{8}$/, 'A real chain tail must exist');
   return value;
 }
 
+/** 續玩案例呼叫；page → Promise<void>，重載並點繼續，斷言實際 journal 重播訊息，不直接還原 Engine。 */
 async function resume(page) {
   await page.reload();
   await page.locator('#continue-game').click();
@@ -81,10 +93,11 @@ async function resume(page) {
   assert.match(await page.locator('#terminal').textContent(), /已從本機操作紀錄還原/);
 }
 
+/** 分支/主持案例呼叫；page → 點燈輸出字串，以狀態命令/口令走真表單，改頁面進度。 */
 async function lightLamp(page) {
   assert.match(await send(page, 'systemctl status lamp'), /inactive \(dead\)/);
   await send(page, 'systemctl start lamp');
-  assert.equal((await page.locator('#prompt').textContent()).trim(), '口令 >');
+  assert.equal((await page.locator('#prompt').textContent()).trim(), '口令:');
   const output = await send(page, 'lamp-before-sudo');
   assert.match(output, /lamp\.service: active \(running\)/);
   assert.match(output, /燈亮了/);
@@ -94,12 +107,14 @@ async function lightLamp(page) {
 // Read only the documented portable RA1 payload (AGENT_BUILD_PROMPT.md §4).
 // No Engine/Save imports, injected application calls, or storage-envelope access.
 // This helper is not a CRC/integrity verifier; those belong to T1–T4/T11.
+/** 匯出案例呼叫；RA1 字串 → 解開的 m/c 物件，唯讀格式輔助，刻意不當 CRC/安全驗證器使用。 */
 function portable(code) {
   assert.match(code, /^RA1-[A-Za-z0-9_-]+-[0-9a-f]{8}$/);
   const body = code.slice(4, code.lastIndexOf('-'));
   return JSON.parse(inflateSync(Buffer.from(body, 'base64url')).toString('utf8'));
 }
 
+/** 案例呼叫；page/是否快捷按鈕 → {code,packed}，打開保存 dialog 並核對 DOM head，呼叫端負責關閉。 */
 async function exportSave(page, {chip=false}={}) {
   if (chip) {
     await page.getByRole('button', {name:'執行 save', exact:true}).click();
@@ -112,6 +127,7 @@ async function exportSave(page, {chip=false}={}) {
   return {code, packed};
 }
 
+/** 續玩案例呼叫；歡迎頁/code → Promise<void>，經匯入表單恢復並檢查完整性文字，改該頁遊戲狀態。 */
 async function importOwn(page, code) {
   await page.locator('#import-code').fill(code);
   await page.locator('#import-submit').click();
@@ -119,6 +135,7 @@ async function importOwn(page, code) {
   assert.match(await page.locator('#terminal').textContent(), /存檔完整性：完整/);
 }
 
+/** 純鍵盤案例呼叫；page/selector → Promise<void>，有限次 Tab 找焦點，失敗 assert；不程式化 focus。 */
 async function tabTo(page, selector) {
   for (let n=0; n<16; n++) {
     if (await page.locator(selector).evaluate(node => node===document.activeElement)) return;
@@ -247,10 +264,10 @@ uiTest('host really lights lamp then votes directly; typed/chip save and RA1 imp
   for (const command of ['ls', 'cat handbook.md', 'ls -a notes', 'grep lamp logs/lamp.log', 'grep -r KEY-FRAG ~']) {
     await send(page, command);
   }
-  assert.notEqual((await page.locator('#prompt').textContent()).trim(), 'block / pass >');
+  assert.notEqual((await page.locator('#prompt').textContent()).trim(), 'block / pass:');
   const lit = await lightLamp(page);
   assert.doesNotMatch(lit, /你可以開一條分支/);
-  assert.equal((await page.locator('#prompt').textContent()).trim(), 'block / pass >');
+  assert.equal((await page.locator('#prompt').textContent()).trim(), 'block / pass:');
   assert.equal(await page.locator('#task-title').textContent(), '02:00 的訪客');
   assert.equal(await page.locator('#host-label').textContent(), 'lighthouse / main');
   assert.match(await page.locator('.task-panel .mode-notice').textContent(), /共享.*不供正式版個人匯入/);
@@ -264,7 +281,7 @@ uiTest('host really lights lamp then votes directly; typed/chip save and RA1 imp
   assert.ok(!first.packed.c.some(c => c[0]==='choice'), 'save is not a vote');
   assert.match(await page.locator('dialog .mode-notice').textContent(), /主持人共享紀錄，不供正式版個人匯入/);
   await page.locator('#close-save').click();
-  assert.equal((await page.locator('#prompt').textContent()).trim(), 'block / pass >');
+  assert.equal((await page.locator('#prompt').textContent()).trim(), 'block / pass:');
   const second = await exportSave(page, {chip:true});
   assert.deepEqual(second.packed, first.packed, 'Repeated vote save does not advance world time or commits');
   assert.equal(await head(page), voteHead);
@@ -274,7 +291,7 @@ uiTest('host really lights lamp then votes directly; typed/chip save and RA1 imp
   const restored = await open(t);
   await importOwn(restored, first.code);
   assert.equal(await head(restored), voteHead);
-  assert.equal((await restored.locator('#prompt').textContent()).trim(), 'block / pass >');
+  assert.equal((await restored.locator('#prompt').textContent()).trim(), 'block / pass:');
   const third = await exportSave(restored);
   assert.deepEqual(third.packed, first.packed);
   assert.match(await restored.locator('dialog .mode-notice').textContent(), /主持人共享紀錄，不供正式版個人匯入/);
@@ -298,6 +315,7 @@ const welcomeLines = [
   '[init] 請輸入你的暱稱（英文或數字，最多 12 字）。\n',
 ];
 
+/** 動畫案例呼叫；TestContext → 尚有未完文字的 page，明示前進 24ms 並驗證真的只顯示部分內容。 */
 async function pendingWelcome(t) {
   const page = await open(t, {reducedMotion:'no-preference'});
   await page.locator('#new-game').click();
@@ -312,6 +330,7 @@ async function pendingWelcome(t) {
   return page;
 }
 
+/** 動畫案例呼叫；page/凍結時間 → Promise<void>，唯讀斷言所有文字已補完且無推進 timer。 */
 async function assertWelcomeFinished(page, frozenAt) {
   assert.deepEqual(await page.locator('#terminal > .terminal-line').allTextContents(), welcomeLines,
     'The same input event must finish every queued line, not only the first');

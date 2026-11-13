@@ -1,3 +1,8 @@
+/**
+ * 存檔 QA（T1–T4/安全/互通）：依賴 save/index.js、vectors.json、Node zlib/crypto 與 Python savelib。
+ * callback 回傳 void/Promise；變異只改副本，拒絕案例需 CodeError，CRC 正確以深入驗證解壓/形狀。
+ * 僅最後互通案例啟動限時 Python；不寫來源/測資，沒有常駐瀏覽器或檔案資源。
+ */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -10,6 +15,7 @@ import * as S from '../src/save/index.js';
 globalThis.crypto ??= webcrypto;
 const vectors = JSON.parse(await readFile(new URL('../../demo/testvectors/vectors.json', import.meta.url), 'utf8'));
 
+/** T2 呼叫；save → Promise<與 Python expect_of 同欄位摘要>，只讀投影/分級，不改來源。 */
 async function expectOf(save) {
   const [level, level_reasons] = await S.level(save);
   const sc = S.score(save);
@@ -58,13 +64,16 @@ test('T4 tampered JSON file: broken, unverified, no badge', async () => {
   assert.deepEqual(fg.perks, []);
 });
 
+/** 安全案例呼叫；任意壓縮 bytes → CRC 正確 RA1，不驗形狀，故意讓錯誤進入更深的匯入邊界。 */
 function encodeRaw(raw) {
   const body = Buffer.from(raw).toString('base64url');
   return 'RA1-' + body + '-' + S.crc32('RA1-' + body).toString(16).padStart(8, '0');
 }
+/** 安全案例呼叫；任意 JSON/異常文字 → zlib+RA1，無 I/O，不使用被測匯出器避免同錯互證。 */
 const encodeText = text => encodeRaw(deflateSync(text));
 const packed = JSON.parse(S.canonical(S.pack(JSON.parse(JSON.stringify(vectors.file_tampered.file)))));
 const rawPacked = JSON.stringify(packed);
+/** 變異案例呼叫；JSON 值 → 深複製值，隔離 packed/fixtures，不保留原型或非 JSON 型別。 */
 const clone = value => JSON.parse(JSON.stringify(value));
 
 test('Safety: integer-only lexical JSON, including floats rounded to integers', async t => {

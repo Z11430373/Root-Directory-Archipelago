@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# 存檔 QA 測資工具；依賴 savelib.py、simulate.py 與其 YAML，給 JS save.test.mjs 跨語言對照。
+# build/check 只回傳資料或錯誤清單；CLI make 才覆寫 vectors.json；壓縮差異不當成語意失敗。
 """
 跨語言對照測資。Python 的 savelib.py 是參考實作；前端（JavaScript）要對同一份測資給出同樣的結果。
 
@@ -24,6 +26,7 @@ import simulate as SIM     # noqa: E402
 OUT = os.path.join(S.DEMO, "testvectors", "vectors.json")
 
 
+# 呼叫：build 異常案例；packed/可選原始 bytes → CRC 正確的 RA1，故意繞過安全形狀檢查，不作正式匯出。
 def enc(packed, raw_override=None):
     """把任意 packed 物件編成『CRC 正確』的代碼，這樣被擋下的原因就不是 CRC。"""
     raw = raw_override if raw_override is not None else zlib.compress(S.canonical(packed).encode("utf-8"), 9)
@@ -31,10 +34,12 @@ def enc(packed, raw_override=None):
     return "%s%s-%s" % (S.PREFIX, b, "%08x" % (zlib.crc32((S.PREFIX + b).encode()) & 0xFFFFFFFF))
 
 
+# 呼叫：build；黃金路線名 → 固定暱稱/種子的合成 save，無檔案副作用。
 def golden(name):
     return SIM.build(name, nick="zien", seed=5)
 
 
+# 呼叫：build/check/JS 互通子程序；save → 完整預期欄位 dict，唯讀計分/分級/正式版投影。
 def expect_of(sv):
     lv, why = S.level(sv)
     sc = S.score(sv)
@@ -50,6 +55,7 @@ def expect_of(sv):
     }
 
 
+# 呼叫：CLI make/validate_demo；無參數 → 正常/可疑/必拒/竄改測資，僅改局部副本與各 save.head。
 def build():
     V = {"note": "vectors.json：由 tools/testvectors.py make 產生。請勿手改。", "schema": 1}
 
@@ -105,6 +111,7 @@ def build():
     good = S.export_code(golden("median"))
     rej = []
 
+    # 呼叫：必拒案例宣告；名稱/代碼/原因 → None，附加局部 rej，不測結果也不改來源。
     def R(name, code, why):
         rej.append({"name": name, "code": code, "why": why})
 
@@ -120,6 +127,7 @@ def build():
     R("not_zlib", enc(None, raw_override=b"this is not zlib data"), "不是 zlib 資料")
     R("truncated_zlib", enc(None, raw_override=zlib.compress(S.canonical(base).encode())[:-6]), "壓縮資料被截斷（但 CRC 對）")
 
+    # 呼叫：單欄變異案例；突變 callback → 代碼，先 deepcopy base，再改副本編碼，避免案例互相污染。
     def mut(fn):
         o = copy.deepcopy(base)
         fn(o)
@@ -161,6 +169,7 @@ def build():
     return V
 
 
+# 呼叫：CLI/validate_demo；測資物件 → 錯誤字串清單，跑參考編解碼/分級/投影，不重寫測資。
 def check(V):
     errs = []
     for c in V["canonical_and_id"]:

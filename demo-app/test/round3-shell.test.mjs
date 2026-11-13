@@ -1,3 +1,8 @@
+/**
+ * 第三輪 Shell 回歸：依賴 VFS/execute/Engine/quests/data，固定預期另經 Git Bash 核對。
+ * callback 回傳 void/Promise，逐案只改新記憶體世界；覆蓋 glob、管線副作用、讀取時 inode、檔案邊界與 Unicode。
+ * 測試不啟動 Bash、不改對照檔或宿主檔案；Engine 非同步入口仍依序 await。
+ */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { webcrypto } from 'node:crypto';
@@ -9,6 +14,7 @@ import { checkQuest } from '../src/quests.js';
 
 if (!globalThis.crypto) globalThis.crypto = webcrypto;
 
+/** 案例呼叫；無參數 → 只有 home 的空 VFS，避免劇本既有檔案干擾 Shell 斷言，無外部資源。 */
 function emptyWorld() {
   const world = new VFS();
   world.mkdir(world.home);

@@ -1,0 +1,14 @@
+/* Load AFTER theme.css, server.css and the pinned upstream xterm.css. */
+.xterm-console{overflow:hidden;min-height:0}
+.xterm-console-mount{flex:1;min-height:0;min-width:0;padding:14px 18px;overflow:hidden}
+.xterm-console-mount:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
+/* Existing .terminal / #command-input rules belong to the island surface.
+ * Reset those collisions without touching xterm's cell metrics/positioning. */
+.xterm-console .xterm.terminal{height:100%;min-height:0;max-height:none;margin:0;padding:0;border:0;border-radius:0;background:transparent;overflow:hidden;white-space:normal;overflow-wrap:normal;font:inherit;box-shadow:none}
+.xterm-console #command-input.xterm-helper-textarea{min-width:0;max-width:none;min-height:0;max-height:none;margin:0;padding:0;border:0;border-radius:0;outline:none;resize:none;box-shadow:none;field-sizing:fixed}
+.xterm-console .xterm-screen{white-space:normal;overflow-wrap:normal}
+.xterm-console .xterm-rows{white-space:pre;overflow-wrap:normal}
+.xterm-console-status{flex:none;margin:0;padding:4px 18px;color:var(--muted);font:12px/1.5 var(--mono)}
+.xterm-console-status[hidden]{display:none}
+.xterm-console .console-keys{user-select:text}
+@media(max-width:760px){.xterm-console-mount{padding:8px}.xterm-console-status{padding:4px 8px}}

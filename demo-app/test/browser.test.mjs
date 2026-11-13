@@ -1,3 +1,8 @@
+/**
+ * T12 瀏覽器整合 QA：依賴生成 dist、walkthrough.json、save codec 與選用 Playwright/RA_CHROME。
+ * 測試由使用者路徑輸入並檢查 DOM/請求/CSP；缺工具會 skip，不等於完成跨瀏覽器或真人驗收。
+ * 主 callback 回傳 Promise；t.after 關 browser/HTTPS server，context 用後 close，自簽 TLS 僅在隔離 context 容許。
+ */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -17,6 +22,7 @@ const walk = JSON.parse(await readFile(new URL('../../demo/testvectors/walkthrou
 test('T12: offline file + HTTPS, safety, keyboard, mobile, resume, kiosk, exports and themes', {skip: !enabled, timeout: 180_000}, async t => {
   const browser = await chromium.launch({executablePath: browserPath, headless: true});
   t.after(() => browser.close());
+  /** 本案例呼叫；網址/可選初始化腳本 → browser 環境與蒐集清單，建立 context；呼叫端負責 close。 */
   async function open(url=htmlURL.href, init) {
     const context = await browser.newContext({viewport:{width:1280,height:800}, reducedMotion:'reduce', ignoreHTTPSErrors:true});
     if (init) await context.addInitScript(init);
@@ -24,13 +30,16 @@ test('T12: offline file + HTTPS, safety, keyboard, mobile, resume, kiosk, export
     const errors=[], requests=[], violations=[];
     page.on('console', msg => {if(msg.type()==='error') errors.push(msg.text());});
     page.on('pageerror', error => errors.push(error.message));
-    page.on('request', request => {if(request.resourceType()!=='document') requests.push(request.url());});
+    // A bundled Blob Worker is local execution, not an external subresource.
+    // Keep rejecting every non-document URL other than these CSP-authorized blobs.
+    page.on('request', request => {if(request.resourceType()!=='document'&&!request.url().startsWith('blob:')) requests.push(request.url());});
     await page.exposeFunction('recordCSP', value => violations.push(value));
     await page.addInitScript(() => document.addEventListener('securitypolicyviolation', event => window.recordCSP(event.violatedDirective)));
     await page.goto(url);
     await page.locator('#new-game').waitFor();
     return {context,page,errors,requests,violations};
   }
+  /** 本案例呼叫；page/文字 → Promise<void>，經真表單送出並等輸入解鎖，推進頁面狀態。 */
   async function send(page, text) {
     const input=page.locator('#command-input');
     await input.fill(text);
@@ -64,6 +73,7 @@ test('T12: offline file + HTTPS, safety, keyboard, mobile, resume, kiosk, export
   await page.locator('#font-size').selectOption('large');
   assert.equal(await page.locator('html').getAttribute('data-font'),'large');
   await page.setViewportSize({width:360,height:740});
+  await page.waitForFunction(()=>document.querySelector('.task-panel')?.open===false);
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth<=innerWidth));
   assert.equal(await page.locator('.task-panel').getAttribute('open'),null);
   assert.ok((await page.locator('#panel-summary').textContent()).includes('Q0-2'));

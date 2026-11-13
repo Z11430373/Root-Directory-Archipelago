@@ -1,0 +1,10 @@
+✔ Console browser: line editing, completion, reverse search, draft history, IME guard and multiline paste (23361.1652ms)
+✔ Console browser: reading the latest printed save restores bottom and mid-scrollback positions (14608.9326ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 39742.9841

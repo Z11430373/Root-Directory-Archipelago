@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# 試玩設計 QA 整合入口；依賴 savelib/simulate/testvectors/validate_flow/flow_sim/make_conformance、
+# tools/validate.py/gen_logs.py、demo YAML/text 與真 Bash；檢查來源唯讀，不重新產生對照答案。
+# 暫存世界 finally 清理；錯誤/警告/說明累積全域清單，最後以非零退出回報失敗。
 """
 試玩版驗證器：不用真人玩，只檢查設計是否自洽。
   python3 demo/tools/validate_demo.py
@@ -6,6 +9,7 @@
 檢查：引用、15 分鐘預算、指令白名單、試玩規模日誌上的快題標準答案、
       匯入規則（白名單旗標都存在、不洩漏試玩專用旗標）、存檔來回／竄改／截斷、活動統計、劇透護欄。
 """
+import base64
 import importlib.util
 import json
 import os
@@ -15,6 +19,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import zlib
 
 import yaml
 
@@ -33,10 +38,44 @@ errors, warnings, notes = [], [], []
 err, warn, ok = errors.append, warnings.append, notes.append
 
 
+# 呼叫：main；demo 相對片段 → YAML 值，只讀資料，不修改來源。
 def Y(*p):
     return yaml.safe_load(open(os.path.join(DEMO, *p), encoding="utf-8"))
 
 
+# 呼叫：vector_contract；僅供既有 truncated_zlib 測資的表示無關比對。
+# CRC、字元、解壓上限及未結束串流都必須正確；不把任意「會被拒絕」視為同一案例。
+def truncated_zlib_payload(code):
+    limits = S.integrity()["limits"]
+    if len(code) > limits["max_code_chars"]:
+        raise ValueError("truncated_zlib 代碼超過上限")
+    match = re.fullmatch(re.escape(S.PREFIX) + r"([A-Za-z0-9_-]+)-([0-9a-fA-F]{8})", code)
+    if not match:
+        raise ValueError("truncated_zlib 必須是合法 RA1/base64url 外殼")
+    body, crc = match.groups()
+    if crc.lower() != "%08x" % (zlib.crc32((S.PREFIX + body).encode("ascii")) & 0xFFFFFFFF):
+        raise ValueError("truncated_zlib 的 CRC 不符，未測到壓縮截斷")
+    raw = base64.urlsafe_b64decode(body + "=" * (-len(body) % 4))
+    decoder = zlib.decompressobj()
+    payload = decoder.decompress(raw, limits["max_inflated_bytes"] + 1)
+    if len(payload) > limits["max_inflated_bytes"] or decoder.unconsumed_tail:
+        raise ValueError("truncated_zlib 解壓超過上限")
+    if decoder.eof or decoder.unused_data or not payload:
+        raise ValueError("truncated_zlib 必須能部分解壓且串流尚未結束")
+    return payload
+
+
+# 呼叫：main；測資 → 比對用副本，只有已證實為壓縮表示差異的截斷案例改比部分解壓 bytes。
+# 其餘 code、名稱、原因、預期結論與結構仍精確比對；不修改測資或重新產生 golden 檔案。
+def vector_contract(vectors):
+    comparable = json.loads(json.dumps(vectors))
+    for case in comparable["reject"]:
+        if case["name"] == "truncated_zlib":
+            case["code"] = truncated_zlib_payload(case["code"])
+    return comparable
+
+
+# 呼叫：CLI；無參數 → 程序退出，依區塊驗引用/時間/世界/存檔/統計/護欄與三種測資，會啟動參考子程序。
 def main():
     cfg = Y("demo.yaml")
     ru = Y("import_rules.yaml")
@@ -310,9 +349,16 @@ def main():
         VV = json.load(open(vp, encoding="utf-8"))
         for e in TV.check(VV):
             err("測資：" + e)
-        # 測資必須是最新的：重新產生後應該完全一致
-        if TV.build() != json.loads(json.dumps(TV.build())) or json.loads(json.dumps(TV.build(), ensure_ascii=False, sort_keys=True)) != json.loads(json.dumps(VV, sort_keys=True)):
-            err("testvectors/vectors.json 已過期（資料或工具改過），請執行 python3 tools/testvectors.py make")
+        # 保留重建確定性與全部欄位檢查，只排除已驗證的壓縮表示差異。
+        rebuilt = TV.build()
+        for e in TV.check(rebuilt):
+            err("重建測資：" + e)
+        if rebuilt != json.loads(json.dumps(TV.build())):
+            err("testvectors.build() 重建不確定或不是穩定的 JSON 結構")
+        if vector_contract(rebuilt) != vector_contract(VV):
+            err("testvectors/vectors.json 與重建的內容或預期結論不符；請先檢查資料與工具差異")
+        elif rebuilt != VV:
+            ok("跨語言測資新鮮度：僅 truncated_zlib 壓縮表示不同；各自 CRC 正確，截斷狀態與部分解壓 bytes 相同")
         ok("跨語言測資：接受 %d／可疑 %d／必拒 %d 全部符合" % (len(VV["accept"]), len(VV["suspicious"]), len(VV["reject"])))
     except Exception as e:  # noqa
         err("跨語言測資無法執行：%s" % e)
@@ -320,12 +366,15 @@ def main():
     # ---- 11. 引擎一致性測資（真 bash 重跑必須與檔案一致）
     try:
         import subprocess as _sp
-        r = _sp.run([sys.executable, os.path.join(S.HERE, "make_conformance.py"), "check"], capture_output=True, text=True, timeout=300)
+        r = _sp.run([sys.executable, "-X", "utf8", os.path.join(S.HERE, "make_conformance.py"), "check"], capture_output=True, text=True, encoding="utf-8", timeout=300)
         if r.returncode != 0:
-            err("一致性測資過期或與真 bash 不符：" + (r.stdout + r.stderr).strip()[-300:])
+            err("一致性測資與真 bash 重跑不符（先檢查參考工具與平台差異）：" + (r.stdout + r.stderr).strip()[-300:])
         else:
             CC = json.load(open(os.path.join(S.DEMO, "testvectors", "conformance.json"), encoding="utf-8"))
             ok("引擎一致性測資：%d 個指令案例（真 bash 重跑一致）、%d 個快題判定" % (len(CC["cases"]), len(CC["quests"])))
+            for line in r.stdout.splitlines():
+                if line.startswith("Bash provenance:"):
+                    ok(line)
     except Exception as e:  # noqa
         err("一致性測資無法執行：%s" % e)
 
@@ -339,9 +388,9 @@ def main():
             ok(n_)
         import flow_sim as FSM
         wp = os.path.join(S.DEMO, "testvectors", "walkthrough.json")
-        r = _sp.run([sys.executable, os.path.join(S.HERE, "flow_sim.py"), "check"], capture_output=True, text=True, timeout=300)
+        r = _sp.run([sys.executable, "-X", "utf8", os.path.join(S.HERE, "flow_sim.py"), "check"], capture_output=True, text=True, encoding="utf-8", timeout=300)
         if r.returncode != 0:
-            err("流程走法測資過期：請執行 python3 demo/tools/flow_sim.py make")
+            err("流程走法測資與參考模擬器重跑不符：" + (r.stdout + r.stderr).strip()[-300:])
         else:
             ok("流程走法測資（walkthrough.json、expr.json）與參考模擬器重跑一致")
     except Exception as e:  # noqa

@@ -1,3 +1,8 @@
+/**
+ * 本機 session 硬化 QA：依賴 storage/Engine/save、dist 與選用 Playwright；不更改原對照檔。
+ * callback 回傳 void/Promise，核心案只改 journal，browser 案驗救援、模式保留與 kiosk 隱私清除。
+ * browser 在 hooks 開關；open 的可選 envelope 只注入隔離 context，t.after 關閉並驗無未捕捉錯誤。
+ */
 import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
 import {appendAdvance,checkJournal} from '../src/storage.js';
@@ -33,6 +38,7 @@ test('Session: invalid clock interval cannot poison the last readable journal',(
   assert.equal(journal.reduce((n,step)=>n+step.dt,0),86400*60+1);
 });
 
+/** 案例呼叫；TestContext/可選本機 envelope/網址模式 → page，凍結時間，context 由 t.after 清理。 */
 async function open(t,{envelope,mode}={}){
   const context=await browser.newContext({viewport:{width:1280,height:800},reducedMotion:'reduce'});
   if(envelope)await context.addInitScript(value=>localStorage.setItem('ra.demo.save.v1',JSON.stringify(value)),envelope);
@@ -44,8 +50,11 @@ async function open(t,{envelope,mode}={}){
   const url=new URL('../dist/index.html',import.meta.url);if(mode)url.searchParams.set('mode',mode);
   await page.goto(url.href);await page.locator('#new-game').waitFor();return page;
 }
+/** 案例/helper 呼叫；page/raw → Promise<void>，送表單並等 enabled；不直接呼叫私有 Engine。 */
 async function send(page,raw){await page.locator('#command-input').fill(raw);await page.locator('#command-input').press('Enter');await page.locator('#command-input:enabled').waitFor();}
+/** 案例呼叫；page → Promise<head 字串>，唯讀 DOM。 */
 const head=page=>page.locator('#save-status').getAttribute('data-head');
+/** 案例呼叫；page/暱稱 → Promise<void>，開始新遊戲並完成暱稱輸入，後續保存由 app 負責。 */
 async function start(page,nick='sessionqa'){await page.locator('#new-game').click();await page.locator('#command-input:enabled').waitFor();await send(page,nick);}
 
 test('Session browser: nickname shortcuts cannot overwrite a previous shift; typed hint nickname stays legal',{skip,timeout:30000},async t=>{

@@ -1,3 +1,8 @@
+/**
+ * Engine 邊界回歸：依賴 engine/index.js、save/index.js 與 Web Crypto，覆蓋跳題/事件預算/續玩准入。
+ * 案例 callback 回傳 Promise，以重複提示/分支及匯入驗證後續仍能完成；僅修改測試自有記憶體。
+ * 無檔案/瀏覽器/timer 資源，無清理外部資料；不提高 400 事件上限來取得通過。
+ */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { webcrypto } from 'node:crypto';
@@ -6,6 +11,7 @@ import * as S from '../src/save/index.js';
 
 if (!globalThis.crypto) globalThis.crypto = webcrypto;
 
+/** 案例呼叫；可選 Engine 選項 → 已輸入固定暱稱的 Engine，僅初始化本次記憶體。 */
 async function started(options) {
   const engine = new Engine(options);
   await engine.start();
@@ -13,6 +19,7 @@ async function started(options) {
   return engine;
 }
 
+/** 案例/提示輔助呼叫；引擎/指令/秒差 → Promise<void>，feed 後驗形狀與剩餘預算，會改傳入引擎。 */
 async function send(engine, raw, dt = 0) {
   await engine.feed(raw, dt);
   assert.equal(S.checkShape(engine.save), true, raw);
@@ -20,6 +27,7 @@ async function send(engine, raw, dt = 0) {
   assert.ok(engine.canSpendCommits(0), 'Every settled state retains its continuation budget');
 }
 
+/** 案例呼叫；引擎 → 還原的新 Engine，seal 原 head 並驗 JS/JSON/RA1 來回，不允許重寫原鏈。 */
 async function portable(engine) {
   S.seal(engine.save);
   assert.equal(S.checkShape(engine.save), true);
@@ -35,11 +43,13 @@ async function portable(engine) {
   return restored;
 }
 
+/** 壓測案例呼叫；引擎/次數/秒差 → Promise<void>，序列送 hint，副作用與 send 相同。 */
 async function hints(engine, count = 3, dt = 0) {
   for (let i = 0; i < count; i++) await send(engine, 'hint', dt);
 }
 
 const ch0 = ['ls', 'cat handbook.md', 'ls -a notes', 'grep lamp logs/lamp.log', 'grep -r KEY-FRAG ~'];
+/** 案例呼叫；引擎 → Promise<void>，送點燈命令與口令，更新其旗標/對話/存檔。 */
 async function lamp(engine) {
   await send(engine, 'systemctl start lamp');
   await send(engine, 'lamp-before-sudo');

@@ -1,7 +1,16 @@
+/**
+ * 世界/流程之間的快題判定層，無 import；由 Engine 與一致性測試傳入 check、manifest、VFS。
+ * 只讀指令/輸出/新檔案，不發獎勵、不寫 commit；Engine.finishQuest 負責套用完成副作用。
+ */
+/** 由 checkQuest 呼叫；設定值/manifest → 已替換佔位符的字串，無外部副作用。 */
 export function substituteManifest(value, manifest = {}) {
   return typeof value === 'string' ? value.replace(/\{manifest\.(\w+)\}/g, (_, key) => String(manifest[key])) : String(value);
 }
 
+/**
+ * 由 Engine.questCheck/測試呼叫；check、原始指令、stdout、manifest、可選 VFS → boolean。
+ * file_matches 只查 cwd 玩家新建檔，錯誤規則/路徑一律 false；不改資料、不需清理。
+ */
 export function checkQuest(check, raw, output, manifest = {}, vfs) {
   if (!check) return false;
   raw = String(raw ?? '');

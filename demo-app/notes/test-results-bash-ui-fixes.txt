@@ -1,0 +1,41 @@
+Data: 125269 bytes; 31 content_ref/text_ref checked; B0 text matched.
+Built dist/index.html: 2307259 bytes (offline, CSP SHA-256).
+✔ T12: offline file + HTTPS, safety, keyboard, mobile, resume, kiosk, exports and themes (9054.0834ms)
+✔ Console: pasted newlines separate commands only outside quotes and continuations (219.9834ms)
+✔ Bash completion: quoted filenames, escapes, directory continuations and pipeline positions (1.19ms)
+✔ Console browser: keyboard-only start, task, status, save, download, exit, resume and import (20588.811ms)
+✔ Console browser: line editing, completion, reverse search, draft history, IME guard and multiline paste (26628.5117ms)
+✔ Console browser: F2 and switching back preserve multiline drafts exactly without execution (3491.1598ms)
+✔ Console browser: a pasted mode change retains later commands as an unexecuted draft (4755.4696ms)
+✔ Console browser: Ctrl+C resets recalled history to the latest command and an empty draft (5093.6334ms)
+✔ Console browser: completion before a closing quote keeps one quoted filename with spaces (2755.9852ms)
+✔ Console browser: real worker cancellation rolls back writes, keeps journal replayable and accepts the next command (14016.4308ms)
+✔ Console browser: continuous prompt, wrapped input, raw output and stable scrollback at 320px (15261.4206ms)
+✔ Console browser: continuous prompt, wrapped input, raw output and stable scrollback at 1280px (9082.4031ms)
+✔ Bash browser: multiline for preserves quoted loop words (3786.4369ms)
+✔ Bash browser: multiline if executes only the selected branch (3771.3602ms)
+✔ Bash browser: multiline quoted heredoc preserves literal dollars and newlines (5260.9345ms)
+✔ Bash browser: keyboard Enter continues an unfinished for until done (2689.1802ms)
+✔ Bash browser: variables and functions survive commands, F2 round trips and reload/resume (12841.4106ms)
+✔ Console browser: golden digger path preserves every commit ID through worker execution (55178.2333ms)
+✔ Console browser: golden newbie path preserves every commit ID through worker execution (39562.5426ms)
+✔ Console browser: golden edge path preserves every commit ID through worker execution (77085.7226ms)
+✔ Console browser: golden timeup path preserves every commit ID through worker execution (34301.4142ms)
+✔ Styles: legacy, malformed and unknown preferences normalize without changing game data (175.0516ms)
+✔ Styles: Server dark palette keeps every text color at least 4.5:1 on all surfaces (3.53ms)
+✔ Styles browser: live Server and islands switching preserves draft, head, transcript and cwd (1860.4686ms)
+✔ Styles browser: style, contrast and font persist independently and never enter RA1 (11716.0599ms)
+✔ Styles browser: both styles usable at 320px, with keyboard and both contrast palettes (4643.2461ms)
+✔ Styles browser: both styles usable at 360px, with keyboard and both contrast palettes (4644.8717ms)
+✔ Styles browser: both styles usable at 768px, with keyboard and both contrast palettes (4607.1559ms)
+✔ Styles browser: unavailable preference storage does not break either style (5422.743ms)
+✔ Styles browser: primitive saved preferences can be changed without errors (5277.4131ms)
+✔ Modes browser: terminal ending, certificate and export stay in scrollback at mobile width (21403.3492ms)
+ℹ tests 31
+ℹ suites 0
+ℹ pass 31
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 337139.2448

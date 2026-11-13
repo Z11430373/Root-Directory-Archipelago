@@ -1,3 +1,8 @@
+/**
+ * Shell 清理/語意硬化 QA：依賴 VFS、execute、Engine；不啟動宿主 Shell 或修改來源測資。
+ * callback 回傳 void/Promise，使用人工 chunk/故障 sink 驗啟動與 return；每案世界/覆寫方法皆為局部實例。
+ * producer 的 finally 次數是清理證據，不能為了跑完副作用而把所有未讀來源全 drain。
+ */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { webcrypto } from 'node:crypto';
@@ -7,6 +12,7 @@ import { Engine } from '../src/engine/index.js';
 
 if (!globalThis.crypto) globalThis.crypto = webcrypto;
 
+/** 案例呼叫；無參數 → 只含 home 的 VFS，所有後續讀寫只留在該記憶體實例，不需宿主清理。 */
 function emptyWorld() {
   const world = new VFS();
   world.mkdir(world.home);

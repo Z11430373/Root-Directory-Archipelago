@@ -1,0 +1,202 @@
+[
+  {
+    "ms": 823,
+    "label": "before pairqa",
+    "data": {
+      "disabled": false,
+      "status": "尚未開始",
+      "head": "",
+      "welcome": "",
+      "output": "ROOT ARCHIPELAGO  試玩版〈第一夜〉\n預計 15 分鐘。你可以隨時輸入 hint。\n[init] 請輸入你的暱稱（英文或數字，最多 12 字）。\n",
+      "locks": {
+        "held": [],
+        "pending": []
+      }
+    }
+  },
+  {
+    "ms": 887,
+    "label": "after pairqa",
+    "data": {
+      "disabled": false,
+      "status": "● 已自動存檔",
+      "head": "e10de7e4",
+      "welcome": "",
+      "output": "ROOT ARCHIPELAGO  試玩版〈第一夜〉\n預計 15 分鐘。你可以隨時輸入 hint。\n[init] 請輸入你的暱稱（英文或數字，最多 12 字）。\n暱稱: pairqa\n[init] 暱稱已記錄：op-pairqa。\n[PAGE] INIT -> op-<你的暱稱>\n       燈塔機房需要人手。優先度：低。倒數：無。\n       你是目前唯一回應的人。\nWelcome to ROOT ARCHIPELAGO v5.0 (POSIX-ish / island)\n * 本島：lighthouse    uptime 41d    燈：熄\n * 上次登入：lin，41 天前\nYou have 1 new mail.\n[init] 你有一封信。指令是 mail。\n",
+      "locks": {
+        "held": [],
+        "pending": []
+      }
+    }
+  },
+  {
+    "ms": 888,
+    "label": "before echo ALPHA > notes/a.txt",
+    "data": {
+      "disabled": false,
+      "status": "● 已自動存檔",
+      "head": "e10de7e4",
+      "welcome": "",
+      "output": "ROOT ARCHIPELAGO  試玩版〈第一夜〉\n預計 15 分鐘。你可以隨時輸入 hint。\n[init] 請輸入你的暱稱（英文或數字，最多 12 字）。\n暱稱: pairqa\n[init] 暱稱已記錄：op-pairqa。\n[PAGE] INIT -> op-<你的暱稱>\n       燈塔機房需要人手。優先度：低。倒數：無。\n       你是目前唯一回應的人。\nWelcome to ROOT ARCHIPELAGO v5.0 (POSIX-ish / island)\n * 本島：lighthouse    uptime 41d    燈：熄\n * 上次登入：lin，41 天前\nYou have 1 new mail.\n[init] 你有一封信。指令是 mail。\n",
+      "locks": {
+        "held": [],
+        "pending": []
+      }
+    }
+  },
+  {
+    "ms": 925,
+    "label": "worker",
+    "data": "blob:null/f55d7115-61ea-4dca-84c9-904da378a3a3"
+  },
+  {
+    "ms": 1135,
+    "label": "after echo ALPHA > notes/a.txt",
+    "data": {
+      "disabled": false,
+      "status": "● 已自動存檔",
+      "head": "e10de7e4",
+      "welcome": "",
+      "output": "ROOT ARCHIPELAGO  試玩版〈第一夜〉\n預計 15 分鐘。你可以隨時輸入 hint。\n[init] 請輸入你的暱稱（英文或數字，最多 12 字）。\n暱稱: pairqa\n[init] 暱稱已記錄：op-pairqa。\n[PAGE] INIT -> op-<你的暱稱>\n       燈塔機房需要人手。優先度：低。倒數：無。\n       你是目前唯一回應的人。\nWelcome to ROOT ARCHIPELAGO v5.0 (POSIX-ish / island)\n * 本島：lighthouse    uptime 41d    燈：熄\n * 上次登入：lin，41 天前\nYou have 1 new mail.\n[init] 你有一封信。指令是 mail。\nop-pairqa@lighthouse:~$ echo ALPHA > notes/a.txt\n",
+      "locks": {
+        "held": [],
+        "pending": []
+      }
+    }
+  },
+  {
+    "ms": 1472,
+    "label": "worker",
+    "data": "blob:null/49ea1fe0-3acd-4cfe-a87f-57a47688a766"
+  },
+  {
+    "ms": 1685,
+    "label": "before echo BETA > notes/b.txt",
+    "data": {
+      "disabled": false,
+      "status": "尚未開始",
+      "head": "e10de7e4",
+      "welcome": "",
+      "output": "ROOT ARCHIPELAGO  試玩版〈第一夜〉\n預計 15 分鐘。你可以隨時輸入 hint。\n[init] 請輸入你的暱稱（英文或數字，最多 12 字）。\n暱稱: pairqa\n[init] 暱稱已記錄：op-pairqa。\n[PAGE] INIT -> op-<你的暱稱>\n       燈塔機房需要人手。優先度：低。倒數：無。\n       你是目前唯一回應的人。\nWelcome to ROOT ARCHIPELAGO v5.0 (POSIX-ish / island)\n * 本島：lighthouse    uptime 41d    燈：熄\n * 上次登入：lin，41 天前\nYou have 1 new mail.\n[init] 你有一封信。指令是 mail。\nop-pairqa@lighthouse:~$ echo ALPHA > notes/a.txt\n[系統] 已從本機操作紀錄還原。\n",
+      "locks": {
+        "held": [],
+        "pending": []
+      }
+    }
+  },
+  {
+    "ms": 1719,
+    "label": "worker",
+    "data": "blob:null/303cc481-ad02-410d-a933-214fe8751ef2"
+  },
+  {
+    "ms": 1927,
+    "label": "after echo BETA > notes/b.txt",
+    "data": {
+      "disabled": false,
+      "status": "● 已自動存檔",
+      "head": "e10de7e4",
+      "welcome": "",
+      "output": "ROOT ARCHIPELAGO  試玩版〈第一夜〉\n預計 15 分鐘。你可以隨時輸入 hint。\n[init] 請輸入你的暱稱（英文或數字，最多 12 字）。\n暱稱: pairqa\n[init] 暱稱已記錄：op-pairqa。\n[PAGE] INIT -> op-<你的暱稱>\n       燈塔機房需要人手。優先度：低。倒數：無。\n       你是目前唯一回應的人。\nWelcome to ROOT ARCHIPELAGO v5.0 (POSIX-ish / island)\n * 本島：lighthouse    uptime 41d    燈：熄\n * 上次登入：lin，41 天前\nYou have 1 new mail.\n[init] 你有一封信。指令是 mail。\nop-pairqa@lighthouse:~$ echo ALPHA > notes/a.txt\n[系統] 已從本機操作紀錄還原。\nop-pairqa@lighthouse:~$ echo BETA > notes/b.txt\n",
+      "locks": {
+        "held": [],
+        "pending": []
+      }
+    }
+  },
+  {
+    "ms": 1929,
+    "label": "before echo OLD > notes/old.txt",
+    "data": {
+      "disabled": false,
+      "status": "另一分頁已更新存檔，已停止本頁自動存檔；可先用 save 匯出本頁進度，再重新載入。",
+      "head": "e10de7e4",
+      "welcome": "",
+      "output": "ROOT ARCHIPELAGO  試玩版〈第一夜〉\n預計 15 分鐘。你可以隨時輸入 hint。\n[init] 請輸入你的暱稱（英文或數字，最多 12 字）。\n暱稱: pairqa\n[init] 暱稱已記錄：op-pairqa。\n[PAGE] INIT -> op-<你的暱稱>\n       燈塔機房需要人手。優先度：低。倒數：無。\n       你是目前唯一回應的人。\nWelcome to ROOT ARCHIPELAGO v5.0 (POSIX-ish / island)\n * 本島：lighthouse    uptime 41d    燈：熄\n * 上次登入：lin，41 天前\nYou have 1 new mail.\n[init] 你有一封信。指令是 mail。\nop-pairqa@lighthouse:~$ echo ALPHA > notes/a.txt\n",
+      "locks": {
+        "held": [],
+        "pending": []
+      }
+    }
+  },
+  {
+    "ms": 1969,
+    "label": "worker",
+    "data": "blob:null/055a28c8-c6c9-4c23-9c05-7b7b09c5a96a"
+  },
+  {
+    "ms": 2801,
+    "label": "after echo OLD > notes/old.txt",
+    "data": {
+      "disabled": false,
+      "status": "另一分頁已更新存檔，已停止本頁自動存檔；可先用 save 匯出本頁進度，再重新載入。",
+      "head": "e10de7e4",
+      "welcome": "",
+      "output": "ROOT ARCHIPELAGO  試玩版〈第一夜〉\n預計 15 分鐘。你可以隨時輸入 hint。\n[init] 請輸入你的暱稱（英文或數字，最多 12 字）。\n暱稱: pairqa\n[init] 暱稱已記錄：op-pairqa。\n[PAGE] INIT -> op-<你的暱稱>\n       燈塔機房需要人手。優先度：低。倒數：無。\n       你是目前唯一回應的人。\nWelcome to ROOT ARCHIPELAGO v5.0 (POSIX-ish / island)\n * 本島：lighthouse    uptime 41d    燈：熄\n * 上次登入：lin，41 天前\nYou have 1 new mail.\n[init] 你有一封信。指令是 mail。\nop-pairqa@lighthouse:~$ echo ALPHA > notes/a.txt\nop-pairqa@lighthouse:~$ echo OLD > notes/old.txt\n",
+      "locks": {
+        "held": [],
+        "pending": []
+      }
+    }
+  },
+  {
+    "ms": 2804,
+    "label": "before save",
+    "data": {
+      "disabled": false,
+      "status": "另一分頁已更新存檔，已停止本頁自動存檔；可先用 save 匯出本頁進度，再重新載入。",
+      "head": "e10de7e4",
+      "welcome": "",
+      "output": "ROOT ARCHIPELAGO  試玩版〈第一夜〉\n預計 15 分鐘。你可以隨時輸入 hint。\n[init] 請輸入你的暱稱（英文或數字，最多 12 字）。\n暱稱: pairqa\n[init] 暱稱已記錄：op-pairqa。\n[PAGE] INIT -> op-<你的暱稱>\n       燈塔機房需要人手。優先度：低。倒數：無。\n       你是目前唯一回應的人。\nWelcome to ROOT ARCHIPELAGO v5.0 (POSIX-ish / island)\n * 本島：lighthouse    uptime 41d    燈：熄\n * 上次登入：lin，41 天前\nYou have 1 new mail.\n[init] 你有一封信。指令是 mail。\nop-pairqa@lighthouse:~$ echo ALPHA > notes/a.txt\nop-pairqa@lighthouse:~$ echo OLD > notes/old.txt\n",
+      "locks": {
+        "held": [],
+        "pending": []
+      }
+    }
+  },
+  {
+    "ms": 2949,
+    "label": "after save",
+    "data": {
+      "disabled": false,
+      "dialog": true,
+      "status": "另一分頁已更新存檔，已停止本頁自動存檔；可先用 save 匯出本頁進度，再重新載入。",
+      "head": "e10de7e4",
+      "welcome": "",
+      "output": "ROOT ARCHIPELAGO  試玩版〈第一夜〉\n預計 15 分鐘。你可以隨時輸入 hint。\n[init] 請輸入你的暱稱（英文或數字，最多 12 字）。\n暱稱: pairqa\n[init] 暱稱已記錄：op-pairqa。\n[PAGE] INIT -> op-<你的暱稱>\n       燈塔機房需要人手。優先度：低。倒數：無。\n       你是目前唯一回應的人。\nWelcome to ROOT ARCHIPELAGO v5.0 (POSIX-ish / island)\n * 本島：lighthouse    uptime 41d    燈：熄\n * 上次登入：lin，41 天前\nYou have 1 new mail.\n[init] 你有一封信。指令是 mail。\nop-pairqa@lighthouse:~$ echo ALPHA > notes/a.txt\nop-pairqa@lighthouse:~$ echo OLD > notes/old.txt\nop-pairqa@lighthouse:~$ save\n[init] save code   顯示存檔代碼（可複製貼上）\n[init] save file   下載存檔檔案 (.rasave.json)\n[init] save card   顯示值班證\n",
+      "locks": {
+        "held": [],
+        "pending": []
+      }
+    }
+  },
+  {
+    "ms": 2952,
+    "label": "complete",
+    "data": {
+      "a": {
+        "disabled": false,
+        "dialog": true,
+        "status": "另一分頁已更新存檔，已停止本頁自動存檔；可先用 save 匯出本頁進度，再重新載入。",
+        "head": "e10de7e4",
+        "welcome": "",
+        "output": "ROOT ARCHIPELAGO  試玩版〈第一夜〉\n預計 15 分鐘。你可以隨時輸入 hint。\n[init] 請輸入你的暱稱（英文或數字，最多 12 字）。\n暱稱: pairqa\n[init] 暱稱已記錄：op-pairqa。\n[PAGE] INIT -> op-<你的暱稱>\n       燈塔機房需要人手。優先度：低。倒數：無。\n       你是目前唯一回應的人。\nWelcome to ROOT ARCHIPELAGO v5.0 (POSIX-ish / island)\n * 本島：lighthouse    uptime 41d    燈：熄\n * 上次登入：lin，41 天前\nYou have 1 new mail.\n[init] 你有一封信。指令是 mail。\nop-pairqa@lighthouse:~$ echo ALPHA > notes/a.txt\nop-pairqa@lighthouse:~$ echo OLD > notes/old.txt\nop-pairqa@lighthouse:~$ save\n[init] save code   顯示存檔代碼（可複製貼上）\n[init] save file   下載存檔檔案 (.rasave.json)\n[init] save card   顯示值班證\n",
+        "locks": {
+          "held": [],
+          "pending": []
+        }
+      },
+      "b": {
+        "disabled": false,
+        "status": "● 已自動存檔",
+        "head": "e10de7e4",
+        "welcome": "",
+        "output": "ROOT ARCHIPELAGO  試玩版〈第一夜〉\n預計 15 分鐘。你可以隨時輸入 hint。\n[init] 請輸入你的暱稱（英文或數字，最多 12 字）。\n暱稱: pairqa\n[init] 暱稱已記錄：op-pairqa。\n[PAGE] INIT -> op-<你的暱稱>\n       燈塔機房需要人手。優先度：低。倒數：無。\n       你是目前唯一回應的人。\nWelcome to ROOT ARCHIPELAGO v5.0 (POSIX-ish / island)\n * 本島：lighthouse    uptime 41d    燈：熄\n * 上次登入：lin，41 天前\nYou have 1 new mail.\n[init] 你有一封信。指令是 mail。\nop-pairqa@lighthouse:~$ echo ALPHA > notes/a.txt\n[系統] 已從本機操作紀錄還原。\nop-pairqa@lighthouse:~$ echo BETA > notes/b.txt\n",
+        "locks": {
+          "held": [],
+          "pending": []
+        }
+      }
+    }
+  }
+]

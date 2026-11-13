@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# 流程 QA：依賴 savelib/flowexpr/flow_sim、tools/validate.py 與 demo/flow/dialogue YAML。
+# check 回傳 errors/notes，供 validate_demo 或 CLI 顯示；走法執行真 Bash，逐個 finally close 暫存 Sim。
+# 不改規則或測資，不提供玩家輸入執行服務。
 """
 流程規格的靜態檢查 + 用參考模擬器跑完所有走法。被 validate_demo.py 呼叫，也可單獨執行。
 """
@@ -22,10 +25,12 @@ ACTIONS = {"say", "set", "give", "card", "checkpoint", "find", "world", "end", "
 JS_UNSAFE = [r"\(\?P<", r"\(\?i\)", r"\(\?<[=!]", r"\\Z", r"\\A", r"\(\?>", r"\*\+", r"\+\+"]
 
 
+# 呼叫：check；資料包相對片段 → YAML 值，唯讀磁碟。
 def Y(*p):
     return yaml.safe_load(open(os.path.join(PACK, *p), encoding="utf-8"))
 
 
+# 呼叫：CLI/validate_demo；可選 report（目前未使用）→ (錯誤清單,說明清單)，執行靜態引用與全部固定走法。
 def check(report=None):
     errs, notes = [], []
     cfg = S.demo_cfg()
@@ -43,6 +48,7 @@ def check(report=None):
     finds = {f["id"] for f in cfg["finds"]}
     env = {"flags": set(), "vars": {}, "funcs": {"done": lambda *a: False, "exists": lambda *a: False, "empty": lambda *a: False}}
 
+    # 呼叫：規則/對話/引導掃描；運算式/位置 → None，於空環境解析，錯誤附加局部 errs，不改規則。
     def expr_ok(e, where):
         try:
             FX.evaluate(e, env)

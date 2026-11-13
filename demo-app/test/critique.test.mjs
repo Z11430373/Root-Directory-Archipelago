@@ -1,3 +1,8 @@
+/**
+ * 獨立找碴回歸：依賴 Engine/save/storage；部分案例另需 dist、Playwright 與 RA_CHROME。
+ * 命名 callback 回傳 void/Promise，驗浮點重播、長休眠、跳題與事件預算；不建置/重寫 fixture。
+ * browser 由 before/after 開關，各 open 的 context 由 t.after 關閉；工具缺席僅跳 browser 案例。
+ */
 import test, {before, after} from 'node:test';
 import assert from 'node:assert/strict';
 import {Engine} from '../src/engine/index.js';
@@ -89,6 +94,7 @@ test('CRIT-04: repeated supported hint input never makes the app own save unimpo
   assert.equal(imported.head, engine.save.head);
 });
 
+/** 瀏覽器案例呼叫；TestContext → 已進新遊戲的 page，凍結時鐘並蒐錯，t.after 關 context/驗無錯誤。 */
 async function open(t) {
   const context = await browser.newContext({viewport:{width:1280, height:800}, reducedMotion:'reduce'});
   const page = await context.newPage();
@@ -108,6 +114,7 @@ async function open(t) {
   await page.locator('#command-input:enabled').waitFor();
   return page;
 }
+/** browser 案例呼叫；page/raw → Promise<void>，送表單並等解鎖，無直接呼叫 app 私有 API。 */
 async function send(page, raw) {
   const input = page.locator('#command-input');
   await input.fill(raw);

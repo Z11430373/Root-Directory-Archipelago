@@ -1,3 +1,8 @@
+/**
+ * RA1 代碼編解碼邊界；依賴 vendor/pako 與 canonical/crc32/config/errors/json/state/validate/hash.js。
+ * main.js、Engine 測試與互通檢查使用 importCode/exportCode；不碰 DOM、網路或本機儲存。
+ * 資料流：CRC → base64url → 有界 zlib → 嚴格 JSON → unpack/形狀；分級由 integrity.js 另做。
+ */
 import { Inflate, deflate } from '../../vendor/pako.esm.mjs';
 import { canonical } from './canonical.js';
 import { crcHex } from './crc32.js';
@@ -8,12 +13,14 @@ import { pack, unpack } from './state.js';
 import { checkShape } from './validate.js';
 import { verifyChain } from './hash.js';
 
+/** 由匯出及尾位核對呼叫；位元組序列 → 不補等號的 base64url 字串；無副作用。 */
 function base64url(bytes) {
   let binary = '';
   for (const b of bytes) binary += String.fromCharCode(b);
   return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
+/** 由 importCode 呼叫；base64url 本體 → Uint8Array，重編碼核對尾位，非法內容拋錯。 */
 function unbase64url(body) {
   need(body.length % 4 !== 1, '代碼無法解開：base64url 長度不符');
   const binary = atob(body.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - body.length % 4) % 4));
@@ -22,6 +29,10 @@ function unbase64url(body) {
   return raw;
 }
 
+/**
+ * 由 importCode/安全測試呼叫；壓縮位元組與上限 → 解壓位元組，超限即中止並拋 CodeError。
+ * 只接受單一 RFC1950 串流；chunk 尚未保留就檢查大小，局部 pako/陣列由呼叫結束釋放。
+ */
 export function inflateBounded(raw, limit = LIMITS.max_inflated_bytes) {
   try {
     need(raw instanceof Uint8Array && Number.isSafeInteger(limit) && limit >= 0 && limit <= LIMITS.max_inflated_bytes,
@@ -58,6 +69,7 @@ export function inflateBounded(raw, limit = LIMITS.max_inflated_bytes) {
   } catch (error) { throw codeError(error, '代碼無法解開：壓縮資料不合法'); }
 }
 
+/** 由 UI/互通測試呼叫；可含貼上空白的代碼 → Promise<save>；只驗安全形狀，完整性須另呼叫 level。 */
 export async function importCode(input) {
   try {
     need(typeof input === 'string', '不是存檔代碼（應以 RA1- 開頭）');
@@ -79,6 +91,10 @@ export async function importCode(input) {
   } catch (error) { throw codeError(error, '代碼無法解開'); }
 }
 
+/**
+ * 由 UI/互通測試呼叫；save → Promise<RA1 字串>，驗鏈後壓縮並重新匯入自檢。
+ * pack 會 seal 更新來源 head；壞鏈不替換 head，錯誤附 rawJSON 供使用者自行備份。
+ */
 export async function exportCode(save) {
   checkShape(save);
   // Check hashes before seal() can replace a contradictory imported head.

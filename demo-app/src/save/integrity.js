@@ -1,7 +1,13 @@
+/**
+ * 存檔完整性分級層；依賴 config.js、fold.js、hash.js。
+ * 硬性安全拒絕屬於 validate/json/codec；這裡只標示 intact/suspicious/broken。
+ * main/card/import 與測試讀取結果；不修復或修改輸入，不持有外部資源。
+ */
 import { integrityConfig } from './config.js';
 import { fold } from './fold.js';
 import { verifyChain } from './hash.js';
 
+/** 由 level 呼叫；save → 可疑原因字串陣列；僅檢查速度、題序與投票時機，不拒絕遊玩。 */
 export function plausibility(save) {
   const st = fold(save);
   const timeUp = st.flags.has('flag.demo.time_up');
@@ -22,6 +28,7 @@ export function plausibility(save) {
   return reasons;
 }
 
+/** 由 UI/匯入/摘要呼叫；save → Promise<[分級, 原因陣列]>，鏈不符優先標為 broken。 */
 export async function level(save) {
   const [ok] = await verifyChain(save);
   if (!ok) return ['broken', ['chain']];

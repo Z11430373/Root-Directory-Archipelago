@@ -1,15 +1,25 @@
+/**
+ * 建置系統入口：把根目錄 YAML/text 編為 data.js，再將 JS/CSS 嵌入零外部資源的單一 HTML。
+ * 依賴 Node fs/path/url/crypto、js-yaml、esbuild 與 src/main.js、src/ui/{theme,server}.css。
+ * package.json 的 data/build/pretest 會執行 main；測試可只 import compileData，不自動寫檔。
+ * 來源資料唯讀；產物 src/data.js、dist/index.html 可重建，不應直接修改其生成內容。
+ */
 import { readFile, writeFile, mkdir, readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createHash } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import yaml from 'js-yaml';
 import { build } from 'esbuild';
+import {patchBashBrowserSource} from './src/shell/bash-runtime.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.dirname(here);
+/** compileData 呼叫；平台路徑 → / 分隔的資料鍵，無 I/O 或來源變更。 */
 const slash = p => p.split(path.sep).join('/');
+/** 建置/測試呼叫；可選資料包根目錄 → Promise<{data,json,bytes,refs}>，讀取/驗證來源但不寫產物。 */
 export async function compileData(sourceRoot = root) {
   const data = { yaml: {}, text: {} };
+  /** compileData 呼叫；子目錄/副檔名/目標 map → Promise<void>，排序遞迴讀檔並填目標，不改磁碟來源。 */
   async function walk(dir, extension, target) {
     for (const entry of (await readdir(path.join(sourceRoot, dir), { withFileTypes: true })).sort((a,b) => a.name.localeCompare(b.name, 'en'))) {
       const rel = slash(path.join(dir, entry.name));
@@ -26,6 +36,7 @@ export async function compileData(sourceRoot = root) {
   }
   await walk('text', null, data.text);
   let refs = 0;
+  /** compileData 遞迴呼叫；巢狀值/診斷路徑 → Promise<void>，驗引用/補讀 text 並累加 refs，缺檔拒絕建置。 */
   async function checkRefs(value, where) {
     if (!value || typeof value !== 'object') return;
     for (const [key, child] of Object.entries(value)) {
@@ -43,6 +54,7 @@ export async function compileData(sourceRoot = root) {
   for (const [key, doc] of Object.entries(data.yaml)) await checkRefs(doc, key);
   const b0 = data.yaml['branches/B0.yaml'];
   const originals = new Set();
+  /** compileData 呼叫；B0 巢狀值 → undefined，將所有 say 文字加入 originals，用來核對 flow 固定文案。 */
   function gather(value) {
     if (!value || typeof value !== 'object') return;
     for (const [k,v] of Object.entries(value)) {
@@ -62,6 +74,7 @@ export async function compileData(sourceRoot = root) {
   return { data, json, bytes, refs };
 }
 
+/** CLI 呼叫；無參數 → Promise<void>，產生 data.js；非 --data-only 時打包 JS/CSS、算 CSP 並覆寫 HTML。 */
 export async function main() {
   const result = await compileData();
   await mkdir(path.join(here, 'src'), { recursive: true });
@@ -70,11 +83,37 @@ export async function main() {
   if (process.argv.includes('--data-only')) return;
   const entry = path.join(here, 'src/main.js');
   const hasEntry = !!await stat(entry).catch(() => null);
-  const js = hasEntry ? (await build({ entryPoints: [entry], bundle: true, write: false, format: 'iife', target: 'es2020', minify: true, legalComments: 'inline' })).outputFiles[0].text : '"use strict";';
+  const styleNonce = randomBytes(24).toString('base64');
+  const sessionHook = {name:'bash-session-hook',setup(plugin){
+    plugin.onResolve({filter:/^node:zlib$/},()=>({path:path.join(here,'src/shell/browser-zlib.js')}));
+    plugin.onLoad({filter:/[\\/]just-bash[\\/]dist[\\/]bundle[\\/]browser\.js$/},async({path:file})=>({contents:patchBashBrowserSource(await readFile(file,'utf8')),loader:'js'}));
+    plugin.onLoad({filter:/[\\/]@xterm[\\/]xterm[\\/]lib[\\/]xterm\.m?js$/},async({path:file})=>{
+      let source=await readFile(file,'utf8');
+      const esm=file.endsWith('.mjs');
+      const needle=esm?'_addStyle(t,e){t.setAttribute("style",`${t.getAttribute("style")||""}${e};`)}':'_addStyle(e,t){e.setAttribute("style",`${e.getAttribute("style")||""}${t};`)}';
+      const replacement=esm?'_addStyle(t,e){t.style.cssText+=`${e};`}':'_addStyle(e,t){e.style.cssText+=`${t};`}';
+      if(source.split(needle).length!==2)throw new Error('xterm 6.0.0 CSSOM hook mismatch; review upstream before upgrading');
+      source=source.replace(needle,replacement);
+      // Feature detection must tolerate a denied Clipboard API getter at module load.
+      const clipboard=/!!\(([a-zA-Z_$][\w$]*)&&\1\.clipboard&&\1\.clipboard\.(writeText|readText)\)/g;
+      if([...source.matchAll(clipboard)].length!==2)throw new Error('xterm 6.0.0 clipboard probe mismatch; review upstream before upgrading');
+      source=source.replace(clipboard,expression=>`(()=>{try{return ${expression}}catch{return false}})()`);
+      return {contents:source,loader:'js'};
+    });
+  }};
+  const bundleOptions = {bundle:true,write:false,format:'iife',platform:'browser',target:'es2020',minify:true,legalComments:'inline',plugins:[sessionHook]};
+  const worker = (await build({...bundleOptions,entryPoints:[path.join(here,'src/shell/worker.js')]})).outputFiles[0].text;
+  const js = hasEntry ? (await build({...bundleOptions,entryPoints:[entry],define:{__SHELL_WORKER_SOURCE__:JSON.stringify(worker),__XTERM_STYLE_NONCE__:JSON.stringify(styleNonce)}})).outputFiles[0].text : '"use strict";';
   if (/<\/script/i.test(js)) throw new Error('Bundle contains unsafe closing script tag.');
-  const css = (await Promise.all(['theme.css','server.css'].map(file=>readFile(path.join(here,'src/ui',file),'utf8')))).join('\n');
+  const notices = await Promise.all(['just-bash','@xterm/xterm','@xterm/addon-fit'].map(async name=>{
+    const dir=path.join(here,'node_modules',name),pkg=JSON.parse(await readFile(path.join(dir,'package.json'),'utf8'));
+    const license=await readFile(path.join(dir,'LICENSE'),'utf8');
+    return `/*! ${name}@${pkg.version}\n${license.replace(/\*\//g,'* /')}\n*/`;
+  }));
+  const css = [...notices,await readFile(path.join(here,'node_modules/@xterm/xterm/css/xterm.css'),'utf8'),...(await Promise.all(['theme.css','server.css','xterm-console.css'].map(file=>readFile(path.join(here,'src/ui',file),'utf8'))))].join('\n');
+  // hash 接收最終文字、回傳 SHA-256 base64；必須與實際嵌入位元組一致，任何 JS/CSS 變更都需重算 CSP。
   const hash = text => createHash('sha256').update(text).digest('base64');
-  const csp = `default-src 'none'; script-src 'sha256-${hash(js)}'; style-src 'sha256-${hash(css)}'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'`;
+  const csp = `default-src 'none'; script-src 'sha256-${hash(js)}'; worker-src blob:; style-src 'sha256-${hash(css)}' 'nonce-${styleNonce}'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'`;
   const html = `<!doctype html>\n<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content"><meta http-equiv="Content-Security-Policy" content="${csp}"><meta name="color-scheme" content="dark light"><title>根目錄群島 · 第一夜</title><style>${css}</style></head><body><div id="app"></div><script>${js}</script></body></html>\n`;
   await mkdir(path.join(here, 'dist'), { recursive: true });
   await writeFile(path.join(here, 'dist/index.html'), html);

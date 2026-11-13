@@ -1,0 +1,687 @@
+
+> root-archipelago-first-night@0.3.0 pretest
+> node build.mjs
+
+Data: 125269 bytes; 31 content_ref/text_ref checked; B0 text matched.
+Built dist/index.html: 2306724 bytes (offline, CSP SHA-256).
+
+> root-archipelago-first-night@0.3.0 test
+> node --import ./test/helpers/register-bash.mjs --test --test-concurrency=2
+
+✔ Bash: command-not-found stays on stderr through redirection and pipelines (3.4643ms)
+✔ Bash Engine: digger retains golden dialogue, commits and summary (104.7334ms)
+✔ Bash Engine: newbie retains golden dialogue, commits and summary (38.7206ms)
+✔ Bash Engine: edge retains golden dialogue, commits and summary (43.8633ms)
+✔ Bash Engine: timeup retains golden dialogue, commits and summary (28.3981ms)
+✔ Bash Engine: world handoff retains shell variables with the destination cwd (7.826ms)
+✔ Bash Engine: rejected transaction restores files and serializable shell state (5.057ms)
+✔ Bash Engine: mixed legacy and Bash journal reproduces files, state and commits (14.5225ms)
+✔ Bash Engine: leaving a sandbox restores the main shell session with its files (5.6037ms)
+✔ Engine: a submitted runtime remains immutable across asynchronous clock commits (3.2587ms)
+✔ Engine: cancellation before shell dispatch rolls back the whole input transaction (1.4822ms)
+✔ Engine: legacy journals retain their original whole-line story dispatch (2.5927ms)
+✔ Bash replay browser: M1 feed waiting in idle commit, F2 preserves legacy replay and upgrades the next input (1583.3828ms)
+✔ Bash replay browser: M1 feed waiting in idle commit, F2 then back to islands preserves legacy replay and upgrades the next input (744.6136ms)
+✔ Bash replay browser: M5 baseSave waiting in verifyChain, F2 preserves legacy replay and upgrades the next input (1219.7211ms)
+✔ Bash replay browser: M5 baseSave waiting in verifyChain, F2 then back to islands preserves legacy replay and upgrades the next input (916.1958ms)
+✔ Bash replay browser: M3 islands to terminal, Ctrl+C before Worker preserves exact storage (924.1835ms)
+✔ Bash replay browser: M3 stays in islands, Ctrl+C before Worker preserves exact storage (861.3237ms)
+✔ Bash replay browser: M3 console resume to islands, Ctrl+C before Worker preserves exact storage (1227.1982ms)
+✔ Bash replay browser: M5 early baseSave F2, Ctrl+C before Worker preserves exact storage (908.1234ms)
+✔ Bash replay browser: M5 early baseSave roundtrip, Ctrl+C before Worker preserves exact storage (912.2208ms)
+▶ the twelve recorded Bash gap probes now run through the mature interpreter
+  ✔ pipeline (59.6498ms)
+  ✔ quoted filename (5.3481ms)
+  ✔ shell variable (9.7281ms)
+  ✔ command substitution (6.6442ms)
+  ✔ arithmetic expansion (8.5042ms)
+  ✔ OR list (2.0937ms)
+  ✔ for loop (5.0403ms)
+  ✔ printf builtin (5.5665ms)
+  ✔ input redirection (5.9629ms)
+  ✔ brace expansion (4.5867ms)
+  ✔ parameter default (3.5573ms)
+  ✔ unknown command stream (1.7326ms)
+✔ the twelve recorded Bash gap probes now run through the mature interpreter (130.5937ms)
+✔ mature parser: variables, substitution, arithmetic, OR, control flow, printf and redirects (26.143ms)
+✔ variables, arrays, functions, aliases, cwd and previous rc survive structuredClone (19.3626ms)
+✔ two disposable Node Workers transfer shell state as data (1303.6693ms)
+✔ no history replay; exit and subshell preserve correct parent state (10.8645ms)
+✔ child shells receive exports and clean defaults, never the saved parent base state (37.2415ms)
+✔ clock and PRNG are deterministic across clones, submissions and concurrent sessions (66.7879ms)
+✔ nested story commands fail explicitly while standalone start and status remain supported (17.1794ms)
+✔ pipeline cd stays process-local and failed function redirects return rc1 before its body (13.2834ms)
+✔ read events snapshot actual inode aliases before unlink/rebind; dead branches do not read (7.462ms)
+✔ head zero and recursive grep unseen content do not create discoveries (6.183ms)
+✔ input redirect discoveries follow actual consumers and the final redirect (13.9306ms)
+✔ hardlinks survive writes; clones isolate both filesystem and session (12.4328ms)
+✔ main rm protections apply through variables and aliases; branch removal stays isolated (29.6129ms)
+✔ literal quoted tilde/home paths and UTF8 input/redirects preserve text (5.1904ms)
+✔ syntax errors return rc2 and preserve state; world cwd wins over serialized cwd (40.0527ms)
+✔ source hook refuses mismatched releases (0.6938ms)
+▶ Bash native oracle: fixed sessions match independently specified bytes and statuses
+  ✔ variables, functions, aliases, cwd and previous status persist (84.3643ms)
+  ✔ quoting preserves empty arguments, punctuation and quoted filenames (104.8704ms)
+  ✔ command substitution strips trailing newlines and records actual reads (107.0521ms)
+  ✔ arithmetic expansion and assignment retain numeric results (63.347ms)
+  ✔ OR, AND and if use command status and short circuit (54.7896ms)
+  ✔ for and while loops preserve quoted words and loop variables (66.5168ms)
+  ✔ printf keeps UTF-8, tab, padding and missing final newline bytes (55.1829ms)
+  ✔ stdin redirection preserves bytes and credits the named file (79.9354ms)
+  ✔ stdout and stderr redirects stay distinct (110.4711ms)
+  ✔ descriptor duplication follows left-to-right redirect order (141.5837ms)
+  ✔ pipelines transport bytes and use the final command status (211.6344ms)
+  ✔ pipeline and command-substitution state cannot leak into the parent (217.921ms)
+  ✔ pipeline cd does not change later file lookup or the next call cwd (138.7377ms)
+  ✔ command-substitution cd does not change later file lookup or the next call cwd (143.6703ms)
+  ✔ brace expansion and parameter defaults close the recorded gaps (78.9925ms)
+  ✔ saving session state never replays substitution or function side effects (177.2268ms)
+  ✔ hardlink overwrite and append retain one inode across calls (158.1296ms)
+  ✔ read events snapshot aliases before unlink and pathname rebinding (206.9479ms)
+  ✔ unknown commands report stderr and preserve rc 127 for the next call (69.5793ms)
+  ✔ unknown-command diagnostics stay out of stdout pipes and can be redirected (136.401ms)
+  ✔ nonzero status commits completed writes and assignments (98.3476ms)
+  ✔ failed cd preserves cwd and a failed redirect suppresses command startup (123.5662ms)
+  ✔ parse errors return rc 2 and leave a settled session usable (115.7891ms)
+  ✔ unset, function deletion and unalias persist without resurrecting state (103.6193ms)
+✔ Bash native oracle: fixed sessions match independently specified bytes and statuses (2899.7008ms)
+ℹ GNU bash, version 5.3.15(2)-release (x86_64-pc-cygwin)
+✔ Bash adapter: variables, functions, aliases, cwd and previous status persist (466.8017ms)
+✔ Bash structuredClone: variables, functions, aliases, cwd and previous status persist (16.2255ms)
+✔ Bash adapter: quoting preserves empty arguments, punctuation and quoted filenames (5.4634ms)
+✔ Bash adapter: command substitution strips trailing newlines and records actual reads (6.9798ms)
+✔ Bash adapter: arithmetic expansion and assignment retain numeric results (4.4328ms)
+✔ Bash adapter: OR, AND and if use command status and short circuit (4.4901ms)
+✔ Bash adapter: for and while loops preserve quoted words and loop variables (16.3027ms)
+✔ Bash adapter: printf keeps UTF-8, tab, padding and missing final newline bytes (4.5116ms)
+✔ Bash adapter: stdin redirection preserves bytes and credits the named file (4.9461ms)
+✔ Bash adapter: stdout and stderr redirects stay distinct (6.3031ms)
+✔ Bash adapter: descriptor duplication follows left-to-right redirect order (8.8003ms)
+✔ Bash adapter: pipelines transport bytes and use the final command status (8.2188ms)
+✔ Bash adapter: pipeline and command-substitution state cannot leak into the parent (8.7032ms)
+✔ Bash adapter: pipeline cd does not change later file lookup or the next call cwd (5.7196ms)
+✔ Bash adapter: command-substitution cd does not change later file lookup or the next call cwd (6.4996ms)
+✔ Bash adapter: brace expansion and parameter defaults close the recorded gaps (6.3437ms)
+✔ Bash adapter: saving session state never replays substitution or function side effects (15.3678ms)
+✔ Bash structuredClone: saving session state never replays substitution or function side effects (9.1779ms)
+✔ Bash adapter: hardlink overwrite and append retain one inode across calls (4.5547ms)
+✔ Bash structuredClone: hardlink overwrite and append retain one inode across calls (5.7988ms)
+✔ Bash adapter: read events snapshot aliases before unlink and pathname rebinding (6.737ms)
+✔ Bash adapter: unknown commands report stderr and preserve rc 127 for the next call (2.4069ms)
+✔ Bash structuredClone: unknown commands report stderr and preserve rc 127 for the next call (12.5864ms)
+✔ Bash adapter: unknown-command diagnostics stay out of stdout pipes and can be redirected (29.0782ms)
+✔ Bash adapter: nonzero status commits completed writes and assignments (9.4858ms)
+✔ Bash structuredClone: nonzero status commits completed writes and assignments (5.6898ms)
+✔ Bash adapter: failed cd preserves cwd and a failed redirect suppresses command startup (5.5085ms)
+✔ Bash adapter: parse errors return rc 2 and leave a settled session usable (8.7911ms)
+✔ Bash structuredClone: parse errors return rc 2 and leave a settled session usable (5.347ms)
+✔ Bash adapter: unset, function deletion and unalias persist without resurrecting state (6.6296ms)
+✔ Bash structuredClone: unset, function deletion and unalias persist without resurrecting state (10.555ms)
+✔ Bash isolation: interleaved VFS instances have independent variables, definitions and last status (6.5211ms)
+✔ Bash isolation: structuredClone copies shell state and detached hardlinks without replay (10.9388ms)
+✔ Bash isolation: VFS.clone copies shell state and detached hardlinks without replay (17.1273ms)
+✔ Bash game policy: main-world recursive rm protection is intentional and never sent to native Bash (18.3864ms)
+✔ Bash transaction: executor failure restores initial shellState and VFS (128.7342ms)
+✔ Bash transaction: executor failure restores settled shellState and VFS (21.5861ms)
+✔ Bash transaction: ShellJob cancellation discards a completed isolated shellState before reply acceptance (26.8775ms)
+✔ Browser gzip shim preserves bytes, concatenated streams and output bounds (7.3801ms)
+✖ T12: offline file + HTTPS, safety, keyboard, mobile, resume, kiosk, exports and themes (32747.1738ms)
+✔ M0: all content_ref/text_ref exist, B0 fixed text matches, data <1.5MB (58.5483ms)
+✔ M0: single HTML has matching CSP hashes and no external resource tags (13.0141ms)
+✔ M0: compiler refuses missing content and changed B0 fixed text (isolated copies) (376.8069ms)
+✔ T12 accessibility: both themes have at least 4.5:1 text contrast (1.1161ms)
+✔ editing uses grapheme boundaries and preserves text after the cursor (3.4189ms)
+✔ readline movement, kill/yank, delete and transpose (0.3905ms)
+✔ history restores the draft and original selection; editing a recalled command creates a new draft (0.2565ms)
+✔ reverse history search cycles without executing, Escape restores draft (0.5619ms)
+✔ bracketed paste accepts split framing and never executes pasted lines or control bytes (0.2516ms)
+✔ PS2 continuation handles quotes, escaping, groups, substitutions, comments and pipes (0.2767ms)
+✔ PS2 and script boundaries retain for/while/if/case/function bodies (0.9966ms)
+✔ heredoc bodies are opaque, support quoted delimiters, tabs and multiple documents (0.2366ms)
+✔ completion gets complete text and UTF-16 cursor and returns draft plus candidates (0.2914ms)
+✔ cancel callback can read the original draft; busy input cannot edit or submit (0.2643ms)
+✔ secret mode suppresses history/search/completion and accepts literal unmatched quotes (0.1379ms)
+✔ Console worker: real structured clone preserves hard links, read-time aliases, cwd and live flags (718.962ms)
+✔ Console worker: nonzero shell rc still commits completed writes, exactly like synchronous execution (283.9439ms)
+✔ Console worker: construction, cloning and worker exceptions release resources and permit retry (456.9293ms)
+✔ Console worker: cancellation rolls back idle commits, branch VFS, clocks and outputs; successful journal alone replays (609.3355ms)
+✔ Console worker: digger keeps every golden commit ID and matches synchronous replay (15245.1661ms)
+✔ Console worker: newbie keeps every golden commit ID and matches synchronous replay (8399.5937ms)
+✔ Console worker: edge keeps every golden commit ID and matches synchronous replay (16133.4547ms)
+✔ Console worker: timeup keeps every golden commit ID and matches synchronous replay (7332.7917ms)
+✔ Console worker browser: resume uses Workers and Ctrl+C preserves the exact local save without recovery (8805.1229ms)
+✔ Console: pasted newlines separate commands only outside quotes and continuations (188.3683ms)
+✔ Bash completion: quoted filenames, escapes, directory continuations and pipeline positions (1.0126ms)
+✔ Console browser: keyboard-only start, task, status, save, download, exit, resume and import (19198.6203ms)
+✔ Console browser: line editing, completion, reverse search, draft history, IME guard and multiline paste (25494.9114ms)
+✖ Console browser: F2 and switching back preserve multiline drafts exactly without execution (30027.3194ms)
+✔ Console browser: a pasted mode change retains later commands as an unexecuted draft (3724.4121ms)
+✔ Console browser: Ctrl+C resets recalled history to the latest command and an empty draft (5078.3895ms)
+✔ Console browser: completion before a closing quote keeps one quoted filename with spaces (3057.1431ms)
+✔ Console browser: real worker cancellation rolls back writes, keeps journal replayable and accepts the next command (13989.8621ms)
+✔ Console browser: continuous prompt, wrapped input, raw output and stable scrollback at 320px (15591.6044ms)
+✔ Console browser: continuous prompt, wrapped input, raw output and stable scrollback at 1280px (10121.9122ms)
+✔ Bash browser: multiline for preserves quoted loop words (3801.4959ms)
+✔ Bash browser: multiline if executes only the selected branch (3882.6316ms)
+✔ Bash browser: multiline quoted heredoc preserves literal dollars and newlines (6138.9522ms)
+✔ Bash browser: keyboard Enter continues an unfinished for until done (2717.7199ms)
+✖ Bash browser: variables and functions survive commands, F2 round trips and reload/resume (9941.7119ms)
+✔ Console browser: golden digger path preserves every commit ID through worker execution (56861.0868ms)
+✔ Console browser: golden newbie path preserves every commit ID through worker execution (40718.2304ms)
+✔ Console browser: golden edge path preserves every commit ID through worker execution (77705.1113ms)
+✔ Console browser: golden timeup path preserves every commit ID through worker execution (33687.4591ms)
+✔ CRIT-01: coalesced fractional UI clock journal reproduces every commit exactly (214.4401ms)
+✔ CRIT-02: one-hour browser suspension creates a valid, lossless local journal (0.5931ms)
+✔ CRIT-03: skip confirmation from a completed quest cannot skip the next quest (8.6667ms)
+✔ CRIT-04: repeated supported hint input never makes the app own save unimportable (204.4503ms)
+✔ CRIT-02 browser: a saved shift survives one-hour suspension then reload/continue (769.9915ms)
+✔ CRIT-05 browser: hint shortcut cannot silently register hint as the player nickname (446.4924ms)
+✔ hardening: skip belongs to its quest, clears on completion, and expires after ten seconds (46.9152ms)
+✔ hardening: 405 hints preserve fourth-hint compatibility and every later task, hint rung, vote and ending (1343.082ms)
+✔ hardening: 405 hints still allow the complete timeout fallback and an importable ending (1004.5178ms)
+✔ hardening: host voting and all skip effects retain their protected commits after hint saturation (1895.8393ms)
+✔ hardening: repeated merge/abandon rounds are admitted atomically and cannot consume later task or ending slots (2129.1363ms)
+✔ hardening: hint saturation inside a branch leaves both merge and exit slots available after import (1651.322ms)
+✔ hardening: a shape-valid 399-event active import is rejected without partial restore; a completed 400-event save stays readable (724.4215ms)
+✔ T5: expression cases and errors match the Python reference (2.9605ms)
+✔ T10: digger says, every commit including id, and summary (99.6037ms)
+✔ T10: newbie says, every commit including id, and summary (29.3859ms)
+✔ T10: edge says, every commit including id, and summary (26.1424ms)
+✔ T10: timeup says, every commit including id, and summary (24.1807ms)
+✔ T11: four JS codes import intact in JS and in Python check_codes.py (398.675ms)
+✔ Engine: fractional clock crosses all boundaries; split and merged advance agree (7.8254ms)
+✔ Engine: actual text, wrong-answer tiers, INPUT escape, and delayed output (3.8441ms)
+✔ Engine: hints share persistent counters with idle and expand quest text (2.2757ms)
+✔ Engine: host votes immediately after lamp and carries host-led event; seed is configurable (19.0176ms)
+✔ Engine: restore preserves every byte of save and rebuilds known branch/lost0/choice states (11.0992ms)
+✔ test\helpers\bash-loader.mjs (366.6788ms)
+✔ test\helpers\register-bash.mjs (204.1452ms)
+✔ test\helpers\xterm.mjs (254.2466ms)
+✔ R3 session control: same-head file-only changes are protected from an older tab and its export (1258.2096ms)
+✔ R3 session control: a stale kiosk idle reset cannot delete another tab's newer journal (1000.3428ms)
+✔ R3 session control: kiosk cleanup preserves a recovery copy changed by an observed external tab (861.6482ms)
+✔ R3 session control: a failed state action rolls back and can be retried after fixing the blocking file (1294.2697ms)
+✔ R3 fix glob: malformed and unmatched patterns stay literal; valid and quoted globs differ (2.7589ms)
+✔ R3 fix glob: redirect targets retain invalid literals and reject ambiguous expansion (0.7265ms)
+✔ R3 fix lifecycle: upstream rm and ln execute when downstream ignores stdin (0.9364ms)
+✔ R3 fix lifecycle: pipeline cd starts but cannot mutate the parent or sibling cwd (0.3181ms)
+✔ R3 fix lifecycle: failed redirects suppress command side effects before startup (0.3242ms)
+✔ R3 fix lifecycle: every redirect opens left-to-right and redirected producers finish (0.4004ms)
+✔ R3 fix lifecycle: direct and upstream redirect errors preserve useful status and stderr (0.2794ms)
+✔ R3 fix lifecycle: a sink write error closes upstream and fails the writer, not the whole shell (0.9481ms)
+✔ R3 fix lifecycle: head still closes upstream early, including redirected and ignored output (0.7519ms)
+✔ R3 fix lifecycle: ignored producers are started once then closed, not fully drained (0.3124ms)
+✔ R3 fix lifecycle: main rm guards still apply to producers whose stdout is ignored (17.1208ms)
+✔ R3 fix source boundaries: sort/cut split per file while cat preserves raw concatenation (0.8793ms)
+✔ R3 fix source boundaries: stdin between files stays a distinct source for sort/cut (0.3559ms)
+✔ R3 fix Unicode: quoted/unquoted non-ASCII spaces survive in words and filenames (0.4915ms)
+✔ R3 fix read snapshots: a rebound pathname keeps both actual inode reads; legacy reads stay unique (0.4632ms)
+✔ R3 fix read snapshots: only a real post-rebind cat read earns dark credit and later cat discovery (15.4026ms)
+✔ R3-S01: a nonmatching invalid glob range remains literal without throwing (2.1383ms)
+✔ R3-S02: pipeline producers run side effects even when the consumer ignores stdin (0.4065ms)
+✔ R3-S03: file.read uses the inode alias snapshot from the actual read (24.9172ms)
+✔ R3-S04: sort and cut keep separate input-file line boundaries (1.0252ms)
+✔ R3-S05: Unicode spaces are word data, not Bash token separators (0.2434ms)
+✔ R3 control: stdin, missing-file continuation, redirect errors and named reads (0.3822ms)
+✔ R3 control: quotes, escapes, short circuit and quoted Unicode round-trip (0.2928ms)
+✔ R3 control: main rm protection is atomic across aliases, options and compounds (2.4035ms)
+✔ R3 control: alternate valid quest solutions and combined grep options agree (6.1202ms)
+✔ R3 fix: failed feed rolls back VFS, once, nested advance, hashes, hints and unpublished output (38.9978ms)
+✔ R3 fix: timer failure after end restores the entire advance and can retry with exact IDs (11.2738ms)
+✔ R3 fix: failing branch enter and exit restore original worlds and shared flag identity (7.7041ms)
+✔ R3 fix: output observers see only committed state and cannot turn publication into a failed command (1.5652ms)
+✔ R3 fix: active t clock limit is refused without changing the original session or source (9.7391ms)
+✔ R3 fix: active r clock limit is refused without changing the original session or source (5.7003ms)
+✔ R3 fix: active expired clock limit is refused without changing the original session or source (5.1727ms)
+✔ R3 fix: runtime world clock guard rejects excess no-commit commands without truncation or leaked output (8.8404ms)
+✔ R3 fix: ferry overflow rolls back its +30, +600, dialogue, flags and world replacement (5.6769ms)
+✔ R3 fix: completed saves at both clock maxima remain readable and keep the exact chain (3.8969ms)
+✔ R3 fix: a long suspended active shift keeps elapsed wall time and ends at the original timer boundary (5.0568ms)
+✔ R3 fix: invalid clock values reject without advancing state or publishing output (1.716ms)
+✔ R3 fix: large prior stdout and file strings are not reserialized on every normal clock tick (6.7836ms)
+ℹ 4 MB prior stdout + file; 100 transactions: 2.84ms
+✔ R3 storage: writes and clears require an explicit successful load baseline (0.3518ms)
+✔ R3 storage: compare the complete envelope, latch stale ownership, and block reset/clear (0.7042ms)
+✔ R3 storage: load binds the version used by replay, not the version present after an async gap (0.1201ms)
+✔ R3 storage: stringify occurs before the synchronous final compare and set (0.1088ms)
+✔ R3 storage: storage-event invalidation detects ABA and cannot silently reacquire ownership (0.1441ms)
+✔ R3 storage: denied access, malformed reads, quota and size failures never advance the baseline (0.286ms)
+✔ R3 storage: cooperating simultaneous writers compare inside the same exclusive Web Lock (0.2521ms)
+✔ R3 storage: fallback is explicitly best-effort and a lock failure does not silently downgrade (0.1071ms)
+✔ R3 storage: recovery cleanup rechecks primary ownership inside its acquired lock (0.1114ms)
+✔ R3-STATE-02 t: an admitted hard-limit clock cannot poison the next supported input (229.0978ms)
+✔ R3-STATE-02 r: an admitted hard-limit clock cannot poison the next supported input (8.5722ms)
+✔ R3 control: a completed save at both clock maxima still remains readable and exportable (6.4011ms)
+✔ R3 control: journal/string capacity failures preserve the previous readable storage value (4.6893ms)
+✔ R3-STATE-01 browser: a handled state-rule failure cannot autosave an unreplayable journal (1011.7129ms)
+✔ R3-STATE-03 browser: an idle older tab must not overwrite a newer continued shift (1176.9969ms)
+✔ R3 Terminal: finishing an idle log never scrolls it (1.8713ms)
+✔ R3 Terminal: animation appends Unicode to one text node rather than rewriting each prefix (1.4301ms)
+✔ R3 Terminal: reduced-motion changes finish queued text; destroy detaches media and pointer listeners (0.3507ms)
+✔ R3 Terminal: bounded DOM also drops detached animation queue entries (3.7993ms)
+✔ R3 Terminal: consecutive queued lines keep following, but an explicit history scroll stays put (0.5934ms)
+✔ R3-UI01: repeated PageUp can read past more than one page of islands terminal history (1402.3777ms)
+✔ R3-UI01: repeated PageUp can read past more than one page of server terminal history (3587.6714ms)
+✔ R3-UI02: idle hint does not pull a player away from earlier islands terminal output (1259.702ms)
+✔ R3-UI02: idle hint does not pull a player away from earlier server terminal output (23812.2698ms)
+✔ R3-UI03: desktop task summary works with both pointer and keyboard (646.9858ms)
+✔ R3-UI04: form boundaries and terminal caret/focus cues meet contrast requirements in both themes (1245.0869ms)
+✔ R3-UI05: mobile GUI controls retain 44px hit areas; terminal viewport activates native input by touch (1786.9489ms)
+✔ R3-UI06: changing reduced-motion while text is animating completes it without another key (871.2992ms)
+✔ R3-UI07: input accessible name follows nickname, shell, password and vote modes (1113.8976ms)
+✔ R3-UI08: rejected code is identified, described and focused without hiding the prior save (566.7784ms)
+✔ R3-UI control: editing a rejected code clears the stale error and Shift+Tab leaves command input (850.4382ms)
+✔ R3-UI control: a rejected file points to the file field rather than an unrelated code field (531.3436ms)
+✔ R3-UI09: the command input stays inside its workspace and hit-testable with a low mobile visual viewport (5997.7263ms)
+✔ R3-UI control: each native resize updates the task panel before its event microtask with a paused UI clock (869.9954ms)
+✔ T1 canonical and commit id 0 (6.0615ms)
+✔ T1 canonical and commit id 1 (0.6908ms)
+✔ T1 canonical and commit id 2 (0.3103ms)
+✔ T1 CRC32 0 (0.1685ms)
+✔ T1 CRC32 1 (0.0594ms)
+✔ T1 CRC32 2 (0.0512ms)
+✔ T2 golden_fast: every expect field including fullgame (51.6604ms)
+✔ T2 golden_median: every expect field including fullgame (43.3023ms)
+✔ T2 golden_slow: every expect field including fullgame (33.4245ms)
+✔ T2 golden_digger: every expect field including fullgame (45.9714ms)
+✔ T2 crowd_0: every expect field including fullgame (32.3184ms)
+✔ T2 crowd_1: every expect field including fullgame (41.2832ms)
+✔ T2 crowd_2: every expect field including fullgame (36.5129ms)
+✔ T2 crowd_3: every expect field including fullgame (28.0602ms)
+✔ T2 golden_fast_with_whitespace: every expect field including fullgame (31.9781ms)
+✔ T2 too_fast: every expect field including fullgame (43.4205ms)
+✔ T2 task_order: every expect field including fullgame (5.3455ms)
+✔ T2 vote_before_night: every expect field including fullgame (3.9032ms)
+✔ T3 not_a_code: clean CodeError rejection (0.645ms)
+✔ T3 wrong_prefix: clean CodeError rejection (0.0905ms)
+✔ T3 crc_bad_char: clean CodeError rejection (0.0906ms)
+✔ T3 truncated: clean CodeError rejection (0.0688ms)
+✔ T3 empty_body: clean CodeError rejection (0.0529ms)
+✔ T3 illegal_chars: clean CodeError rejection (0.0462ms)
+✔ T3 too_long: clean CodeError rejection (0.0536ms)
+✔ T3 zip_bomb: clean CodeError rejection (7.2569ms)
+✔ T3 not_json: clean CodeError rejection (0.6315ms)
+✔ T3 not_zlib: clean CodeError rejection (0.3618ms)
+✔ T3 truncated_zlib: clean CodeError rejection (1.4757ms)
+✔ T3 float_time: clean CodeError rejection (1.1567ms)
+✔ T3 nick_xss: clean CodeError rejection (2.0694ms)
+✔ T3 nick_too_long: clean CodeError rejection (1.2229ms)
+✔ T3 seed_negative: clean CodeError rejection (1.016ms)
+✔ T3 seed_huge: clean CodeError rejection (1.8692ms)
+✔ T3 unknown_meta_key: clean CodeError rejection (1.2053ms)
+✔ T3 wrong_game: clean CodeError rejection (0.929ms)
+✔ T3 unknown_kind: clean CodeError rejection (1.4888ms)
+✔ T3 unknown_task_id: clean CodeError rejection (1.1865ms)
+✔ T3 extra_data_key: clean CodeError rejection (1.2398ms)
+✔ T3 bad_flag_name: clean CodeError rejection (1.9275ms)
+✔ T3 bad_vote_value: clean CodeError rejection (1.0686ms)
+✔ T3 time_backwards: clean CodeError rejection (0.7676ms)
+✔ T3 r_too_large: clean CodeError rejection (1.086ms)
+✔ T3 end_not_last: clean CodeError rejection (0.9859ms)
+✔ T3 too_many_commits: clean CodeError rejection (4.7128ms)
+✔ T3 bad_branch: clean CodeError rejection (2.6664ms)
+✔ T3 bad_chapter: clean CodeError rejection (1.7578ms)
+✔ T3 deep_nesting: clean CodeError rejection (0.6052ms)
+✔ T4 tampered JSON file: broken, unverified, no badge (17.0777ms)
+▶ Safety: integer-only lexical JSON, including floats rounded to integers
+  ✔ 1.0 (1.732ms)
+  ✔ 1e0 (1.4319ms)
+  ✔ 1E+0 (1.2426ms)
+  ✔ 1.0000000000000000000001 (0.8294ms)
+  ✔ 1e309 (1.1707ms)
+  ✔ NaN (0.9087ms)
+  ✔ Infinity (0.9809ms)
+  ✔ -Infinity (1.3469ms)
+  ✔ 9007199254740993 (1.0294ms)
+✔ Safety: integer-only lexical JSON, including floats rounded to integers (11.7544ms)
+▶ Safety: bool is not an integer or a packed zero sentinel
+  ✔ schema (1.1979ms)
+  ✔ seed (1.4095ms)
+  ✔ dt (0.9425ms)
+  ✔ dr (0.9651ms)
+  ✔ branch (1.1271ms)
+  ✔ chapter (0.8069ms)
+  ✔ hint.n (0.4409ms)
+  ✔ hint.full (0.3674ms)
+  ✔ end.time_up (0.3328ms)
+✔ Safety: bool is not an integer or a packed zero sentinel (8.3799ms)
+▶ Safety: JSON duplicate/escaped keys and prototype fields are rejected
+  ✔ {"c":[["flag","demo.started",52,28190,0,0],["flag" (0.9011ms)
+  ✔ {"c":[["flag","demo.started",52,28190,0,0],["flag" (1.3784ms)
+  ✔ {"c":[["flag","demo.started",52,28190,0,0],["flag" (0.9589ms)
+  ✔ {"c":[["flag","demo.started",52,28190,0,0],["flag" (0.9278ms)
+  ✔ {"c":[["flag","demo.started",52,28190,0,0],["flag" (1.1498ms)
+  ✔ {"c":[["flag","demo.started",52,28190,0,0],["flag" (0.7268ms)
+  ✔ {"m":{"a":{"m":{"a":{"m":{"a":{"m":{"a":{"m":{"a": (1.0922ms)
+✔ Safety: JSON duplicate/escaped keys and prototype fields are rejected (7.7787ms)
+▶ Safety: malformed packed shapes and metadata always produce CodeError
+  ✔ 0 (0.2877ms)
+  ✔ 1 (0.1527ms)
+  ✔ 2 (0.2324ms)
+  ✔ 3 (0.1809ms)
+  ✔ 4 (0.1459ms)
+  ✔ 5 (0.2085ms)
+  ✔ 6 (0.168ms)
+  ✔ 7 (1.6506ms)
+  ✔ 8 (0.4997ms)
+  ✔ 9 (0.3337ms)
+  ✔ 10 (0.317ms)
+  ✔ 11 (0.9998ms)
+  ✔ 12 (1.0724ms)
+  ✔ 13 (2.027ms)
+  ✔ 14 (1.3069ms)
+  ✔ 15 (1.4845ms)
+  ✔ 16 (1.2997ms)
+  ✔ 17 (1.2281ms)
+  ✔ 18 (1.7131ms)
+  ✔ 19 (1.5423ms)
+  ✔ 20 (1.4929ms)
+  ✔ 21 (1.3961ms)
+  ✔ 22 (0.9338ms)
+  ✔ 23 (1.2479ms)
+  ✔ 24 (0.8732ms)
+  ✔ 25 (0.8625ms)
+  ✔ 26 (0.6881ms)
+✔ Safety: malformed packed shapes and metadata always produce CodeError (26.8692ms)
+▶ Safety: importFile shape, hash fields, limits and untrusted input types
+  ✔ f => { f.commits[0].extra = 'x'; } (2.2101ms)
+  ✔ f => { delete f.commits[0].id; } (0.8636ms)
+  ✔ f => { delete f.commits[0].parent; } (0.7426ms)
+  ✔ f => { f.commits[0].id = {}; } (0.6829ms)
+  ✔ f => { f.commits[0].parent = true; } (0.7028ms)
+  ✔ f => { f.commits[0].r = true; } (0.9887ms)
+  ✔ f => { f.commits[0].data = []; } (0.6545ms)
+  ✔ f => { f.event = 'a'.repeat(65); } (0.5387ms)
+  ✔ f => { f.game = {}; } (0.3771ms)
+  ✔ f => { f.nick = '<img src=x onerror=alert(1)>'; } (0.9483ms)
+✔ Safety: importFile shape, hash fields, limits and untrusted input types (9.982ms)
+▶ Safety: single RFC1950 stream only; no gzip, raw, tail, concat or bad UTF-8
+  ✔ gzip (0.402ms)
+  ✔ raw (0.1755ms)
+  ✔ tail (1.0556ms)
+  ✔ concat (0.5104ms)
+  ✔ bad utf8 (0.1112ms)
+  ✔ BOM (0.4517ms)
+  ✔ bad Adler32 (0.3869ms)
+✔ Safety: single RFC1950 stream only; no gzip, raw, tail, concat or bad UTF-8 (4.5807ms)
+✔ Safety: streaming limit boundary and proof of early zip-bomb interruption (18.6924ms)
+✔ Semantics: empty save, all valid commit kinds, de-duplication and data snapshots (33.8309ms)
+✔ Semantics: Python ties-to-even time rounding and Unicode canonical ordering (1.5569ms)
+✔ Semantics: broken heads, including empty/null head, are not silently intact (17.3723ms)
+✔ Interop: JS exports and card text agree with Python savelib for every accepted vector (1740.6107ms)
+✔ Security: application JavaScript contains no dynamic code, HTML injection or network APIs (22.8659ms)
+✔ Session: journal compaction retains every live IEEE754 endpoint, including half-ms ties (222.6139ms)
+✔ Session: invalid clock interval cannot poison the last readable journal (2.3027ms)
+✔ Session browser: nickname shortcuts cannot overwrite a previous shift; typed hint nickname stays legal (913.8028ms)
+✔ Session browser: an old fractional journal mismatch exposes backups without overwriting its original (601.3658ms)
+✔ Session browser: self journal and code opened under host URL keep original mode, event and exact head (1126.0732ms)
+✔ Session browser: rejecting a valid but over-budget legacy code cannot replace the welcome or previous save (1162.0719ms)
+✔ Session browser: kiosk reset also clears the private recovery copy (607.1799ms)
+✔ M1 adapter: unavailable, corrupted or oversized localStorage never interrupts play (0.7088ms)
+✔ M1 adapter: journal keeps raw input and safely coalesces clock ticks (0.7621ms)
+✔ Styles: legacy, malformed and unknown preferences normalize without changing game data (215.5262ms)
+✔ Styles: Server dark palette keeps every text color at least 4.5:1 on all surfaces (3.2048ms)
+✖ Styles browser: live Server and islands switching preserves draft, head, transcript and cwd (1904.9698ms)
+✔ Styles browser: style, contrast and font persist independently and never enter RA1 (11697.7371ms)
+✖ Styles browser: both styles usable at 320px, with keyboard and both contrast palettes (34677.7595ms)
+✖ Styles browser: both styles usable at 360px, with keyboard and both contrast palettes (35103.7754ms)
+✖ Styles browser: both styles usable at 768px, with keyboard and both contrast palettes (35120.2566ms)
+✖ Styles browser: unavailable preference storage does not break either style (30017.7172ms)
+✔ Styles browser: primitive saved preferences can be changed without errors (5194.344ms)
+✔ Modes browser: terminal ending, certificate and export stay in scrollback at mobile width (20537.1941ms)
+✔ T12-extra: keyboard-only Q0-1, unique command/path Tab completion and real ls submission (900.4412ms)
+✔ T12-extra: local resume retains uncommitted echo/append files and cd cwd over two reloads (1082.8024ms)
+✔ T12-extra: local branch resume retains cloned hardlinks/files/cwd without mutating main (1548.4787ms)
+✔ T12-extra: UI imports its own in-progress RA1 without changing head or portable state while clock is paused (1606.4947ms)
+✔ T12-extra: host really lights lamp then votes directly; typed/chip save and RA1 import preserve the choice (2018.6362ms)
+✔ T12-extra: a non-submit key instantly finishes genuinely animated text (553.8958ms)
+✔ T12-extra: a terminal click instantly finishes genuinely animated text (571.4324ms)
+✔ T12-extra: a click outside the terminal also instantly finishes animated text (612.4982ms)
+✔ T12-extra: prefers-reduced-motion renders all welcome text without a key/click to skip it (599.3318ms)
+✔ T6 ch0: exact files, directories, UTF-8 hashes (19.4295ms)
+✔ T6 ch1: exact files, directories, UTF-8 hashes (0.7831ms)
+✔ T7 c0-00: ls (1.6089ms)
+✔ T7 c0-01: ls -a (0.63ms)
+✔ T7 c0-02: ls shelf (0.5341ms)
+✔ T7 c0-03: ls -a notes (0.3184ms)
+✔ T7 c0-04: ls incidents notes (0.4093ms)
+✔ T7 c0-05: cat handbook.md (0.4009ms)
+✔ T7 c0-06: cat shelf/jar.txt shelf/cat.txt (0.3023ms)
+✔ T7 c0-07: cat notes/.draft.txt (0.2715ms)
+✔ T7 c0-08: cat .bash_history (0.2248ms)
+✔ T7 c0-09: cat notes/01-first-night.txt (0.1795ms)
+✔ T7 c0-10: cat incidents/TICKET-0001.md (0.1613ms)
+✔ T7 c0-11: cat logs/lamp.log (0.1651ms)
+✔ T7 c0-12: cat var/mail/op (0.1604ms)
+✔ T7 c0-13: cat var/log/boot.0 (0.1588ms)
+✔ T7 c0-14: head -n 3 handbook.md (0.6228ms)
+✔ T7 c0-15: head -2 handbook.md (0.2483ms)
+✔ T7 c0-16: tail -n 2 logs/lamp.log (0.2681ms)
+✔ T7 c0-17: tail -1 logs/lamp.log (0.224ms)
+✔ T7 c0-18: wc -l logs/lamp.log (0.5064ms)
+✔ T7 c0-19: wc -l handbook.md logs/lamp.log (0.3857ms)
+✔ T7 c0-20: grep -r KEY .  (0.9518ms)
+✔ T7 c0-21: grep -rn amend . (0.4278ms)
+✔ T7 c0-22: grep -ri charter handbook.md (0.2958ms)
+✔ T7 c0-23: grep -c '' handbook.md (0.2253ms)
+✔ T7 c0-24: grep -v '^#' logs/lamp.log (0.2575ms)
+✔ T7 c0-25: grep -n lamp logs/lamp.log (0.214ms)
+✔ T7 c0-26: grep -r lin notes shelf (0.2527ms)
+✔ T7 c0-27: grep nothing-here handbook.md; echo rc=$? (0.505ms)
+✔ T7 c0-28: grep -r KEY-FRAG ~ (0.4867ms)
+✔ T7 c0-29: grep -rl lin . (0.355ms)
+✔ T7 c0-30: cd shelf && pwd && ls (0.3501ms)
+✔ T7 c0-31: cd .. && pwd (0.1959ms)
+✔ T7 c0-32: cd / && pwd (0.1584ms)
+✔ T7 c0-33: cd ~/notes && ls -a (0.2334ms)
+✔ T7 c0-34: pwd (0.1395ms)
+✔ T7 c0-35: cat handbook.md | grep -i charter | wc -l (0.2756ms)
+✔ T7 c0-36: echo hello > note.txt && cat note.txt (0.2415ms)
+✔ T7 c0-37: echo a > n.txt && echo b >> n.txt && cat n.txt (0.2241ms)
+✔ T7 c0-38: cat shelf/jar.txt | head -n 1 (0.1835ms)
+✔ T7 c0-39: sort handbook.md | head -n 3 (2.0235ms)
+✔ T7 c0-40: cut -d: -f1 logs/lamp.log | head -n 2 (0.5115ms)
+✔ T7 c0-41: cat nope.txt; echo rc=$? (0.2609ms)
+✔ T7 c0-42: ls nope; echo rc=$? (0.1687ms)
+✔ T7 c1-00: ls (0.3692ms)
+✔ T7 c1-01: ls -a (0.3812ms)
+✔ T7 c1-02: cat error.log (0.1097ms)
+✔ T7 c1-03: head -n 5 error.log (0.0978ms)
+✔ T7 c1-04: tail -n 3 error.log (0.0928ms)
+✔ T7 c1-05: wc -l error.log (0.1529ms)
+✔ T7 c1-06: grep -c '' error.log (0.1065ms)
+✔ T7 c1-07: grep -i slipper error.log (0.1535ms)
+✔ T7 c1-08: grep -n WARN error.log | head -n 3 (0.1405ms)
+✔ T7 c1-09: sort error.log | uniq -c | sort -rn | head -n 3 (0.4463ms)
+✔ T7 c1-10: cut -d' ' -f1 error.log | sort | uniq -c (0.3203ms)
+✔ T7 c1-11: pwd (0.1039ms)
+✔ T7 c1-12: cd .. && pwd && ls (0.1092ms)
+✔ T7 c1L-00: wc -l access.log (12.7753ms)
+✔ T7 c1L-01: head -n 2 access.log (0.2215ms)
+✔ T7 c1L-02: tail -n 1 access.log (0.1213ms)
+✔ T7 c1L-03: grep -c 404 access.log (1.1578ms)
+✔ T7 c1L-04: grep -c ' 404 ' access.log (2.4065ms)
+✔ T7 c1L-05: grep -c '" 404 ' access.log (2.01ms)
+✔ T7 c1L-06: grep '02:00:00' access.log | head -n 3 (0.5925ms)
+✔ T7 c1L-07: grep -c 'gc/1.0' access.log (1.7308ms)
+✔ T7 c1L-08: grep -c 10.7.0.2 access.log (1.8944ms)
+✔ T7 c1L-09: grep -c '^10\.7\.0\.2 ' access.log (1.0881ms)
+✔ T7 c1L-10: cut -d' ' -f1 access.log | sort | uniq -c | sort -rn | head -n 3 (15.0517ms)
+✔ T7 c1L-11: cut -d'[' -f2 access.log | cut -d: -f1 | sort | uniq -c | sort -rn | head -n 1 (7.5653ms)
+✔ T7 c1L-12: grep -c 'POST /appeal' access.log (0.8732ms)
+✔ T7 c1L-13: grep 'gc/1.0' access.log | tail -n 1 (0.943ms)
+✔ T7 c1L-14: grep ' 404 ' access.log | cut -d' ' -f1 | sort | uniq -c | sort -rn | head -n 2 (2.0497ms)
+✔ T8: complete Python log SHA-256, manifest, first/last lines (1.0418ms)
+✔ T8+ mulberry32 unsigned wraparound is deterministic (28.3441ms)
+✔ T8+ independent Python SHA-256 oracles for other seeds, NPC modes, and rotated logs (22.8274ms)
+✔ T9 Q0-1 pass[0]: ls (0.5723ms)
+✔ T9 Q0-1 pass[1]: ls (0.2356ms)
+✔ T9 Q0-1 pass[2]: ls ~ (0.1525ms)
+✔ T9 Q0-1 pass[3]: ls -l (0.2405ms)
+✔ T9 Q0-1 pass[4]: ls ./ (0.1533ms)
+✔ T9 Q0-1 fail[0]: cat handbook.md (0.1091ms)
+✔ T9 Q0-1 fail[1]: lsof (0.0866ms)
+✔ T9 Q0-2 pass[0]: cat handbook.md (0.1276ms)
+✔ T9 Q0-2 pass[1]: cat handbook.md (0.1411ms)
+✔ T9 Q0-2 pass[2]: cat ~/handbook.md (0.1249ms)
+✔ T9 Q0-2 pass[3]: cat ./handbook.md (0.0986ms)
+✔ T9 Q0-2 fail[0]: cat notes/01-first-night.txt (0.093ms)
+✔ T9 Q0-2 fail[1]: ls handbook.md (0.1135ms)
+✔ T9 Q0-3 pass[0]: ls -a notes (0.2061ms)
+✔ T9 Q0-3 fail[0]: ls notes (0.1975ms)
+✔ T9 Q0-4 pass[0]: grep lamp logs/lamp.log (0.1375ms)
+✔ T9 Q0-5 pass[0]: grep -r KEY-FRAG ~ (0.2022ms)
+✔ T9 Q0-5 fail[0]: grep KEY-FRAG notes/01-first-night.txt (0.1426ms)
+✔ T9 Q1-1 pass[0]: grep -c ' 404 ' access.log (0.8932ms)
+✔ T9 Q1-1 fail[0]: grep -c 404 access.log (0.6667ms)
+✔ T9 Q1-3 pass[0]: grep '02:00:00' access.log (0.8281ms)
+✔ T6+ hard links survive deep clone without sharing file changes (0.4961ms)
+✔ T7+ safe rm, absent/hidden notes, failed cd, lenient ln (1.0234ms)
+✔ T7+ named file reads, recursive matching only, inode aliases, redirects (0.4755ms)
+✔ T7+ BRE, quoting, short circuit, literal unsafe shell syntax (0.3862ms)
+✔ T6+ dynamic variants share global flags with branch (0.2074ms)
+✔ T9+ remaining check types, manifest substitution, only new cwd files (1.1805ms)
+✔ T7+ direct head/tail seek and pipelines consume lazily (3.9671ms)
+✔ T7+ option combinations, C ordering, adjacency, globbing and literal syntax (1.9802ms)
+ℹ tests 525
+ℹ suites 0
+ℹ pass 517
+ℹ fail 6
+ℹ cancelled 2
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 406417.6743
+
+✖ failing tests:
+
+test at test\browser.test.mjs:22:1
+✖ T12: offline file + HTTPS, safety, keyboard, mobile, resume, kiosk, exports and themes (32747.1738ms)
+  locator.waitFor: Timeout 30000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#new-game') to be visible[22m
+  
+      at open (C:\Users\user\Documents\《根目錄群島》\demo-app\test\browser.test.mjs:37:37)
+      at async TestContext.<anonymous> (C:\Users\user\Documents\《根目錄群島》\demo-app\test\browser.test.mjs:103:17) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#new-game') to be visible" ]
+  }
+
+test at test\console.test.mjs:103:1
+✖ Console browser: F2 and switching back preserve multiline drafts exactly without execution (30027.3194ms)
+  'test timed out after 30000ms'
+
+test at test\console.test.mjs:246:1
+✖ Bash browser: variables and functions survive commands, F2 round trips and reload/resume (9941.7119ms)
+  AssertionError [ERR_ASSERTION]: Expected settled visible draft ""
+  Observed: {"editor":{"prompt":"op-consoleqa@lighthouse:~$ ","draft":"report() { printf \"state:%s:%s\\n\" \"$shared\" \"$((count + $1))\"; }\n"},"screen":"根目錄群島 / 第一夜\nBash 終端（模擬）· 離線工作階段\n\n遊戲啟動器\n  game start          開始值班\n  game import <RA1-…> 匯入存檔代碼（也接受 JSON）\n  game help           Bash 操作與遊戲命令說明\n  game mode islands   返回群島模式（或按 F2）\n\narchipelago> game start\nROOT ARCHIPELAGO  試玩版〈第一夜〉\n預計 15 分鐘。你可以隨時輸入 hint。\n[init] 請輸入你的暱稱（英文或數字，最多 12 字）。\n輸入暱稱以開始。game help、game save、game exit 可隨時使用。\n暱稱 > consoleqa\n[init] 暱稱已記錄：op-consoleqa。\n[PAGE] INIT -> op-<你的暱稱>\n       燈塔機房需要人手。優先度：低。倒數：無。\n       你是目前唯一回應的人。\nWelcome to ROOT ARCHIPELAGO v5.0 (POSIX-ish / island)\n * 本島：lighthouse    uptime 41d    燈：熄\n * 上次登入：lin，41 天前\nYou have 1 new mail.\n[init] 你有一封信。指令是 mail。\n\n[任務] Q0-1 列出家目錄有什麼\n[init] 任務：看看家目錄裡有什麼。\nop-consoleqa@lighthouse:~$ shared=$(printf \"once\\n\" >> ~/effects.txt; printf persistent); count=7\nop-consoleqa@lighthouse:~$ report() { printf \"state:%s:%s\\n\" \"$shared\" \"$((count + $1))\"; }\n>\n\n\n\n","label":"輸入 Bash 或遊戲指令"}
+      at eventually (file:///C:/Users/user/Documents/%E3%80%8A%E6%A0%B9%E7%9B%AE%E9%8C%84%E7%BE%A4%E5%B3%B6%E3%80%8B/demo-app/test/helpers/xterm.mjs:28:10)
+      at async expectDraft (file:///C:/Users/user/Documents/%E3%80%8A%E6%A0%B9%E7%9B%AE%E9%8C%84%E7%BE%A4%E5%B3%B6%E3%80%8B/demo-app/test/helpers/xterm.mjs:60:3)
+      at async send (file:///C:/Users/user/Documents/%E3%80%8A%E6%A0%B9%E7%9B%AE%E9%8C%84%E7%BE%A4%E5%B3%B6%E3%80%8B/demo-app/test/helpers/xterm.mjs:112:3)
+      at async TestContext.<anonymous> (file:///C:/Users/user/Documents/%E3%80%8A%E6%A0%B9%E7%9B%AE%E9%8C%84%E7%BE%A4%E5%B3%B6%E3%80%8B/demo-app/test/console.test.mjs:250:3)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'fail',
+    diff: 'simple'
+  }
+
+test at test\styles.test.mjs:66:1
+✖ Styles browser: live Server and islands switching preserves draft, head, transcript and cwd (1904.9698ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'server'
+  - 'islands'
+  
+      at TestContext.<anonymous> (file:///C:/Users/user/Documents/%E3%80%8A%E6%A0%B9%E7%9B%AE%E9%8C%84%E7%BE%A4%E5%B3%B6%E3%80%8B/demo-app/test/styles.test.mjs:80:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'server',
+    expected: 'islands',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test\styles.test.mjs:99:34
+✖ Styles browser: both styles usable at 320px, with keyboard and both contrast palettes (34677.7595ms)
+  locator.selectOption: Timeout 30000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#theme')[22m
+  [2m    - locator resolved to <select id="theme" aria-label="顯示主題">…</select>[22m
+  [2m  - attempting select option action[22m
+  [2m    2 × waiting for element to be visible and enabled[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying select option action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and enabled[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying select option action[22m
+  [2m      - waiting 100ms[22m
+  [2m    59 × waiting for element to be visible and enabled[22m
+  [2m       - element is not visible[22m
+  [2m     - retrying select option action[22m
+  [2m       - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (C:\Users\user\Documents\《根目錄群島》\demo-app\test\styles.test.mjs:107:120) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#theme')", '    - locator resolved to <select id="theme" aria-label="顯示主題">…</select>', '  - attempting select option action', '    2 × waiting for element to be visible and enabled', '      - element is not visible', '    - retrying select option action', '    - waiting 20ms', '    2 × waiting for element to be visible and enabled', '      - element is not visible', '    - retrying select option action', '      - waiting 100ms', '    59 × waiting for element to be visible and enabled', '       - element is not visible', '     - retrying select option action', '       - waiting 500ms' ]
+  }
+
+test at test\styles.test.mjs:99:34
+✖ Styles browser: both styles usable at 360px, with keyboard and both contrast palettes (35103.7754ms)
+  locator.selectOption: Timeout 30000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#theme')[22m
+  [2m    - locator resolved to <select id="theme" aria-label="顯示主題">…</select>[22m
+  [2m  - attempting select option action[22m
+  [2m    2 × waiting for element to be visible and enabled[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying select option action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and enabled[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying select option action[22m
+  [2m      - waiting 100ms[22m
+  [2m    59 × waiting for element to be visible and enabled[22m
+  [2m       - element is not visible[22m
+  [2m     - retrying select option action[22m
+  [2m       - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (C:\Users\user\Documents\《根目錄群島》\demo-app\test\styles.test.mjs:107:120) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#theme')", '    - locator resolved to <select id="theme" aria-label="顯示主題">…</select>', '  - attempting select option action', '    2 × waiting for element to be visible and enabled', '      - element is not visible', '    - retrying select option action', '    - waiting 20ms', '    2 × waiting for element to be visible and enabled', '      - element is not visible', '    - retrying select option action', '      - waiting 100ms', '    59 × waiting for element to be visible and enabled', '       - element is not visible', '     - retrying select option action', '       - waiting 500ms' ]
+  }
+
+test at test\styles.test.mjs:99:34
+✖ Styles browser: both styles usable at 768px, with keyboard and both contrast palettes (35120.2566ms)
+  locator.selectOption: Timeout 30000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#theme')[22m
+  [2m    - locator resolved to <select id="theme" aria-label="顯示主題">…</select>[22m
+  [2m  - attempting select option action[22m
+  [2m    2 × waiting for element to be visible and enabled[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying select option action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and enabled[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying select option action[22m
+  [2m      - waiting 100ms[22m
+  [2m    59 × waiting for element to be visible and enabled[22m
+  [2m       - element is not visible[22m
+  [2m     - retrying select option action[22m
+  [2m       - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (C:\Users\user\Documents\《根目錄群島》\demo-app\test\styles.test.mjs:107:120) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#theme')", '    - locator resolved to <select id="theme" aria-label="顯示主題">…</select>', '  - attempting select option action', '    2 × waiting for element to be visible and enabled', '      - element is not visible', '    - retrying select option action', '    - waiting 20ms', '    2 × waiting for element to be visible and enabled', '      - element is not visible', '    - retrying select option action', '      - waiting 100ms', '    59 × waiting for element to be visible and enabled', '       - element is not visible', '     - retrying select option action', '       - waiting 500ms' ]
+  }
+
+test at test\styles.test.mjs:122:1
+✖ Styles browser: unavailable preference storage does not break either style (30017.7172ms)
+  'test timed out after 30000ms'

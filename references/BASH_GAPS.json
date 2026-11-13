@@ -1,0 +1,188 @@
+{
+  "bashVersion": "GNU bash, version 5.3.15(2)-release (x86_64-pc-cygwin)",
+  "scope": "Twelve fixed capability probes; not a Bash conformance certification.",
+  "total": 12,
+  "exactMatches": 2,
+  "results": [
+    {
+      "name": "pipeline",
+      "command": "echo one | wc -l",
+      "bash": {
+        "stdout": "1\n",
+        "stderr": "",
+        "rc": 0
+      },
+      "gameShell": {
+        "stdout": "1\n",
+        "stderr": "",
+        "rc": 0
+      },
+      "exactMatch": true
+    },
+    {
+      "name": "quoted filename",
+      "command": "cat \"two words.txt\"",
+      "bash": {
+        "stdout": "quoted\n",
+        "stderr": "",
+        "rc": 0
+      },
+      "gameShell": {
+        "stdout": "quoted\n",
+        "stderr": "",
+        "rc": 0
+      },
+      "exactMatch": true
+    },
+    {
+      "name": "shell variable",
+      "command": "answer=42; echo \"$answer\"",
+      "bash": {
+        "stdout": "42\n",
+        "stderr": "",
+        "rc": 0
+      },
+      "gameShell": {
+        "stdout": "bash: answer=42: command not found$answer\n",
+        "stderr": "",
+        "rc": 0
+      },
+      "exactMatch": false
+    },
+    {
+      "name": "command substitution",
+      "command": "echo \"$(echo ready)\"",
+      "bash": {
+        "stdout": "ready\n",
+        "stderr": "",
+        "rc": 0
+      },
+      "gameShell": {
+        "stdout": "",
+        "stderr": "bash: Command substitution is not supported\n",
+        "rc": 2
+      },
+      "exactMatch": false
+    },
+    {
+      "name": "arithmetic expansion",
+      "command": "echo \"$((2 + 3))\"",
+      "bash": {
+        "stdout": "5\n",
+        "stderr": "",
+        "rc": 0
+      },
+      "gameShell": {
+        "stdout": "",
+        "stderr": "bash: Command substitution is not supported\n",
+        "rc": 2
+      },
+      "exactMatch": false
+    },
+    {
+      "name": "OR list",
+      "command": "false || echo fallback",
+      "bash": {
+        "stdout": "fallback\n",
+        "stderr": "",
+        "rc": 0
+      },
+      "gameShell": {
+        "stdout": "",
+        "stderr": "bash: Unsupported operator\n",
+        "rc": 2
+      },
+      "exactMatch": false
+    },
+    {
+      "name": "for loop",
+      "command": "for word in one two; do echo \"$word\"; done",
+      "bash": {
+        "stdout": "one\ntwo\n",
+        "stderr": "",
+        "rc": 0
+      },
+      "gameShell": {
+        "stdout": "bash: for: command not foundbash: do: command not foundbash: done: command not found",
+        "stderr": "",
+        "rc": 127
+      },
+      "exactMatch": false
+    },
+    {
+      "name": "printf builtin",
+      "command": "printf '%s\\n' one two",
+      "bash": {
+        "stdout": "one\ntwo\n",
+        "stderr": "",
+        "rc": 0
+      },
+      "gameShell": {
+        "stdout": "bash: printf: command not found",
+        "stderr": "",
+        "rc": 127
+      },
+      "exactMatch": false
+    },
+    {
+      "name": "input redirection",
+      "command": "cat < input.txt",
+      "bash": {
+        "stdout": "fixture\n",
+        "stderr": "",
+        "rc": 0
+      },
+      "gameShell": {
+        "stdout": "",
+        "stderr": "bash: Unsupported operator: <\n",
+        "rc": 2
+      },
+      "exactMatch": false
+    },
+    {
+      "name": "brace expansion",
+      "command": "echo {one,two}",
+      "bash": {
+        "stdout": "one two\n",
+        "stderr": "",
+        "rc": 0
+      },
+      "gameShell": {
+        "stdout": "{one,two}\n",
+        "stderr": "",
+        "rc": 0
+      },
+      "exactMatch": false
+    },
+    {
+      "name": "parameter default",
+      "command": "echo \"${NOT_SET_IN_PROBE:-fallback}\"",
+      "bash": {
+        "stdout": "fallback\n",
+        "stderr": "",
+        "rc": 0
+      },
+      "gameShell": {
+        "stdout": "${NOT_SET_IN_PROBE:-fallback}\n",
+        "stderr": "",
+        "rc": 0
+      },
+      "exactMatch": false
+    },
+    {
+      "name": "unknown command stream",
+      "command": "ra_nonexistent_probe_command",
+      "bash": {
+        "stdout": "",
+        "stderr": "/usr/bin/bash: line 1: ra_nonexistent_probe_command: command not found\n",
+        "rc": 127
+      },
+      "gameShell": {
+        "stdout": "bash: ra_nonexistent_probe_command: command not found",
+        "stderr": "",
+        "rc": 127
+      },
+      "exactMatch": false
+    }
+  ]
+}

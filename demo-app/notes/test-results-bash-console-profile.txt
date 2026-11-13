@@ -1,0 +1,311 @@
+{
+  "steps": [
+    {
+      "step": "bad nick!",
+      "ms": 568
+    },
+    {
+      "step": "zien",
+      "ms": 669
+    },
+    {
+      "step": "save",
+      "ms": 676
+    },
+    {
+      "step": "ask lin",
+      "ms": 650
+    },
+    {
+      "step": "man ticket-0001",
+      "ms": 743
+    },
+    {
+      "step": "close TICKET-0001",
+      "ms": 672
+    },
+    {
+      "step": "systemctl status lamp",
+      "ms": 1463
+    },
+    {
+      "step": "block",
+      "ms": 604
+    },
+    {
+      "step": "git merge --knowledge",
+      "ms": 612
+    },
+    {
+      "step": "git status",
+      "ms": 719
+    },
+    {
+      "step": "git checkout -b x",
+      "ms": 651
+    },
+    {
+      "step": "ssh logport",
+      "ms": 581
+    },
+    {
+      "step": "catt handbook.md",
+      "ms": 1399
+    },
+    {
+      "step": "xyzzy",
+      "ms": 1391
+    },
+    {
+      "step": "ls",
+      "ms": 1438
+    },
+    {
+      "step": "cat handbook.md",
+      "ms": 1436
+    },
+    {
+      "step": "ls -a notes",
+      "ms": 1422
+    },
+    {
+      "step": "grep lamp logs/lamp.log",
+      "ms": 1457
+    },
+    {
+      "step": "grep -r KEY-FRAG ~",
+      "ms": 1450
+    },
+    {
+      "step": "skip",
+      "ms": 584
+    },
+    {
+      "step": "hint",
+      "ms": 601
+    },
+    {
+      "step": "hint",
+      "ms": 622
+    },
+    {
+      "step": "hint",
+      "ms": 617
+    },
+    {
+      "step": "help",
+      "ms": 713
+    },
+    {
+      "step": "cat notes/01-first-night.txt",
+      "ms": 1408
+    },
+    {
+      "step": "systemctl start lamp",
+      "ms": 1444
+    },
+    {
+      "step": "",
+      "ms": 653
+    },
+    {
+      "step": "systemctl start lamp",
+      "ms": 1400
+    },
+    {
+      "step": "cat handbook.md",
+      "ms": 1410
+    },
+    {
+      "step": "systemctl start lamp",
+      "ms": 1471
+    },
+    {
+      "step": "lamp-before-sudo",
+      "ms": 777
+    },
+    {
+      "step": "systemctl start lamp",
+      "ms": 1452
+    },
+    {
+      "step": "systemctl status lamp",
+      "ms": 1469
+    },
+    {
+      "step": "git checkout -b foo",
+      "ms": 624
+    },
+    {
+      "step": "git checkout -b alt/sandbox",
+      "ms": 608
+    },
+    {
+      "step": "ssh logport",
+      "ms": 759
+    },
+    {
+      "step": "git merge --knowledge",
+      "ms": 630
+    },
+    {
+      "step": "git tag mark1",
+      "ms": 685
+    },
+    {
+      "step": "rm notes/01-first-night.txt",
+      "ms": 1457
+    },
+    {
+      "step": "rm -rf ~/notes",
+      "ms": 1474
+    },
+    {
+      "step": "hint",
+      "ms": 606
+    },
+    {
+      "step": "hint",
+      "ms": 671
+    },
+    {
+      "step": "hint",
+      "ms": 720
+    },
+    {
+      "step": "cat /lost+found/#0",
+      "ms": 1509
+    },
+    {
+      "step": "hint",
+      "ms": 626
+    },
+    {
+      "step": "hint",
+      "ms": 659
+    },
+    {
+      "step": "hint",
+      "ms": 589
+    },
+    {
+      "step": "git abandon",
+      "ms": 699
+    },
+    {
+      "step": "ask harbor-master tea",
+      "ms": 680
+    },
+    {
+      "step": "ssh logport",
+      "ms": 762
+    },
+    {
+      "step": "ask harbor-master tea",
+      "ms": 677
+    },
+    {
+      "step": "finger harbor-master",
+      "ms": 611
+    },
+    {
+      "step": "grep -c 404 access.log",
+      "ms": 1431
+    },
+    {
+      "step": "grep -c ' 404 ' access.log",
+      "ms": 1425
+    },
+    {
+      "step": "grep '02:00:00' access.log",
+      "ms": 1416
+    },
+    {
+      "step": "hint",
+      "ms": 657
+    },
+    {
+      "step": "maybe",
+      "ms": 619
+    },
+    {
+      "step": "pass",
+      "ms": 741
+    },
+    {
+      "step": "save and read real scrollback",
+      "ms": 30670,
+      "codeBytes": 901
+    }
+  ],
+  "helpers": {
+    "freezeGameTime": {
+      "calls": 1,
+      "ms": 19
+    },
+    "ready": {
+      "calls": 61,
+      "ms": 19448
+    },
+    "renderedEditor": {
+      "calls": 457,
+      "ms": 5291
+    },
+    "screenRows": {
+      "calls": 396,
+      "ms": 2239
+    },
+    "screenText": {
+      "calls": 396,
+      "ms": 2247
+    },
+    "eventually": {
+      "calls": 181,
+      "ms": 16240
+    },
+    "expectDraft": {
+      "calls": 121,
+      "ms": 16408
+    },
+    "clearDraft": {
+      "calls": 60,
+      "ms": 1226
+    },
+    "typeDraft": {
+      "calls": 60,
+      "ms": 9629
+    },
+    "cellBox": {
+      "calls": 60,
+      "ms": 295
+    },
+    "send": {
+      "calls": 60,
+      "ms": 38748
+    },
+    "advanceGameTime": {
+      "calls": 58,
+      "ms": 16907
+    },
+    "visibleHistory": {
+      "calls": 89,
+      "ms": 29168
+    },
+    "scrollPosition": {
+      "calls": 74,
+      "ms": 29064
+    },
+    "scrollTerminal": {
+      "calls": 29,
+      "ms": 29133
+    },
+    "terminalText": {
+      "calls": 1,
+      "ms": 30216
+    },
+    "saveCode": {
+      "calls": 1,
+      "ms": 30216
+    }
+  }
+}

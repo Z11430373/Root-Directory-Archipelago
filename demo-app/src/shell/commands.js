@@ -1,8 +1,14 @@
+/**
+ * 模擬 Shell 的文字/檔案指令層；依賴 ../data.js、bre.js、stream.js，供 exec.js 派送。
+ * ctx 提供 VFS、flags、branch、read/error 與 rc/stderr；所有輸出皆為文字塊 iterator。
+ * 讀檔需經 ctx.read 記錄；cd/ln/rm 改記憶體世界，外層 Engine 管回復，exec 管串流關閉。
+ */
 import { DATA } from '../data.js';
 import { compileBRE } from './bre.js';
 import { lines, withoutNewline } from './stream.js';
 
 const encoder = new TextEncoder();
+/** 由 ls/sort 呼叫；兩字串 → UTF-8 位元組排序比較值，避免 locale 排序改變真 bash 對照。 */
 function compareBytes(a, b) {
   if (a === b) return 0;
   // ASCII and BMP text share UTF-8/UTF-16 ordering. Encode only rare astrals.
@@ -12,6 +18,7 @@ function compareBytes(a, b) {
   return aa.length - bb.length;
 }
 
+/** 由各讀檔指令呼叫；運算元/stdin/ctx → 來源 iterator，登記具名讀取並報錯後繼續下一檔。 */
 function* sources(operands, input, ctx, errorRC = 1) {
   if (!operands.length) { yield { name: null, chunks: input }; return; }
   for (const name of operands) {
@@ -22,14 +29,17 @@ function* sources(operands, input, ctx, errorRC = 1) {
     yield { name, path, chunks: ctx.vfs.iterChunks(path) };
   }
 }
+/** 由 cat/uniq 呼叫；來源參數 → 原樣串接文字塊 iterator，不補各檔案缺少的尾端換行。 */
 function* joinedSources(operands, input, ctx) {
   for (const src of sources(operands, input, ctx)) yield* src.chunks;
 }
+/** 由 sort/cut 呼叫；來源參數 → 分檔逐行 iterator，保留檔案邊界，避免兩檔殘行黏成一行。 */
 function* sourceLines(operands, input, ctx) {
   // Text tools terminate an incomplete last line at each file boundary. cat,
   // in contrast, must keep using joinedSources for byte-preserving concatenation.
   for (const src of sources(operands, input, ctx)) yield* lines(src.chunks);
 }
+/** 由簡單選項指令呼叫；args/允許字母 → {options,operands}，保留 -- 後字面值，非法選項拋錯。 */
 function splitOptions(args, allowed) {
   let options = '', operands = [], stop = false;
   for (const arg of args) {
@@ -40,16 +50,19 @@ function splitOptions(args, allowed) {
   }
   return { options, operands };
 }
+/** 由 ls 描述列呼叫；八進位權限/是否目錄 → rwx 字串，無副作用。 */
 function modeString(perms, dir) {
   const n = parseInt(perms, 8);
   let out = dir ? 'd' : '-';
   for (const shift of [6, 3, 0]) { const bits = n >> shift; out += (bits & 4 ? 'r' : '-') + (bits & 2 ? 'w' : '-') + (bits & 1 ? 'x' : '-'); }
   return out;
 }
+/** 由 runCommand 呼叫；args/ctx → ls 文字 iterator，唯讀 stat/list，錯誤透過 ctx.error 設 rc。 */
 function* ls(args, ctx) {
   const { options, operands } = splitOptions(args, 'alitr');
   const targets = operands.length ? operands : ['.'];
   const long = options.includes('l'), inode = options.includes('i'), all = options.includes('a');
+  // describe 接收路徑與顯示名稱，回傳單列；inode/nlink 取同一 VFS，硬連結才能正確顯示。
   const describe = (path, name) => {
     const stat = ctx.vfs.stat(path);
     let line = inode ? `${stat.inode} ` : '';
@@ -77,6 +90,10 @@ function* ls(args, ctx) {
   }
 }
 
+/**
+ * 由 runCommand 呼叫；args/stdin/ctx → grep 結果 iterator，支援模式、遞迴、計數與提早停止。
+ * 直接具名檔算讀取；遞迴檔僅在匹配時登記，避免沒看到的隱藏劇情被記作發現；rc 為 0/1/2。
+ */
 function* grep(args, input, ctx) {
   let recursive = false, count = false, number = false, invert = false, ignoreCase = false;
   let filenames = false, hideName = false, forceName = false, quiet = false, extended = false, fixed = false, limit = Infinity;
@@ -161,6 +178,7 @@ function* grep(args, input, ctx) {
   if (ctx.state.rc !== 2) ctx.state.rc = any ? 0 : 1;
 }
 
+/** 由 headTail 呼叫；args → 行/位元組數、來源、是否從起點計數；非法數量拋錯，無 VFS 副作用。 */
 function countOptions(args) {
   let n = 10, bytes = false, operands = [], fromStart = false;
   let stop = false;
@@ -179,6 +197,7 @@ function countOptions(args) {
   }
   return { n, bytes, operands, fromStart };
 }
+/** 由 head/tail 派送呼叫；名稱/args/stdin/ctx → iterator，直接 tail 逆尋、管線用有限行環形緩衝。 */
 function* headTail(name, args, input, ctx) {
   const { n, bytes, operands, fromStart } = countOptions(args);
   let previous = false;
@@ -219,6 +238,10 @@ function* headTail(name, args, input, ctx) {
   }
 }
 
+/**
+ * 由 runCommand 呼叫；args/stdin/ctx → 排序後行 iterator，唯讀來源並登記讀取。
+ * 本試玩版會收集全部行再排序，不是大型外部排序；改比較/平手規則會影響 T7 與快題。
+ */
 function* sort(args, input, ctx) {
   let numeric = false, reverse = false, stable = false, unique = false, delimiter = null, key = null;
   const operands = [];
@@ -243,6 +266,7 @@ function* sort(args, input, ctx) {
       }
     } else operands.push(arg);
   }
+  // getKey 取欄位/字元範圍，num 取數字前綴；compare 結合方向與穩定排序，均只操作局部值。
   const getKey = line => {
     if (!key) return line;
     const fields = delimiter === null ? line.trimStart().split(/\s+/) : line.split(delimiter);
@@ -267,9 +291,11 @@ function* sort(args, input, ctx) {
   for (const line of all) { if (!unique || previous === undefined || compare(previous, line)) yield line + '\n'; previous = line; }
 }
 
+/** 由 runCommand 呼叫；args/stdin/ctx → 相鄰重複群組 iterator，不會替輸入排序，也不修改來源。 */
 function* uniq(args, input, ctx) {
   const { options, operands } = splitOptions(args, 'cdui');
   if (operands.length > 1) throw new Error('output file operand is not supported; use >');
+  // output 只格式化目前群組（文字/次數），依 -d/-u 決定省略，-c 的欄寬須符合參考輸出。
   const output = function* (line, count) {
     if ((options.includes('d') && count < 2) || (options.includes('u') && count !== 1)) return;
     yield (options.includes('c') ? String(count).padStart(7, ' ') + ' ' : '') + line + '\n';
@@ -284,6 +310,7 @@ function* uniq(args, input, ctx) {
   if (previous !== undefined) yield* output(previous, count);
 }
 
+/** 由 runCommand 呼叫；args/stdin/ctx → 選定欄位或字元的行 iterator，依各檔案邊界讀取；無寫入。 */
 function* cut(args, input, ctx) {
   let delimiter = '\t', fields = null, chars = null, suppress = false, stop = false;
   const operands = [];
@@ -307,6 +334,7 @@ function* cut(args, input, ctx) {
     if (!match || (!match[1] && !match[2]) || Number(match[1] || 1) < 1) throw new Error('invalid field list');
     return [Number(match[1] || 1), part.includes('-') ? Number(match[2] || Infinity) : Number(match[1])];
   });
+  // ranges 為 1-based 閉區間；keep 接收欄號回傳布林，選取順序沿原始行，不依範圍書寫順序重排。
   const keep = i => ranges.some(([a, b]) => i >= a && i <= b);
   for (const raw of sourceLines(operands, input, ctx)) {
     const line = withoutNewline(raw);
@@ -316,6 +344,7 @@ function* cut(args, input, ctx) {
   }
 }
 
+/** 由 runCommand 呼叫；args/stdin/ctx → 行/字/字元/UTF-8 位元組計數 iterator；跨塊維持 inWord。 */
 function* wc(args, input, ctx) {
   const { options, operands } = splitOptions(args, 'lwmc');
   const modes = options || 'lwc';
@@ -344,6 +373,7 @@ function* wc(args, input, ctx) {
   }
 }
 
+/** 由 runCommand 呼叫；args/ctx → 無 stdout 的 iterator，先整批保護 main，再逐項刪 VFS 並收集錯誤。 */
 function* rm(args, ctx) {
   const { options, operands } = splitOptions(args, 'rfR');
   const recursive = options.includes('r') || options.includes('R');
@@ -365,6 +395,10 @@ function* rm(args, ctx) {
   }
 }
 
+/**
+ * 由 exec 呼叫；名稱/args/stdin/ctx → 惰性指令 iterator，消費時才執行並將例外轉為 ctx.error。
+ * 故事指令多留空交 Engine 規則；真正的 cd/ln/rm 只改 VFS，無宿主磁碟或程序副作用。
+ */
 export function runCommand(name, args, input, ctx) {
   return (function* () {
     try {

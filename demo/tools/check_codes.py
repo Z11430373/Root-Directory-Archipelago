@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# 跨語言 QA CLI；依賴同層 savelib.py 及其 YAML，讀 JS 匯出的代碼/JSON 並印出結論。
+# 不修改來源檔或存檔，沒有暫存樹；損毀/拒絕以非零退出，供 demo-app 的 T11 測試使用。
 """
 互通檢查：前端（JavaScript）匯出的存檔代碼，Python 參考實作必須讀得懂。
   python3 demo/tools/check_codes.py codes.txt        # 每行一個代碼
@@ -14,6 +16,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import savelib as S  # noqa: E402
 
 
+# 呼叫：CLI/T11 子程序；argv → 程序退出，逐行 load_any/分級/計分，累計失敗並印結果。
 def main():
     bad = 0
     if len(sys.argv) >= 3 and sys.argv[1] == "--file":

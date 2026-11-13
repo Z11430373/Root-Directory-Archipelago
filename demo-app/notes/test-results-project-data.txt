@@ -1,0 +1,256 @@
+Python 資料／劇本驗證紀錄（本輪原專案整合）
+============================================================
+工作目錄：C:\Users\user\Documents\《根目錄群島》
+執行平台：Windows / PowerShell
+結論：root validator 最終通過；demo validator 完整執行但仍有 8 項錯誤。
+本紀錄不是「全部專案驗證通過」證明。
+
+1. 環境與實際命令
+------------------------------------------------------------
+已實測：
+  Python：C:\Users\user\AppData\Local\Programs\Python\Python312\python.exe
+  Python 3.12.10；系統 locale encoding 為 cp950
+  PyYAML 6.0.3；zlib runtime 1.3.1
+  Bash：C:\Program Files\Git\bin\bash.exe
+  GNU bash, version 5.3.15(2)-release (x86_64-pc-cygwin)
+  command -v bash/grep/sort/awk 均解析至 /usr/bin 下工具。
+
+路徑與版本確認命令：
+  Get-Command python, python3, bash -All -ErrorAction SilentlyContinue
+  Test-Path 'C:\Program Files\Git\bin\bash.exe'
+  & 'C:\Program Files\Git\bin\bash.exe' --version
+
+以下為每次完整 validator 執行使用的 PowerShell 環境設定。
+命令在上述原專案根目錄執行；環境變數僅設於執行命令的程序。
+
+  $env:PATH = 'C:\Program Files\Git\bin;' + $env:PATH
+  $env:PYTHONUTF8 = '1'
+  $env:PYTHONIOENCODING = 'utf-8'
+  $env:PYTHONDONTWRITEBYTECODE = '1'
+  $env:TEMP = 'C:\Users\user\AppData\Local\Temp\opencode'
+  $env:TMP = $env:TEMP
+
+兩個完整驗證命令分別執行：
+  python tools/validate.py
+  python demo/tools/validate_demo.py
+
+2. 執行前副作用審查與資料完整性
+------------------------------------------------------------
+讀過兩個 validator，並追查 gen_logs.py、make_conformance.py、
+flow_sim.py、validate_flow.py、testvectors.py、simulate.py 的呼叫／寫入路徑，
+以及所有工單參考解／刻意錯解。
+
+本次固定資料與走法的生成／覆寫／刪除均作用於 mkdtemp 暫存世界：
+  - gen_logs.py 的 --out 由 validator 指定為暫存樹內的 gen。
+  - materialize 複製來源至暫存世界；來源章節路徑未含跳脫根目錄的片段。
+  - flow_sim 的 rm 與分支清除作用於其暫存 HOME／分支。
+  - make_conformance.py 與 flow_sim.py 由 validator 呼叫 check，不呼叫 make。
+  - testvectors.build/check 僅在記憶體建立／比對資料。
+  - 工單程式僅讀 stdin、寫 stdout。
+
+未執行任何 make 測資命令。未使用 --keep。
+對 world、chapters、dialogue、quests、tickets、cards、branches、text、demo
+資料做執行前後 SHA-256 快照（demo/tools 與 __pycache__ 排除）：
+  83 個檔案 → 83 個檔案；變更／刪除 0；新增 0。
+包含劇本、工單測資及 demo/testvectors；未覆寫或刪除使用者內容。
+
+3. root validator：失敗定位、修正、最終通過
+------------------------------------------------------------
+初次完整執行：exit 1，1 項錯誤、0 項警告。
+引用／旗標／劇透／憲章／快題通過；工單中斷。
+實際錯誤：
+  UnicodeDecodeError: 'utf-8' codec can't decode byte 0xad in position 0
+  FAIL check_tickets 中斷：AttributeError: 'NoneType' object has no attribute 'rstrip'
+
+原因：run_sol 啟動 Python -I，忽略 PYTHONUTF8/PYTHONIOENCODING；
+Windows 子程序仍以 CP950 輸出 T0100 中文，父程序卻以 UTF-8 解碼。
+本輪修改 tools/validate.py：
+  - run 的 Bash stdout/stderr 明示 encoding="utf-8"。
+  - run_sol 保留 -I，追加 -X utf8，且父端管線明示 encoding="utf-8"。
+  - 保留所有工單答案／錯解／效能比對語意。
+
+另以唯讀暫存探針發現 F2 搜尋的 Windows 路徑問題：
+  原命令：grep -r KEY-FRAG C:\...\fs_ch1/srv/harbor
+  實際 rc=2，stderr 為 No such file or directory，stdout 為空。
+  原程式只看 stdout，可能將搜尋未執行成功誤判為「碎片找不到」。
+  修為在 fs_ch1 作 cwd，執行 grep -r KEY-FRAG srv/harbor，並檢查 rc。
+  同一探針修正後 rc=1、stdout/stderr 均空，代表確實搜尋後沒有匹配。
+  原本「不得找到 KEY-FRAG」斷言保留，新增 rc 非 0/1 時回報錯誤。
+
+執行次序（均為完整 root 命令）：
+  1) 修改前：exit 1，工單編碼中斷。
+  2) 編碼修正後：exit 0，0 錯誤／0 警告，30 萬行參考解 0.61s。
+  3) F2 路徑修正第一次重跑：exit 1，發現本輪 run 呼叫多傳一個參數；
+     TypeError: run() takes 4 positional arguments but 5 were given。
+     已當場修正呼叫參數，沒有將此輪視為通過。
+  4) 最終版本：exit 0，0 錯誤／0 警告，30 萬行參考解 0.42s。
+
+最終完整執行輸出重點：
+  ok 引用檢查：2 章、3 對話檔、10 快題、2 工單、2 知識卡、2 分支
+  ok 旗標：使用 18、設定 46
+  ok 劇透護欄：25 個文字檔與全部對話、快題
+  ok 碎片與憲章：Rev 1–5、v2.4 原句、F1/F2 位置
+  ok 縮小日誌：9781 行，404=184，最忙 24/Nov/2031(547)，GC=31
+  ok 快題 reference 通過，negative_references 被擋下
+  ok T0100/T0427 共 10 組既有 .in/.out 參考解比對
+  ok 已知錯解在指定測資被擋下
+  ok T0427 30 萬行參考解 0.42s，與獨立 Shell 管線一致
+  結果：0 項錯誤，0 項警告
+
+4. demo validator：完整執行，未通過
+------------------------------------------------------------
+修改前與共用 Bash UTF-8 修正後各完整執行一次；兩次均 exit 1，
+8 項錯誤、0 項警告。demo/tools/validate_demo.py 本輪沒有修改。
+
+成功項目（實際輸出）：
+  - 引用：7 段、22 節拍、44 個試玩對話節點。
+  - 時間預算：fast=369、median=787、slow=1283 秒，預算檢查通過。
+  - 白名單：29 指令，涵蓋劇本需要的 14 指令。
+  - 試玩日誌：3315 行、404=78、GC=31；七個快題正反例檢查通過。
+  - 匯入規則：21 旗標、5 題、1 張卡。
+  - 合成 golden fast/median/slow/digger：代碼 1044/1108/960/1236 字元。
+  - 存檔來回、截斷、字元竄改、亂字串、換行貼上、雜湊鏈竄改檢查通過。
+  - 60 位合成玩家統計及試玩劇透護欄通過。
+  - 既有跨語言測資語意檢查：接受 9／可疑 3／必拒 30 全部符合。
+
+最終 8 項 FAIL（保留原輸出摘要）：
+  1) testvectors/vectors.json 已過期（資料或工具改過），請執行 python3 tools/testvectors.py make
+  2) 一致性測資過期或與真 bash 不符：一致性測資：已過期，請執行 make
+  3) 流程：走法 digger 沒有走到結尾
+  4) 流程：走法 newbie 沒有走到結尾
+  5) 流程：節拍 s3b（lin.draft）在任何走法裡都沒有出現
+  6) 流程：未被任何走法覆蓋的規則：r.first_night, r.draft, r.jar,
+     r.cat_dark, r.cat_lit, r.cat_find, r.ticket_file, r.error_log,
+     r.read_lost0, r.git_merge, r.ask_cat
+  7) 流程：未被走法播放過的試玩對話節點：init.demo_g_ferry_3,
+     init.demo_g_merge_1, init.demo_g_merge_2, init.demo_g_merge_3,
+     init.demo_vote_block
+  8) 流程走法測資過期：請執行 python3 demo/tools/flow_sim.py make
+
+注意：工具也印出「50 條規則（走法覆蓋 39 條）……存檔都是完整」的 ok 摘要。
+這只涉及產生存檔的完整性，不能取代後續結尾／覆蓋率的 FAIL。
+
+5. demo 失敗診斷證據與範圍外建議（未自行修改）
+------------------------------------------------------------
+A. vectors.json 精確重建比對
+  實際呼叫 testvectors.check(existing) 回傳 []。
+  對 testvectors.build() 與既有 JSON 做完整遞迴比較，只有一處差異：
+    /reject/10/code，即 truncated_zlib。
+  既有與新建壓縮資料皆 809 bytes，部分解壓結果皆 1980 bytes 且完全相同，
+  decompressobj.eof 皆 False；兩份皆被 savelib 拒絕為「壓縮資料被截斷」。
+  目前證據支持壓縮表示差異，不支持宣稱劇本內容損壞。
+  既有測資產生端 zlib 版本未確認。
+  定位：demo/tools/validate_demo.py:319 精確 JSON 相等檢查；
+        demo/tools/testvectors.py:128 以預設壓縮結果裁掉最後六個 bytes。
+  建議：另案確認壓縮表示的跨平台契約或固定產生環境；保留截斷拒絕斷言。
+  本輪未跳過精確比對、未重建測資來掩蓋失敗。
+
+B. make_conformance.py check
+  實際 C.build() 與既有 JSON 不同的頂層欄位：cases/env/log/quests/vfs。
+  env 舊 Bash：5.2.21(1)-release (x86_64-pc-linux-gnu)
+  env 新 Bash：5.3.15(2)-release (x86_64-pc-cygwin)
+  日誌 manifest 完全相同；Windows 生成檔包含 3315 個 CRLF。
+  既有 LF 日誌 SHA-256：
+    09a7fd1fbbabd2d78c49da7c3dc4d6c7cd052ac22af1a9e800f49041aaefdd4c
+  本輪 CRLF 日誌 SHA-256：
+    21e970a31557b4df08ac23aa800ab67a1cb4065c098f232484da893cc0c377aa
+  僅在記憶體將生成 bytes 的 CRLF 轉 LF 後，SHA 與既有值完全相同。
+  VFS 鍵舊：/home/op/handbook.md；新：/home\op\handbook.md。
+  pwd／grep 輸出的 /tmp/conf_.../case_.../r 未被 Windows 路徑字串 replace 移除。
+  c0-29「grep -rl lin .」檔案遍歷輸出次序不同；不是只差換行。
+  Q0-5 stdout 也殘留暫存根路徑。
+  定位：tools/gen_logs.py:287–291 預設 newline 寫檔；
+        demo/tools/make_conformance.py:121–122、145–149、184–192。
+  建議：另案明訂 LF 輸出、POSIX 虛擬路徑、Bash 實體路徑轉換，
+        並確認環境版本／目錄遍歷順序的 oracle 契約；不要直接重寫黃金測資。
+
+C. flow_sim 流程／走法
+  實際 FS.run_walk('digger')：ended=False，branch=alt/sandbox。
+  to_virtual(home) 得 '/home\\op'（Python repr）；
+  file_reads('cat shelf/jar.txt', '') 得 ['/home\\op\\shelf\\jar.txt']。
+  demo/flow.yaml 的 file.read 規則使用 /home/op/...，因此無法匹配。
+  history 另顯示 cat /lost+found/#0 回傳 rc=1、空輸出；
+  run_bash 將該虛擬絕對路徑原樣交給宿主 Bash，未轉寫為暫存世界路徑。
+  此絕對路徑語意問題不應僅歸因於 Windows。
+  定位：demo/tools/flow_sim.py:179–181、673–691、695–737。
+  建議：另案修復虛擬路徑正規化，以及宿主 Bash／虛擬世界的路徑映射，
+        再重跑 validate_flow、flow_sim check 與完整 demo validator。
+  本輪未改 flow_sim.py、make_conformance.py、gen_logs.py 或任一測資。
+
+6. 診斷命令／呼叫紀錄與未驗邊界
+------------------------------------------------------------
+額外診斷皆在相同 UTF-8、Git Bash、暫存環境下，以 PowerShell 的
+  @'
+  <Python 診斷程式>
+  '@ | python -
+執行；sys.path 先加入 Path('demo/tools').resolve()。
+實際使用的核心呼叫（全部在記憶體比對，沒有 CLI make）：
+  TV.check(json.loads(Path('demo/testvectors/vectors.json').read_text(encoding='utf-8')))
+  TV.build()                         # 遞迴比較全部欄位
+  C.build()                          # 對比既有 conformance.json
+  C.build_tree(tmp, cfg, D)           # tmp 為 TemporaryDirectory
+  hashlib.sha256(data.replace(b'\r\n', b'\n')).hexdigest()
+  V.run(original, tmp, tmp, tmp)     # 原 F2 搜尋命令
+  V.run('grep -r KEY-FRAG srv/harbor', str(root), tmp, tmp)
+  FS.run_walk('digger')              # finally sim.close()
+  sim.file_reads('cat shelf/jar.txt', '')
+  zlib.decompressobj().decompress(raw)  # 兩份 truncated_zlib 解壓比較
+
+另已執行：
+  git diff --check -- tools/validate.py demo/tools/validate_demo.py
+  結果：exit 0，無 whitespace 錯誤。
+
+本輪只新增本紀錄，程式修正限 tools/validate.py；保留原有使用者修改與註解。
+未驗證：Linux/macOS、未設定 UTF-8/Git Bash PATH 的原生啟動方式、
+大型正式世界的完整引擎玩法、瀏覽器與 app 行為；未執行 npm 或 build。
+主代理回報的 npm test 390/390 不屬於此份 Python 驗證的獨立執行證據。
+demo 的其餘問題尚未修復或驗證消失，交付時應明確保留此限制。
+
+7. 本輪暫存／環境清理紀錄
+------------------------------------------------------------
+依後續要求，只核對本 Python 驗證任務已知的確切路徑；沒有掃描或按前綴
+批量刪除共用暫存目錄。保留 tools/validate.py 修正及本紀錄等專案成果。
+此次清理未重跑 validator，也未擴大修正 demo 的 8 項問題。
+
+已刪除的唯一殘留診斷檔：
+  C:\Users\user\AppData\Local\Temp\opencode\validator-data-before-20261102.json
+  刪前 Test-Path=True，並讀取確認是本輪建立的 83 個檔案 SHA-256 快照。
+  以 patch 的 Delete File 操作刪除該確切檔案；刪後再次 Test-Path=False。
+  快照比對結果仍保留於本紀錄第 2 節。
+
+逐一 Test-Path 確認已不存在，未再次刪除：
+  C:\Users\user\AppData\Local\Temp\opencode\validate_probe_49oe8l8u
+    原本由診斷程式 with tempfile.TemporaryDirectory(...) 離開時清理。
+  C:\Users\user\AppData\Local\Temp\opencode\conf_u2q9omqy
+    原本由 make_conformance.build() 的 finally/shutil.rmtree 清理，
+    包含其 case_*／q_* 子世界。
+  C:\Users\user\AppData\Local\Temp\opencode\validator-probe
+    僅曾用作 Bash HOME 環境變數探針，命令未建立此目錄；本次確認不存在。
+
+其餘 validator 暫存世界使用 mkdtemp 的隨機名稱，原執行未輸出完整路徑：
+  root check_quests：finally/shutil.rmtree；未使用 --keep。
+  demo 快題：finally/shutil.rmtree。
+  conformance：build 的 finally/shutil.rmtree。
+  flow_sim：呼叫端 finally sim.close()，由 close 清除該 Sim 的 tmp。
+這些是已審查且原執行會經過的清理路徑；未記錄的隨機目錄未另做逐一路徑
+存在性確認，不將程式 finally 等同於逐個磁碟確認，也未廣掃尋找／刪除。
+
+環境操作與新 shell 實查：
+  - PATH、PYTHONUTF8、PYTHONIOENCODING、PYTHONDONTWRITEBYTECODE、TEMP、TMP、
+    HOME 僅以工具命令的 PowerShell $env: 設定，限該程序及其子程序。
+  - Python 呼叫 Bash 時的 HOME／LC_ALL 僅透過 subprocess env 傳入。
+  - 本次另開 shell，未先設定環境變數，讀取 Process/User/Machine 三個範圍。
+    PYTHONUTF8、PYTHONIOENCODING、PYTHONDONTWRITEBYTECODE、HOME 三範圍皆未設定。
+    Process 與 User 的 TEMP/TMP 均為 C:\Users\user\AppData\Local\Temp；
+    Machine 的 TEMP/TMP 均為 C:\WINDOWS\TEMP。
+    Process PATH 不以本輪加入的 C:\Program Files\Git\bin; 為前綴。
+    因此本次新 shell 未繼承測試用 UTF-8、HOME 或 opencode 暫存目錄覆寫。
+  - 未執行 setx、User/Machine SetEnvironmentVariable、登錄檔／profile 修改，
+    不需要以另一組持久設定覆蓋使用者環境。
+  - 本任務沒有全域或本地安裝軟體／套件；Python、PyYAML、Git Bash 均為既有。
+    沒有啟動持續背景服務，也沒有修改全域工具設定。
+
+實際核對方式：Test-Path -LiteralPath <上述完整路徑>；
+環境檢查使用 [Environment]::GetEnvironmentVariable(name, scope)，僅讀取。
+清理結果：已知殘留快照已刪除；三個已知探針／fixture 路徑均不存在；
+專案程式修正與測試結果紀錄保留。

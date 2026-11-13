@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# 流程 QA 的 Python 參考模擬器；依賴 savelib/flowexpr、tools/validate.py、gen_logs.py、YAML/text 與真 Bash。
+# Sim 建立實體暫存世界，普通指令可啟動宿主 Bash；不是 chroot/安全沙箱，只供受信任固定走法。
+# run_walk 成功回傳的 Sim 仍持有暫存樹，呼叫端必須 finally sim.close()；失敗由 run_walk 清理。
 """
 flow.yaml 的參考實作（headless，無畫面）。用真的 bash 在實體資料夾上執行一般指令，
 其餘（mail/systemctl/git/ssh/ask/finger/man/close/sudo/hint/skip…）由本程式內建。
@@ -15,6 +18,7 @@ flow.yaml 的參考實作（headless，無畫面）。用真的 bash 在實體�
 """
 import json
 import os
+import posixpath
 import re
 import shutil
 import subprocess
@@ -28,6 +32,7 @@ sys.path.insert(0, os.path.join(PACK, "tools"))
 import savelib as S      # noqa: E402
 import flowexpr as FX    # noqa: E402
 import validate as V     # noqa: E402
+import make_conformance as BC  # noqa: E402；共用宿主 Bash/虛擬路徑橋接，不執行 build
 import yaml              # noqa: E402
 
 TV = os.path.join(PACK, "demo", "testvectors")
@@ -35,10 +40,12 @@ READERS = {"cat", "head", "tail", "grep", "sort", "uniq", "cut", "wc"}
 OPT_WITH_VALUE = {"head": {"-n", "-c"}, "tail": {"-n", "-c"}, "cut": {"-d", "-f", "-c"}, "sort": {"-k", "-t", "-o"}, "grep": {"-e", "-m", "-A", "-B", "-C"}}
 
 
+# 呼叫：Sim 建構；資料包相對片段 → YAML 物件，只讀來源，不改資料檔。
 def Y(*p):
     return yaml.safe_load(open(os.path.join(PACK, *p), encoding="utf-8"))
 
 
+# 呼叫：Sim.typo；兩字串 → 編輯距離，對調算一，純局部計算、不執行建議。
 def dl1(a, b):
     """Damerau-Levenshtein（相鄰對調算 1）"""
     d = {}
@@ -56,6 +63,8 @@ def dl1(a, b):
 
 
 class Sim:
+    # 呼叫：run_walk/驗證器；seed/nick_real → 新 Sim，生成日誌/兩章暫存世界；nick_real 目前未使用。
+    # 建構後即持有 tmp，使用完須 close；流程不是瀏覽器 Engine 的交易式執行版本。
     def __init__(self, seed=5, nick_real="zien"):
         self.cfg = S.demo_cfg()
         self.flow = Y("demo", "flow.yaml")
@@ -77,7 +86,7 @@ class Sim:
         ov = self.cfg["content"]["chapters"]["ch1_teaser"]["generate_override"]
         subprocess.run([sys.executable, os.path.join(PACK, "tools", "gen_logs.py"), "--out", gen, "--lines-per-day", str(ov["lines_per_day"]),
                         "--days", str(ov["days"]), "--seed", str(seed), "--npc"], check=True, capture_output=True)
-        self.man = json.load(open(os.path.join(gen, "manifest.json")))
+        self.man = json.load(open(os.path.join(gen, "manifest.json"), encoding="utf-8"))
         self.worlds = {}
         for chid in ("ch0", "ch1"):
             ch = dict(self.D["chapters"][[k for k in self.D["chapters"] if k.startswith(chid)][0]])
@@ -87,7 +96,7 @@ class Sim:
             root = os.path.join(self.tmp, chid)
             os.makedirs(root)
             V.materialize(ch, root, gen, {})
-            home = os.path.join(root, ch["player_start"]["home"].lstrip("/"))
+            home = BC.host_path(root, ch["player_start"]["home"])
             os.makedirs(home, exist_ok=True)
             self.worlds[chid] = {"root": root, "home": home, "start": ch["player_start"]["cwd"], "ch": ch}
         self.world = "ch0"
@@ -125,12 +134,15 @@ class Sim:
         self.said = set()
 
     # ------------------------------------------------------------------ 工具
+    # 呼叫：內部事件/規則/輸入；軌跡欄位 → None，附加 trace 供黃金測資，不寫存檔。
     def T(self, *a):
         self.trace.append(list(a))
 
+    # 呼叫：commit；無參數 → 相對開始的毫秒（Python 偶數捨入），不推進時間。
     def r_ms(self):
         return 0 if self.t0 is None else int(round((self.now - self.t0) * 1000))
 
+    # 呼叫：狀態效果；kind/data → None，已開始才 append 雜湊事件並記 trace，不 seal/落盤。
     def commit(self, kind, data):
         if self.save is None:
             return
@@ -138,33 +150,44 @@ class Sim:
         S.add_commit(self.save, kind, data, self.r_ms(), self.world_t, chapter=ch, branch=self.branch)
         self.T("commit", kind, data, self.branch, ch, self.r_ms())
 
+    # 呼叫：ev；無參數 → flags/vars/唯讀函式環境，done/路徑函式只查狀態，不寫檔。
     def env(self):
         return {"flags": self.flags,
                 "vars": {"tries": self.tries, "in_branch": self.branch != "main", "branch": self.branch,
                          "quest_active": self.active or ""},
                 "funcs": {"done": lambda q: q in self.done or q in self.skipped, "exists": self.p_exists, "empty": self.p_empty}}
 
+    # 呼叫：規則/引導；運算式 → boolean，轉交 flowexpr，錯誤向上傳遞。
     def ev(self, expr):
         return FX.evaluate(expr, self.env())
 
+    # 呼叫：條件/指令內建；虛擬路徑 → 暫存實體路徑，不提供路徑逃逸隔離，不接受外部不可信路徑。
     def vpath(self, p):
         """虛擬路徑 → 實體路徑（~ 與相對路徑以 home 為準）"""
-        if p.startswith("~"):
-            p = "/" + os.path.relpath(self.home, self.root) + p[1:]
-        return os.path.join(self.root, p.lstrip("/"))
+        home = self.to_virtual(self.home)
+        if p == "~":
+            p = home
+        elif p.startswith("~/"):
+            p = posixpath.join(home, p[2:])
+        elif not p.startswith("/"):
+            p = posixpath.join(home, p)
+        return BC.host_path(self.root, p)
 
+    # 呼叫：運算式 exists；路徑 → 是否存在，讀檔案系統 metadata，不寫檔。
     def p_exists(self, p):
         return os.path.exists(self.vpath(p))
 
+    # 呼叫：運算式 empty；路徑 → 缺席或空目錄的布林，包含隱藏項目，只讀目錄。
     def p_empty(self, p):
         r = self.vpath(p)
         return (not os.path.exists(r)) or (os.path.isdir(r) and not os.listdir(r))
 
+    # 呼叫：歷史/讀取推斷；實體路徑 → 相對目前 root 的 / 路徑，唯讀且不是安全邊界。
     def to_virtual(self, real):
-        rel = os.path.relpath(os.path.realpath(real), os.path.realpath(self.root))
-        return "/" if rel == "." else "/" + rel
+        return BC.virtual_path(real, self.root)
 
     # ------------------------------------------------------------------ 旗標與動作
+    # 呼叫：do/say；旗標名 → None，首次才 commit 並排 flag.set；開始旗標建立 seed=5 參考存檔。
     def set_flag(self, name):
         if name in self.flags:
             return
@@ -175,6 +198,8 @@ class Sim:
         self.commit("flag", {"name": name})
         self.queue.append(("flag.set", {"name": name}))
 
+    # 呼叫：fire/say/state；單個動作 → None，可改獎勵/世界/分支/實體檔案與結尾，不具自動回滾。
+    # 分支進入 copytree，退出刪分支樹還原 main；全部剩餘暫存由 close 清理。
     def do(self, act):
         (k, v), = act.items()
         if k == "say":
@@ -235,6 +260,7 @@ class Sim:
         else:
             raise RuntimeError("未知動作 " + k)
 
+    # 呼叫：say；npc.node → (NPC,名稱,節點)，不存在拋 RuntimeError，原始節點保持唯讀。
     def node(self, ref):
         npc, name = ref.split(".", 1)
         n = self.nodes.get((npc, name))
@@ -242,6 +268,8 @@ class Sim:
             raise RuntimeError("找不到對話節點 " + ref)
         return npc, name, n
 
+    # 呼叫：規則/輸入/引導；節點引用/vars → None，記節點軌跡並套效果/模式/後繼，不渲染真實文字。
+    # 此參考路線主要驗 commit/says，未完整實作 JS 的文字變體/延遲呈現；vars 目前未用來格式化。
     def say(self, ref, vars=None):
         npc, name, n = self.node(ref)
         key = (npc if npc != "harbor" else "harbor-master", name)
@@ -272,6 +300,7 @@ class Sim:
                 self.say(npc + "." + nxt)
 
     # ------------------------------------------------------------------ 事件與規則
+    # 呼叫：開始/輸入/效果；無參數 → None，耗盡 queue 再求 state 固定點；事件上限防無限連鎖。
     def drain(self):
         guard = 0
         while self.queue:
@@ -283,6 +312,7 @@ class Sim:
         if self.queue:
             self.drain()
 
+    # 呼叫：fire；規則/事件/payload → 是否匹配，只讀狀態與路徑，不執行動作。
     def match(self, rule, ev, pl):
         if rule["event"] != ev:
             return False
@@ -308,6 +338,7 @@ class Sim:
             return False
         return True
 
+    # 呼叫：match 的 ln_source；原始指令/預期來源 → 是否指向同路徑，簡化分詞非完整 Bash parser。
     def ln_matches(self, raw, src):
         toks = raw.split()
         if not toks or toks[0] != "ln":
@@ -318,6 +349,7 @@ class Sim:
         real = self.vpath(ops[0]) if ops[0].startswith(("~", "/")) else os.path.join(self.cwd, ops[0])
         return os.path.normpath(real) == os.path.normpath(self.vpath(src))
 
+    # 呼叫：drain/state；事件/payload → None，順序執行非 state 規則，更新 once 並遵守 cmd stop。
     def fire(self, ev, pl):
         stop = False
         for rule in self.flow["rules"]:
@@ -337,6 +369,7 @@ class Sim:
             if rule.get("stop"):
                 stop = True
 
+    # 呼叫：fire；動作/payload → None，替換 print 的 n/name 後交 do，不改來源 act。
     def do_with_vars(self, act, pl):
         (k, v), = act.items()
         if k == "print" and isinstance(v, str):
@@ -344,6 +377,7 @@ class Sim:
             act = {"print": v}
         self.do(act)
 
+    # 呼叫：print 模板；無參數 → 目前同名 branch 的非 enter 事件數，唯讀，不按最新分支進入切片。
     def branch_commits(self):
         n = 0
         for c in self.save["commits"]:
@@ -351,6 +385,7 @@ class Sim:
                 n += 1
         return n
 
+    # 呼叫：drain；無參數 → None，反覆觸發符合 state 並同步處理事件，穩定後 update_quest。
     def run_state_rules(self):
         changed = True
         while changed:
@@ -373,11 +408,13 @@ class Sim:
         self.update_quest()
 
     # ------------------------------------------------------------------ 快題
+    # 呼叫：update_quest；無參數 → (題序,章節組)，依完成/抵港旗標選擇，唯讀。
     def quest_seq(self):
         if "flag.ch0_done" in self.flags and "flag.met_harbor" in self.flags:
             return self.flow["quests"]["after"]["order"], "ch1"
         return self.flow["quests"]["order"], "ch0"
 
+    # 呼叫：state 穩定後；無參數 → None，啟用題目並用最近 20 筆歷史補登；可能連續完成數題。
     def update_quest(self):
         while True:
             seq, grp = self.quest_seq()
@@ -397,9 +434,11 @@ class Sim:
             else:
                 return
 
+    # 呼叫：快題/歷史補登；題目/歷史 → boolean，委派 validate.eval_check，無進度寫入。
     def quest_check(self, q, h):
         return V.eval_check(q["check"], h["raw"], h["output"], self.man)
 
+    # 呼叫：快題/skip；題號/跳題/補登標記 → None，更新進度/commit/完成效果並 drain；credited 目前未分支處理。
     def finish_quest(self, qid, skipped=False, credited=False):
         q = self.quests[qid]
         _, grp = (None, "ch1" if qid.startswith("Q1") else "ch0")
@@ -424,12 +463,14 @@ class Sim:
         self.drain()
 
     # ------------------------------------------------------------------ 階梯
+    # 呼叫：show_rung；無參數 → 首個 when 為真的 guidance 或 None，唯讀且順序即優先度。
     def current_ladder(self):
         for g in self.flow["guidance"]:
             if self.ev(g["when"]):
                 return g
         return None
 
+    # 呼叫：hint/tick；觸發來源 → None，更新持久 ladder 計數/提示事件並 drain，不改題目答案。
     def show_rung(self, via):
         g = self.current_ladder()
         if g is None:
@@ -463,6 +504,7 @@ class Sim:
         self.drain()
 
     # ------------------------------------------------------------------ 時間
+    # 呼叫：feed/run_walk；秒數 → None，以至多一秒步長推虛擬 now 並 tick，沒有實體 sleep/timer。
     def advance(self, dt):
         end = self.now + dt
         # 以 1 秒為單位前進，依序觸發 timer 與 idle
@@ -471,6 +513,7 @@ class Sim:
             self.tick()
         self.now = end
 
+    # 呼叫：advance；無參數 → None，精確整秒觸發 840/900/960 timer 與 30/60/90 idle，timer 優先。
     def tick(self):
         if self.ended:
             return
@@ -487,9 +530,11 @@ class Sim:
                 self.show_rung("idle")
 
     # ------------------------------------------------------------------ 指令
+    # 呼叫：白名單/讀檔推斷；原始指令 → 以連接符簡分的片段陣列，不感知引號，不作安全沙箱。
     def segments(self, raw):
         return [s.strip() for s in re.split(r"\|\||&&|;|\|", raw) if s.strip()]
 
+    # 呼叫：run_walk；輸入/間隔秒 → 通常 None，先推時間再依 input/choice/command 派送，改 transient/durable 狀態。
     def feed(self, raw, dt=20):
         """送出一行輸入。dt：距離上一個輸入的秒數。"""
         if self.ended:
@@ -548,6 +593,7 @@ class Sim:
             return
         return self.feed_command(raw)
 
+    # 呼叫：feed；原始指令 → None，世界秒 +30，執行/歷史/讀檔事件/cmd/題目連鎖，失敗不自動回復。
     def feed_command(self, raw):
         self.world_t += 30
         out, rc = self.execute(raw)
@@ -563,6 +609,7 @@ class Sim:
                 self.finish_quest(self.active)
         self.drain()
 
+    # 呼叫：feed_command；可信指令 → (stdout,rc)，故事內建先處理，普通指令交真 Bash，可能改暫存/宿主可及檔案。
     def execute(self, raw):
         toks = raw.split()
         c0 = toks[0]
@@ -612,9 +659,11 @@ class Sim:
                 os.makedirs(dv)
         return self.run_bash(raw)
 
+    # 呼叫：rm main 防護；規則 ID → 來源 match.regex，唯讀，缺少時直接拋錯。
     def rule_regex(self, rid):
         return next(r for r in self.flow["rules"] if r["id"] == rid)["match"]["regex"]
 
+    # 呼叫：未知指令；指令名 → None，唯一建議才記 say/trace，不自動執行建議。
     def typo(self, t0):
         table = self.flow["command_pipeline"]["typos"]["table"]
         sug = table.get(t0)
@@ -625,26 +674,20 @@ class Sim:
             self.say("init.demo_typo")
             self.T("typo", t0, sug)
 
+    # 呼叫：execute；可信 raw → (stdout,rc)，啟動 Bash/30 秒 timeout，讀回 cwd 並正規化暫存路徑。
+    # HOME/cwd 只是執行環境，不限制 Bash 存取範圍；測試樹由 close 清理，不可接玩家任意輸入。
     def run_bash(self, raw):
-        env = dict(os.environ, HOME=self.home, LC_ALL="C")
-        script = raw + '\n__rc=$?\nprintf "\\n__CWD__%s\\n__RC__%s" "$PWD" "$__rc"'
-        p = subprocess.run(["bash", "-c", script], cwd=self.cwd, env=env, capture_output=True, text=True, timeout=30)
-        out = p.stdout
-        m = re.search(r"\n__CWD__(.*)\n__RC__(\d+)$", out, re.S)
-        rc = 0
-        if m:
-            out = out[:m.start()]
-            new = m.group(1)
-            rc = int(m.group(2))
-            if os.path.isdir(new) and os.path.realpath(new).startswith(os.path.realpath(self.root)):
-                self.cwd = new
+        out, rc, new = BC.run_world_bash(raw, self.cwd, self.root, self.home)
+        if new is not None and os.path.isdir(new):
+            self.cwd = new
         if self.branch != "main" and not os.path.isdir(self.home):
             os.makedirs(self.home)        # rm -rf ~ 之後家目錄仍保留
             if not os.path.isdir(self.cwd):
                 self.cwd = self.home
-        out = out.replace(os.path.realpath(self.root), "").replace(self.root, "")
         return out, rc
 
+    # 呼叫：feed_command；指令/stdout → 去重虛擬讀檔路徑，以運算元/遞迴 grep 輸出推測，非系統層追蹤。
+    # 與 JS 讀取時 inode 快照不同，腳本內重綁同名檔案不應依此工具推論正確性。
     def file_reads(self, raw, out):
         res = []
         for seg in self.segments(raw):
@@ -677,9 +720,7 @@ class Sim:
                     for line in out.split("\n"):
                         if ":" in line:
                             pth = line.split(":", 1)[0]
-                            rr = pth if pth.startswith("/") else os.path.join(self.cwd, pth)
-                            if pth.startswith("/") and not os.path.exists(rr):
-                                rr = os.path.join(self.root, pth.lstrip("/"))
+                            rr = self.vpath(pth) if pth.startswith("/") else os.path.join(self.cwd, pth)
                             if os.path.isfile(rr):
                                 res.append(self.to_virtual(rr))
         out_l, seen = [], set()
@@ -689,6 +730,7 @@ class Sim:
                 out_l.append(p)
         return out_l
 
+    # 呼叫：run_walk 例外/上層 finally；無參數 → None，刪除本實例 tmp（含兩章/分支），可重複呼叫。
     def close(self):
         shutil.rmtree(self.tmp, ignore_errors=True)
 
@@ -732,6 +774,8 @@ WALKTHROUGHS = {
 }
 
 
+# 呼叫：CLI/build_vectors/validate_flow；走法名/可選步驟 → 仍開啟的 Sim，例外會 close；keep 目前未用。
+# 成功回傳後呼叫端必須 finally close，避免每次測資生成殘留整棵實體世界。
 def run_walk(name, steps=None, keep=False):
     sim = Sim()
     try:
@@ -755,6 +799,7 @@ def run_walk(name, steps=None, keep=False):
         raise
 
 
+# 呼叫：CLI/build_vectors；Sim → 摘要 dict，seal 會更新 sim.save.head，其餘分數/投影唯讀。
 def summarize(sim):
     sv = sim.save
     S.seal(sv)
@@ -770,6 +815,7 @@ def summarize(sim):
     }
 
 
+# 呼叫：main 的 make/check；無參數 → 走法/運算式對照物件，執行所有真 Bash 走法且逐個 finally close。
 def build_vectors():
     out = {"note": "由 demo/tools/flow_sim.py make 產生，請勿手改。前端 headless 模式用同樣的步驟（dt 為虛擬秒）必須得到同樣的 commit 序列。",
            "schema": 1, "walkthroughs": []}
@@ -806,6 +852,7 @@ def build_vectors():
     return out
 
 
+# 呼叫：CLI；run/make/check → 程序輸出/退出，make 才覆寫 walkthrough.json，run/check 不修改測資。
 def main():
     cmd = sys.argv[1] if len(sys.argv) > 1 else "run"
     if cmd == "run":

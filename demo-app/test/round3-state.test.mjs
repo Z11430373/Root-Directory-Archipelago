@@ -1,3 +1,8 @@
+/**
+ * 第三輪狀態回歸：依賴 Engine/save/storage，瀏覽器案另需 dist/Playwright/RA_CHROME。
+ * callback 回傳 void/Promise，驗時鐘准入、容量不破壞前值、失敗回復與跨分頁競態；不重寫 fixture。
+ * 假 localStorage 用 finally 還原 descriptor；browser hooks 管生命週期，context 的 t.after 關閉並驗錯。
+ */
 import test, {before, after} from 'node:test';
 import assert from 'node:assert/strict';
 import {Engine} from '../src/engine/index.js';
@@ -18,6 +23,7 @@ after(async () => { await browser?.close(); }, {timeout:15_000});
 
 // This file intentionally retains ordinary failing assertions for confirmed new
 // defects. No builds, fixture writes, existing-test edits, or weakened checks.
+/** 核心案例呼叫；無參數 → 已開始且有固定暱稱的 Engine，只改該實例記憶體。 */
 async function started() {
   const engine = new Engine();
   await engine.start();
@@ -97,6 +103,7 @@ test('R3 control: journal/string capacity failures preserve the previous readabl
     }
 });
 
+/** browser 案例呼叫；TestContext → 隔離 context，蒐集其所有 page 錯誤，t.after 關閉並斷言。 */
 async function newContext(t) {
   const context = await browser.newContext({viewport:{width:1280,height:800}, reducedMotion:'reduce'});
   const errors = [];
@@ -110,6 +117,7 @@ async function newContext(t) {
   });
   return context;
 }
+/** browser 案例呼叫；共用 context → 已開產物且凍結時鐘的 page，頁面隨 context.close 清理。 */
 async function open(context) {
   const page = await context.newPage();
   page.setDefaultTimeout(6_000);
@@ -120,6 +128,7 @@ async function open(context) {
   await page.locator('#new-game').waitFor();
   return page;
 }
+/** browser helper/案例呼叫；page/raw → Promise<void>，先等 enabled 再提交/等完成，避免交錯表單。 */
 async function send(page, raw) {
   const input = page.locator('#command-input');
   await page.locator('#command-input:enabled').waitFor();
@@ -127,10 +136,12 @@ async function send(page, raw) {
   await input.press('Enter');
   await page.locator('#command-input:enabled').waitFor();
 }
+/** browser 案例呼叫；page/暱稱 → Promise<void>，按新遊戲並送暱稱，寫隔離 context 的本機紀錄。 */
 async function start(page, nick) {
   await page.locator('#new-game').click();
   await send(page, nick);
 }
+/** browser 案例呼叫；page → Promise<本機 envelope 原字串>，只讀完整內容而非僅 head。 */
 const localText = page => page.evaluate(() => localStorage.getItem('ra.demo.save.v1'));
 
 test('R3-STATE-01 browser: a handled state-rule failure cannot autosave an unreplayable journal',

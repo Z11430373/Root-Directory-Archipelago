@@ -1,3 +1,8 @@
+/**
+ * 存檔檔案匯入與正式版投影；依賴 config/fold/score/hash/integrity/validate/json/errors.js。
+ * main.js 使用 importFile 續玩；toFullgame 只產生攜帶資料，不會連到正式版或覆寫存檔。
+ * 所有輸出為新物件，來源保持不變；可信度不能取代安全形狀檢查。
+ */
 import { importRules } from './config.js';
 import { fold } from './fold.js';
 import { score } from './score.js';
@@ -7,6 +12,7 @@ import { checkShape } from './validate.js';
 import { parseSaveJSON } from './json.js';
 import { codeError } from './errors.js';
 
+/** 由 main.js 匯入 JSON 時呼叫；文字 → Promise<形狀合法的 save>，鏈壞仍接受並交 level 標示。 */
 export async function importFile(jsonText) {
   try {
     const save = parseSaveJSON(jsonText);
@@ -16,6 +22,7 @@ export async function importFile(jsonText) {
   } catch (error) { throw codeError(error, '存檔檔案格式錯誤'); }
 }
 
+/** 由摘要/互通測試呼叫；save 與匯入白名單 → Promise<正式版起始資料>，只對完整結束紀錄給紀念獎勵。 */
 export async function toFullgame(save, ru = importRules) {
   checkShape(save);
   const st = fold(save);

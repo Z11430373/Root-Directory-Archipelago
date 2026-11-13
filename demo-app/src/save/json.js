@@ -1,12 +1,19 @@
+/**
+ * 不可信存檔 JSON 的詞法與物件樹安全層；依賴 config.js、errors.js。
+ * codec/import 先用 parseSaveJSON 保留數字/重複鍵資訊；validate/state 再檢查記憶體物件。
+ * 不執行輸入內容，不修改來源；錯誤皆轉 CodeError，暫存集合隨呼叫釋放。
+ */
 import { LIMITS } from './config.js';
 import { CodeError, codeError } from './errors.js';
 
 const dangerousKeys = new Set(['__proto__', 'constructor', 'prototype']);
+/** 供 validate/state 呼叫；任意值 → 是否為普通或 null-prototype 非陣列物件；無副作用。 */
 export const isRecord = o => o !== null && typeof o === 'object' && !Array.isArray(o)
   && (Object.getPrototypeOf(o) === Object.prototype || Object.getPrototypeOf(o) === null);
 
 // A token-aware parser: JSON.parse alone loses 1.0, 1e0, duplicate keys and
 // precision before a reviver can check them. Never evaluates input as code.
+/** 由代碼/JSON 檔匯入呼叫；受限 ASCII/整數 JSON 文字 → 新值；拒絕浮點詞法、重複鍵與污染鍵。 */
 export function parseSaveJSON(text) {
   try {
     if (typeof text !== 'string' || text.length > LIMITS.max_inflated_bytes
@@ -15,8 +22,10 @@ export function parseSaveJSON(text) {
     }
     let pos = 0;
     let nodes = 0;
+    // fail/whitespace 只操作本次剖析游標；前者統一拒絕，後者僅跳過 JSON 定義的四種空白。
     const fail = () => { throw new CodeError('存檔檔案不是合法的 JSON'); };
     const whitespace = () => { while (pos < text.length && /[\x20\x09\x0a\x0d]/.test(text[pos])) pos++; };
+    /** 由 value 及物件鍵解析呼叫；從引號處前進 pos，回傳解碼後的受限字串或拋錯。 */
     function string() {
       const start = pos++;
       while (pos < text.length) {
@@ -41,6 +50,7 @@ export function parseSaveJSON(text) {
       }
       fail();
     }
+    /** 遞迴讀取指定深度的值；回傳新物件/陣列/純量，累計節點數並拒絕深度與數值越界。 */
     function value(depth) {
       if (++nodes > 16000 || depth > LIMITS.max_depth) throw new CodeError('存檔巢狀過深或內容過多');
       whitespace();
@@ -95,9 +105,11 @@ export function parseSaveJSON(text) {
   } catch (error) { throw codeError(error, '存檔檔案不是合法的 JSON'); }
 }
 
+/** 由 checkShape/unpack 呼叫；記憶體 JSON 值 → undefined，拒絕循環、getter、symbol 與污染鍵。 */
 export function checkJSONTree(value) {
   const ancestors = new Set();
   let nodes = 0;
+  /** 遞迴檢查值與深度；以 descriptor 讀取子值而不執行 getter，離開時清除祖先標記。 */
   function visit(o, depth) {
     if (++nodes > 16000 || depth > LIMITS.max_depth) throw new CodeError('存檔巢狀過深或內容過多');
     if (typeof o === 'string') {

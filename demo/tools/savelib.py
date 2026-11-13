@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# 存檔參考子系統；依賴同層 ../demo.yaml、../integrity.yaml、../import_rules.yaml 與 PyYAML/標準庫。
+# flow_sim/simulate/testvectors/驗證器匯入本模組；JS 對應實作在 demo-app/src/save/。
+# 多數函式只處理記憶體事件；add_commit/seal/pack 修改 save，CLI 額外讀檔/印統計，不修改輸入檔。
 """
 存檔函式庫（試玩版與正式版共用的存檔格式 schema 1 的參考實作）。
 
@@ -37,19 +40,24 @@ DEMO = os.path.dirname(HERE)
 PREFIX = "RA1-"
 
 
+# 呼叫：雜湊/編碼/測資；JSON 值 → 鍵排序、無空白 JSON 字串，無副作用；輸入限制另由 check_shape 保證。
 def canonical(o):
     return json.dumps(o, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
 
 
+# 呼叫：add_commit/verify_chain；parent/本文 → 八碼 SHA-256 前綴，只證明資料一致性，不是簽章。
 def commit_id(parent, body):
     return hashlib.sha256(((parent or "") + canonical(body)).encode("utf-8")).hexdigest()[:8]
 
 
+# 呼叫：模擬器/測資工具；身份/種子/版本/活動 → 新空存檔，不驗欄位、不寫檔。
 def new_save(nick, seed, pack="root-archipelago-ch01@0.1.0", event=None):
     return {"schema": 1, "game": "root-archipelago", "demo": True, "demo_id": "demo-first-night",
             "pack": pack, "nick": nick, "seed": seed, "event": event, "commits": []}
 
 
+# 呼叫：模擬器/unpack；save/事件/時鐘 → 新 commit，原地 append，data 沿用參照且不更新 head。
+# 與 JS addCommit 的深複製不同，呼叫端不得事後修改已附加 data；本函式不做交易回復。
 def add_commit(save, kind, data, r, t=0, chapter="ch0", branch="main"):
     parent = save["commits"][-1]["id"] if save["commits"] else None
     body = {"branch": branch, "chapter": chapter, "kind": kind, "data": data, "t": t, "r": r}
@@ -60,6 +68,7 @@ def add_commit(save, kind, data, r, t=0, chapter="ch0", branch="main"):
     return c
 
 
+# 呼叫：level/匯入投影/CLI；save → (是否一致,首錯索引或 None)，唯讀；此參考版 head 檢查較 JS 寬鬆。
 def verify_chain(save):
     parent = None
     for i, c in enumerate(save["commits"]):
@@ -73,12 +82,14 @@ def verify_chain(save):
 
 
 # ---------------------------------------------------------------------------
+# 呼叫：pack/摘要/匯出前；save → 同一 save，原地更新 head，不修復既有 commit ID。
 def seal(save):
     """寫入 head（鏈尾 id）。匯出前呼叫。"""
     save["head"] = save["commits"][-1]["id"] if save["commits"] else None
     return save
 
 
+# 呼叫：export_code/測資；save → {m,c}，先原地 seal，再以時間差/零值哨兵縮短事件，不刪原始 commits。
 def pack(save):
     """代碼用的緊湊形式：commit 變成陣列、不存 id/parent（匯入時由鏈重算，head 用來對帳）。"""
     seal(save)
@@ -94,6 +105,7 @@ def pack(save):
     return {"m": meta, "c": rows}
 
 
+# 呼叫：import_code；緊湊 {m,c} → 新 save，累加時間並重算鏈，保留 meta.head 供驗鏈；形狀驗證在外層。
 def unpack(o):
     save = dict(o["m"])
     save["commits"] = []
@@ -107,6 +119,7 @@ def unpack(o):
     return save
 
 
+# 呼叫：CLI/模擬/測資；save → RA1 字串，pack 會更新來源 head；此參考版未做 JS 匯出端的驗鏈自檢。
 def export_code(save):
     raw = zlib.compress(canonical(pack(save)).encode("utf-8"), 9)
     b = base64.urlsafe_b64encode(raw).decode().rstrip("=")
@@ -114,18 +127,22 @@ def export_code(save):
     return "%s%s-%s" % (PREFIX, b, crc)
 
 
+# 匯入/形狀驗證統一錯誤型別；供 CLI/驗證器捕捉，不持有額外資源。
 class CodeError(Exception):
     pass
 
 
+# 呼叫：check_shape/import_code；無參數 → integrity.yaml 物件，讀磁碟、不快取或改規格。
 def integrity():
     return yaml.safe_load(open(os.path.join(DEMO, "integrity.yaml"), encoding="utf-8"))
 
 
+# 呼叫：check_shape；任意值 → 嚴格整數布林判定，排除 Python bool 是 int 子類的陷阱，無副作用。
 def _is_int(x):
     return isinstance(x, int) and not isinstance(x, bool)
 
 
+# 呼叫：check_shape/自身；JSON 值/深度 → 最大巢狀深度，超 64 提早回傳，不修改資料。
 def _depth(o, d=0):
     if d > 64:
         return d
@@ -136,6 +153,7 @@ def _depth(o, d=0):
     return d
 
 
+# 呼叫：匯入/驗證器；save/可選設定 → True，結構/白名單/時間不合法拋 CodeError；不驗鏈或改存檔。
 def check_shape(save, cfg=None, ig=None):
     """硬規則：形狀不對就丟 CodeError。這是安全問題，不是可信度問題。"""
     cfg = cfg or demo_cfg()
@@ -192,6 +210,7 @@ def check_shape(save, cfg=None, ig=None):
         if not isinstance(d, dict):
             raise CodeError("%s 的 data 不是物件" % where)
 
+        # 呼叫：目前事件分支；必要/選用鍵 → None，data 少鍵/多鍵拋錯，捕捉當前事件診斷位置。
         def need(keys, optional=()):
             if set(d) - set(keys) - set(optional) or set(keys) - set(d):
                 raise CodeError("%s（%s）的欄位不符" % (where, k))
@@ -238,6 +257,7 @@ def check_shape(save, cfg=None, ig=None):
     return True
 
 
+# 呼叫：level；save/設定 → 可疑原因 list，只讀事件次序/速度/投票時機，不拒絕續玩。
 def plausibility(save, cfg=None, ig=None):
     """可信度：回傳命中的原因（list[str]）。只標記，不拒絕。"""
     cfg = cfg or demo_cfg()
@@ -264,6 +284,7 @@ def plausibility(save, cfg=None, ig=None):
     return reasons
 
 
+# 呼叫：CLI/投影/統計；save → (intact/suspicious/broken,原因)，不修鏈、不證明實際遊玩。
 def level(save):
     """回傳 ('intact'|'suspicious'|'broken', 原因清單)"""
     ok, _ = verify_chain(save)
@@ -273,6 +294,8 @@ def level(save):
     return ("suspicious", r) if r else ("intact", [])
 
 
+# 呼叫：import_code；zlib bytes/上限 → 解壓 bytes，超限/截斷拋 CodeError；解壓器局部釋放。
+# 此 Python 參考未像 JS codec 額外拒絕串流尾料，勿把兩者安全細節誤認為完全相同。
 def _inflate_bounded(raw, limit):
     d = zlib.decompressobj()
     out = d.decompress(raw, limit + 1)
@@ -283,6 +306,7 @@ def _inflate_bounded(raw, limit):
     return out
 
 
+# 呼叫：load_any/測資/CLI；代碼文字 → save，按長度/CRC/字元/有界解壓/JSON/形狀順序處理；不寫檔。
 def import_code(code):
     ig = integrity()
     L = ig["limits"]
@@ -316,10 +340,12 @@ def import_code(code):
     return save
 
 
+# 呼叫：json.loads 的浮點/常數 hook；token → 一律拋 CodeError，防浮點/NaN 進事件欄位。
 def _no_float(x):
     raise CodeError("存檔不接受浮點數或特殊數值")
 
 
+# 呼叫：CLI/check_codes；檔名或代碼 → 已檢查形狀 save，優先讀存在檔；不修改原檔，鏈分級另做。
 def load_any(s):
     if os.path.exists(s):
         txt = open(s, encoding="utf-8").read()
@@ -339,14 +365,17 @@ def load_any(s):
 
 
 # ---------------------------------------------------------------------------
+# 呼叫：參考工具/計分；無參數 → demo.yaml 物件，讀磁碟、不快取或修改來源。
 def demo_cfg():
     return yaml.safe_load(open(os.path.join(DEMO, "demo.yaml"), encoding="utf-8"))
 
 
+# 呼叫：to_fullgame；無參數 → import_rules.yaml 物件，只讀正式版攜帶政策。
 def rules():
     return yaml.safe_load(open(os.path.join(DEMO, "import_rules.yaml"), encoding="utf-8"))
 
 
+# 呼叫：計分/分級/投影/統計；save → 新狀態，flags 為 set，獎勵去重；不重播對話或任意檔案改動。
 def fold(save):
     """把 commit 折成狀態：旗標、完成的快題、發現、選擇、耗時…"""
     st = {"flags": set(), "tasks": [], "finds": [], "items": [], "cards": [], "checkpoints": [],
@@ -385,6 +414,7 @@ def fold(save):
     return st
 
 
+# 呼叫：card/aggregate/to_fullgame/測資；save/設定 → 計分稱號字典，純投影，不將分數寫回存檔。
 def score(save, cfg=None):
     cfg = cfg or demo_cfg()
     st = fold(save)
@@ -412,6 +442,7 @@ def score(save, cfg=None):
             "finished": "flag.demo.finished" in st["flags"], "time_up": "flag.demo.time_up" in st["flags"]}
 
 
+# 呼叫：CLI/互通測試；save/可選規則 → 正式版起始投影，只帶白名單並按完整性給獎勵，不連線或覆寫來源。
 def to_fullgame(save, ru=None):
     ru = ru or rules()
     st = fold(save)
@@ -454,10 +485,12 @@ def to_fullgame(save, ru=None):
     return out
 
 
+# 呼叫：card/CLI/驗證器；秒數 → 分:兩位秒文字，無副作用。
 def fmt_time(sec):
     return "%d:%02d" % (sec // 60, sec % 60)
 
 
+# 呼叫：CLI/互通測試；save/名次/設定 → 純文字值班證，不操作剪貼簿或寫檔。
 def card(save, rank=None, cfg=None):
     cfg = cfg or demo_cfg()
     sc = score(save, cfg)
@@ -466,6 +499,7 @@ def card(save, rank=None, cfg=None):
     state = "完成" if sc["finished"] and not sc["time_up"] else "值班時間到（進度已保存）" if sc["time_up"] else "進行中"
     vote = {"block": "擋", "pass": "放行", None: "—"}[sc["vote"]]
     w = 40
+    # 呼叫：card 每列；文字 → 補空白的框線列，使用與 JS 相同的簡化東亞字寬，無外部副作用。
     def ln(s):
         pad = w - sum(2 if ord(c) > 0x2E80 else 1 for c in s)
         return "│ " + s + " " * max(0, pad - 1) + "│"
@@ -486,6 +520,7 @@ def card(save, rank=None, cfg=None):
     return "\n".join(lines)
 
 
+# 呼叫：CLI/驗證器；存檔陣列 → (活動統計,排名資料)，不改輸入；CLI 才過濾非 intact 的公開排行。
 def aggregate(saves):
     cfg = demo_cfg()
     rows = []
@@ -528,6 +563,7 @@ def aggregate(saves):
     return summary, ranking
 
 
+# 呼叫：CLI；子指令/來源 → 程序輸出，讀代碼/檔案後印驗鏈、值班證、正式版投影或排行，不覆寫來源。
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)

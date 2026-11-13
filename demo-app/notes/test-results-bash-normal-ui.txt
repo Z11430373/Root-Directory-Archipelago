@@ -1,0 +1,44 @@
+Data: 125269 bytes; 31 content_ref/text_ref checked; B0 text matched.
+Built dist/index.html: 2307629 bytes (offline, CSP SHA-256).
+✔ Bash islands: a fresh normal game retains variables, functions, aliases and redirects through reload (4764.5654ms)
+✔ Bash islands: keyboard continuation, heredoc, completion and Ctrl+C at 320px (2564.0564ms)
+✔ Bash islands: keyboard continuation, heredoc, completion and Ctrl+C at 768px (2711.8294ms)
+✔ Bash islands: keyboard continuation, heredoc, completion and Ctrl+C at 1280px (3170.0425ms)
+✖ Bash islands: surface changes preserve the same session; greater-than is only PS2 (2811.5508ms)
+✔ Bash islands: imported event saves also accept Bash without visiting terminal mode (1920.0552ms)
+✔ Bash replay browser: M1 feed waiting in idle commit, F2 preserves legacy replay and upgrades the next input (3073.5694ms)
+✔ Bash replay browser: M1 feed waiting in idle commit, F2 then back to islands preserves legacy replay and upgrades the next input (1581.8085ms)
+✔ Bash replay browser: M5 baseSave waiting in verifyChain, F2 preserves legacy replay and upgrades the next input (2448.0884ms)
+✔ Bash replay browser: M5 baseSave waiting in verifyChain, F2 then back to islands preserves legacy replay and upgrades the next input (2331.2533ms)
+✔ Bash replay browser: feed stays in normal style, replays legacy and uses Bash for new inputs (2366.209ms)
+✔ Bash replay browser: baseSave stays in normal style, replays legacy and uses Bash for new inputs (2169.6891ms)
+✔ Bash replay browser: untagged old journal stays legacy, then normal input uses Bash (1354.6311ms)
+✔ Bash replay browser: M3 islands to terminal, Ctrl+C before Worker preserves exact storage (1497.2305ms)
+✔ Bash replay browser: M3 stays in islands, Ctrl+C before Worker preserves exact storage (1247.3096ms)
+✔ Bash replay browser: M3 console resume to islands, Ctrl+C before Worker preserves exact storage (1429.3272ms)
+✔ Bash replay browser: M5 early baseSave F2, Ctrl+C before Worker preserves exact storage (968.5069ms)
+✔ Bash replay browser: M5 early baseSave roundtrip, Ctrl+C before Worker preserves exact storage (999.3468ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 17
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 22733.7288
+
+✖ failing tests:
+
+test at test\bash-islands-browser.test.mjs:75:1
+✖ Bash islands: surface changes preserve the same session; greater-than is only PS2 (2811.5508ms)
+  AssertionError [ERR_ASSERTION]: A genuine Bash continuation still uses the conventional PS2
+      at TestContext.<anonymous> (file:///C:/Users/user/Documents/%E3%80%8A%E6%A0%B9%E7%9B%AE%E9%8C%84%E7%BE%A4%E5%B3%B6%E3%80%8B/demo-app/test/bash-islands-browser.test.mjs:81:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'ROOT ARCHIPELAGO  試玩版〈第一夜〉\n預計 15 分鐘。你可以隨時輸入 hint。\n[init] 請輸入你的暱稱（英文或數字，最多 12 字）。\n暱稱: normalqa\n[init] 暱稱已記錄：op-normalqa。\n[PAGE] INIT -> op-<你的暱稱>\n       燈塔機房需要人手。優先度：低。倒數：無。\n       你是目前唯一回應的人。\nWelcome to ROOT ARCHIPELAGO v5.0 (POSIX-ish / island)\n * 本島：lighthouse    uptime 41d    燈：熄\n * 上次登入：lin，41 天前\nYou have 1 new mail.\n[init] 你有一封信。指令是 mail。\nop-normalqa@lighthouse:~$ shared=kept; report() { printf "shared:%s\\n" "$shared"; }\nop-normalqa@lighthouse:~$ report\nshared:kept\nop-normalqa@lighthouse:~$ if true; then\n>\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n',
+    expected: /^> /m,
+    operator: 'match',
+    diff: 'simple'
+  }

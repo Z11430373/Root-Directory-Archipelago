@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# 世界資料工具：決定性生成日誌與 manifest，供 validate.py、demo/tools 及 JS loggen.js 對照。
+# 依賴 Python 標準庫，不讀其他專案檔；CLI 會寫 --out 下的 access.log、rotated/、manifest.json。
+# 函式本身多為記憶體計算；CLI 輸出不自動刪除，暫存目錄由呼叫端驗證器負責清理。
 """
 日誌港 access.log 產生器（參考實作 + 規格）。
 
@@ -37,9 +40,11 @@ CONVOY_IP = "10.7.0.23"
 
 
 class Mulberry32:
+    # 呼叫：各產生器；輸入 seed → 新 RNG，將狀態限為 32-bit，無檔案副作用。
     def __init__(self, seed):
         self.a = seed & 0xFFFFFFFF
 
+    # 呼叫：below/互通測試；無參數 → 下一 unsigned 32-bit 值，原地推進 self.a。
     def next_u32(self):
         # 標準 mulberry32（與常見 JS 版相同）
         M = 0xFFFFFFFF
@@ -49,9 +54,11 @@ class Mulberry32:
         t ^= (t + (((t ^ (t >> 7)) * (t | 61)) & M)) & M
         return (t ^ (t >> 14)) & M
 
+    # 呼叫：流量/足跡生成；正整數 n → [0,n) 值，消耗一次 RNG，非安全隨機。
     def below(self, n):
         return self.next_u32() % n
 
+    # 呼叫：day_lines/rand_ip；非空序列 → 隨機元素，透過 below 推進 RNG。
     def pick(self, seq):
         return seq[self.below(len(seq))]
 
@@ -66,17 +73,21 @@ PATHS_404 = ["/dock/berth-%02d/old", "/ship/ghost", "/crane/9", "/static/seal.pn
 UAS = ["ssh-ferry/2.1", "crane-ctl/0.8", "dockwatch/3", "curl/7.88", "tidemon/1.2", "gull-bot/0.3"]
 
 
+# stamp/fmt 是純格式層；時區固定 +0000，改格式會影響 Shell 欄位解析、題目與 JS 雜湊對照。
+# 呼叫：fmt；日期/當日秒數 → Apache 時間戳字串，無副作用。
 def stamp(d, sec):
     h, r = divmod(sec, 3600)
     m, s = divmod(r, 60)
     return "%02d/%s/%04d:%02d:%02d:%02d +0000" % (d.day, MON[d.month - 1], d.year, h, m, s)
 
 
+# 呼叫：所有 rows 產生器；一筆訪問欄位 → 不帶換行的日誌行，不改日期或 RNG。
 def fmt(ip, user, d, sec, method, path, status, nbytes, ua, rt):
     return '%s - %s [%s] "%s %s HTTP/1.1" %d %d "-" "%s" %d' % (
         ip, user, stamp(d, sec), method, path, status, nbytes, ua, rt)
 
 
+# 呼叫：generate/generate_rotated；RNG → 虛構 IP，避開保留組，會消耗不定次數 RNG。
 def rand_ip(rng):
     # 避開 10.7.0.x（GC 與車隊專用）與三個熱門 IP
     while True:
@@ -85,6 +96,7 @@ def rand_ip(rng):
             return ip
 
 
+# 呼叫：day_lines；RNG/[lo,hi) → 非 404 整數，避免未規劃的欄位干擾，會推進 RNG。
 def nonfour(rng, lo, hi):
     while True:
         v = lo + rng.below(hi - lo)
@@ -92,6 +104,7 @@ def nonfour(rng, lo, hi):
             return v
 
 
+# 呼叫：主/輪替日誌；RNG/日期/規模/IP 池/申訴選項 → rows，消耗 RNG 但不寫檔；user_pool 目前未使用。
 def day_lines(rng, d, n, ips, is_appeal=False, appeal_extra=0, user_pool=None):
     """回傳 [(sec, order, line)]。n = 一般流量行數。"""
     rows = []
@@ -138,12 +151,14 @@ def day_lines(rng, d, n, ips, is_appeal=False, appeal_extra=0, user_pool=None):
     return rows
 
 
+# 呼叫：主/輪替生成；日期 → GC 與車隊兩筆固定 rows，不消耗 RNG。
 def gc_rows(d):
     rows = [(7200, 0, fmt(GC_IP, "-", d, 7200, "GET", "/gc/probe", 200, 12, GC_UA, 3))]
     rows.append((7212, 0, fmt(CONVOY_IP, "-", d, 7212, "GET", "/ship/convoy", 200, 96, "ssh-ferry/2.1", 40)))
     return rows
 
 
+# 呼叫：generate；日期/虛構身份/IP/起始秒/額外訪問 → 足跡 rows，新陣列且不讀真實活動資訊。
 def footprint_rows(d, nick, ip, base_sec, extra=()):
     rows = []
     seq = [("POST", "/lighthouse/login", 200, 64), ("GET", "/lighthouse/handbook", 200, 910),
@@ -156,6 +171,7 @@ def footprint_rows(d, nick, ip, base_sec, extra=()):
     return rows
 
 
+# 呼叫：generate_rotated；無參數 → lin 離開當晚的固定彩蛋 rows，無副作用。
 def lin_rows():
     d = date(2031, 10, 27)
     return [
@@ -167,6 +183,8 @@ def lin_rows():
     ]
 
 
+# 呼叫：CLI/JS 對照；生成參數 → (主日誌行陣列, 申訴日, decoy 數)，僅改本次局部 RNG/容器。
+# RNG 呼叫次序也是跨語言契約；今日足跡、申訴流量與 404/前綴陷阱不可只為美化而調換。
 def generate(seed, lines_per_day, days, now, nick, npc_footprints, peers):
     rng = Mulberry32(seed)
     ips = [rand_ip(rng) for _ in range(max(300, lines_per_day // 3))]
@@ -208,6 +226,7 @@ def generate(seed, lines_per_day, days, now, nick, npc_footprints, peers):
     return out, appeal_day, decoy
 
 
+# 呼叫：CLI/一致性工具；種子/規模/日期 → 輪替行陣列，獨立 XOR 種子，不影響主日誌生成。
 def generate_rotated(seed, lines_per_day, days, now):
     rng = Mulberry32(seed ^ 0xA5A5)
     ips = sorted({rand_ip(rng) for _ in range(200)})
@@ -224,6 +243,7 @@ def generate_rotated(seed, lines_per_day, days, now):
     return out
 
 
+# 呼叫：CLI；日誌行/申訴日 → 題目答案 manifest，唯讀計算，IP 平手依四段整數排序。
 def analyze(lines, appeal_day):
     from collections import Counter
     n404 = sum(1 for l in lines if ' 404 ' in l)
@@ -247,6 +267,7 @@ def analyze(lines, appeal_day):
     }
 
 
+# 呼叫：CLI；argv → None，建立輸出目錄、覆寫日誌/manifest 並列印摘要；檔案由 with 關閉，不自動刪產物。
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=5)
@@ -263,15 +284,15 @@ def main():
     npcs = [("op-ada", 9), ("op-bo", 10)] if a.npc else []
     lines, appeal_day, decoy = generate(a.seed, a.lines_per_day, a.days, now, a.nick, npcs, a.peer)
     os.makedirs(os.path.join(a.out, "rotated"), exist_ok=True)
-    with open(os.path.join(a.out, "access.log"), "w") as f:
+    with open(os.path.join(a.out, "access.log"), "w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(lines) + "\n")
     rot = generate_rotated(a.seed, a.lines_per_day, a.days, now)
-    with open(os.path.join(a.out, "rotated", "access.log.1"), "w") as f:
+    with open(os.path.join(a.out, "rotated", "access.log.1"), "w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(rot) + "\n")
     man = analyze(lines, appeal_day)
     man.update({"seed": a.seed, "lines_per_day": a.lines_per_day, "days": a.days, "decoy404_lines": decoy,
                 "nick": a.nick, "rotated_lines": len(rot)})
-    with open(os.path.join(a.out, "manifest.json"), "w") as f:
+    with open(os.path.join(a.out, "manifest.json"), "w", encoding="utf-8", newline="\n") as f:
         json.dump(man, f, ensure_ascii=False, indent=2)
     print(json.dumps(man, ensure_ascii=False, indent=2))
 

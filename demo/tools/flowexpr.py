@@ -1,3 +1,5 @@
+# 流程規格運算式參考層；只依賴 re，供 flow_sim.py、validate_flow.py 及跨語言測資使用。
+# JS 對應 demo-app/src/expr.js；解析器只動局部游標，env.funcs 必須由呼叫者提供無副作用函式。
 """
 flow.yaml 的運算式（expression）。參考實作；前端要寫一個行為相同的解析器（不得使用 eval／new Function）。
 
@@ -22,6 +24,7 @@ flow.yaml 的運算式（expression）。參考實作；前端要寫一個行為
 import re
 
 
+# 文法/未知函式的統一錯誤，驗證器捕捉後列診斷，無額外資源。
 class ExprError(Exception):
     pass
 
@@ -29,6 +32,7 @@ class ExprError(Exception):
 _TOK = re.compile(r"\s*(?:(\d+)|('[^']*'|\"[^\"]*\")|([A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z0-9_\-]+)*)|(==|!=|<=|>=|<|>|\(|\)|,))")
 
 
+# 呼叫：evaluate；來源字串 → (種類,值) tokens，非法位置拋 ExprError，不求值或改環境。
 def tokenize(s):
     pos, out = 0, []
     s = s.rstrip()
@@ -48,14 +52,18 @@ def tokenize(s):
     return out
 
 
+# 呼叫：Sim.ev/靜態驗證/測資；運算式/環境 → boolean，完整解析且不保證短路，不執行一般 Python 程式碼。
 def evaluate(src, env):
     """env: {"flags": set, "vars": dict, "funcs": {name: callable}}"""
     toks = tokenize(src)
     i = [0]
 
+    # 以下文法函式共用 toks/i；回傳當層值並依文法消費 token，不寫入外部世界。
+    # 呼叫：各文法層；無參數 → 當前 token 或 (None,None)，不推進游標。
     def peek():
         return toks[i[0]] if i[0] < len(toks) else (None, None)
 
+    # 呼叫：各文法層；無參數 → token 並推進 i，提早耗盡拋錯。
     def eat():
         if i[0] >= len(toks):
             raise ExprError("運算式提早結束")
@@ -63,6 +71,7 @@ def evaluate(src, env):
         i[0] += 1
         return t
 
+    # 呼叫：根層/括號/參數；無參數 → or 串值，右側也解析求值，環境函式不可帶副作用。
     def p_or():
         v = p_and()
         while peek() == ("name", "or"):
@@ -71,6 +80,7 @@ def evaluate(src, env):
             v = bool(v) or bool(r)       # 解析時不短路（簡單）；求值無副作用，結果相同
         return v
 
+    # 呼叫：p_or；無參數 → and 串值，依優先序解析至 not，比較前不做短路。
     def p_and():
         v = p_not()
         while peek() == ("name", "and"):
@@ -79,12 +89,14 @@ def evaluate(src, env):
             v = bool(v) and bool(r)
         return v
 
+    # 呼叫：p_and/自身；無參數 → 前綴否定布林或比較層值。
     def p_not():
         if peek() == ("name", "not"):
             eat()
             return not p_not()
         return p_cmp()
 
+    # 呼叫：p_not；無參數 → 一次比較或原子值，跨型別排序固定 False，防隱含轉型差異。
     def p_cmp():
         a = p_atom()
         k, v = peek()
@@ -101,6 +113,7 @@ def evaluate(src, env):
             return {"<=": a <= b, ">=": a >= b, "<": a < b, ">": a > b}[v]
         return a
 
+    # 呼叫：p_cmp；無參數 → 常值/名稱/括號/白名單函式結果，未知函式/缺括號拋錯。
     def p_atom():
         if i[0] >= len(toks):
             raise ExprError("運算式提早結束")

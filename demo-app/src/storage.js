@@ -1,3 +1,8 @@
+/**
+ * 本機儲存/重播資料層，無檔案依賴；main.js 使用，session-storage.js 共用 SAVE_KEY。
+ * portable RA1 不含任意指令/cwd；journal 額外保留輸入與時間，本機 envelope 才能完整重播。
+ * read/write/clear 是低階容錯工具，不提供所有權；遊戲主檔寫刪必須走 ui/session-storage.js。
+ */
 // Local replay metadata is deliberately separate from the portable RA1 schema.
 export const SAVE_KEY = 'ra.demo.save.v1';
 export const PREFS_KEY = 'ra.demo.preferences.v1';
@@ -7,6 +12,7 @@ const MAX_LOCAL_CHARS = 2_000_000;
 // independently bounded by the save format and stops when the game ends.
 const MAX_JOURNAL_SECONDS = Number.MAX_SAFE_INTEGER / 1000;
 
+/** main.js 偏好/輔助讀取呼叫；key → JSON 值|null，存取/解析/大小失敗均 null，不改儲存內容。 */
 export function readLocal(key = SAVE_KEY) {
   try {
     const text = globalThis.localStorage.getItem(key);
@@ -14,6 +20,7 @@ export function readLocal(key = SAVE_KEY) {
     return JSON.parse(text);
   } catch { return null; }
 }
+/** 偏好與測試呼叫；值/key → 是否寫入成功，先序列化/限大小再寫；無跨分頁互斥，勿用於主檔所有權。 */
 export function writeLocal(value, key = SAVE_KEY) {
   try {
     const text = JSON.stringify(value);
@@ -22,11 +29,13 @@ export function writeLocal(value, key = SAVE_KEY) {
     return true;
   } catch { return false; }
 }
+/** 低階工具/測試呼叫；key → 是否刪除成功；無所有權保護，main.js 的重開/kiosk 不可藉此繞過 guard。 */
 export function clearLocal(key = SAVE_KEY) {
   try { globalThis.localStorage.removeItem(key); return true; }
   catch { return false; }
 }
 
+/** 本機續玩/persist 呼叫；journal → boolean，檢查步數、有限時間與輸入長度；唯讀且不重播內容。 */
 export function checkJournal(journal) {
   if (!Array.isArray(journal) || journal.length > 20_000) return false;
   let elapsed=0;
@@ -35,10 +44,15 @@ export function checkJournal(journal) {
       typeof step.dt!=='number'||!Number.isFinite(step.dt)||step.dt<0)return false;
     elapsed+=step.dt;
     return Number.isFinite(elapsed)&&elapsed<=MAX_JOURNAL_SECONDS&&
-      (step.type!=='input'||(step.dt<=2700&&typeof step.raw==='string'&&step.raw.length<=4096));
+      (step.type!=='input'||(step.dt<=2700&&typeof step.raw==='string'&&step.raw.length<=4096&&
+        (step.shell===undefined||['legacy','bash'].includes(step.shell))));
   });
 }
 
+/**
+ * main.js syncClock 呼叫；可變 journal/dt → undefined，安全時原地合併最後 advance 或追加新項。
+ * 維持與即時時鐘相同浮點加總終點，避免半毫秒改變 commit ID；參數超限先拋錯，不截斷時間。
+ */
 export function appendAdvance(journal, dt) {
   if(typeof dt!=='number'||!Number.isFinite(dt)||dt<0)throw new RangeError('時鐘間隔必須是非負有限秒數');
   if(dt===0)return;

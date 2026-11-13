@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# 資料包 QA 子系統入口；依賴 PyYAML、tools/gen_logs.py、各 YAML/text、tickets/ref/tests 與真 Bash。
+# demo/tools 的流程/一致性驗證也匯入本檔的載入、materialize、eval_check 等輔助函式。
+# 檢查累積於模組 errors/warnings/notes；暫存樹通常在 finally 清理，--keep 明示保留供除錯。
+# 真 Bash 與 cond 的求值只供受信任專案規格，並非不可信玩家輸入的安全沙箱。
 """
 劇本資料包驗證器（Ch0–Ch1）。只做便宜的自動檢查，不需要引擎。
 
@@ -34,22 +38,27 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 errors, warnings, notes = [], [], []
 
 
+# 呼叫：所有檢查器；訊息 → None，附加全域 errors，供 report/退出碼使用，不立即中斷。
 def err(m):
     errors.append(m)
 
 
+# 呼叫：可接受偏差/效能檢查；訊息 → None，附加 warnings，不令 CLI 自動失敗。
 def warn(m):
     warnings.append(m)
 
 
+# 呼叫：檢查器；說明 → None，附加 notes，僅為檢查資訊而非逐項證明所有玩法。
 def ok(m):
     notes.append(m)
 
 
+# 呼叫：本模組與驗證流程；路徑片段 → ROOT 下路徑，無 I/O，不提供不可信路徑的逃逸防護。
 def P(*a):
     return os.path.join(ROOT, *a)
 
 
+# 呼叫：load_all；檔名 → YAML 值或 None，with 關閉檔案，失敗寫 errors 不直接拋出。
 def load(path):
     try:
         with open(path, encoding="utf-8") as f:
@@ -60,6 +69,7 @@ def load(path):
 
 
 # --------------------------------------------------------------------------- 載入
+# 呼叫：main/demo 工具；無參數 → 分類 ID 索引，讀全部來源 YAML，新增 _chapter/_dir 僅在記憶體。
 def load_all():
     D = {"world": load(P("world", "world.yaml")), "charter": load(P("world", "charter.yaml")),
          "cast": load(P("world", "cast.yaml")), "fragments": load(P("world", "fragments.yaml")),
@@ -94,6 +104,7 @@ def load_all():
     return D
 
 
+# 呼叫：strings/遞迴；巢狀物件 → (鍵或 None, 值) iterator，唯讀遍歷，不修改來源。
 def walk(o):
     """走訪所有巢狀值"""
     if isinstance(o, dict):
@@ -106,6 +117,7 @@ def walk(o):
             yield from walk(v)
 
 
+# 呼叫：資料掃描工具；巢狀值 → 所有字串值 iterator，依 walk 順序，無副作用。
 def strings(o):
     for _, v in walk(o):
         if isinstance(v, str):
@@ -113,11 +125,13 @@ def strings(o):
 
 
 # --------------------------------------------------------------------------- 引用檢查
+# 呼叫：check_refs；資料索引 → 已宣告/保留 NPC 的 set，唯讀。
 def npc_ids(D):
     ids = set(D["cast"]["npcs"].keys()) | set(D["cast"].get("reserved", []))
     return ids
 
 
+# 呼叫：check_refs/demo 驗證；資料索引 → (NPC,節點名) 對照表，包含 alias，節點本體保持唯讀參照。
 def dialogue_index(D):
     idx = {}
     for npc, d in D["dialogue"].items():
@@ -129,10 +143,12 @@ def dialogue_index(D):
     return idx
 
 
+# 呼叫：main；資料索引 → None，檢查跨檔 ID/引用存在與一致，問題/摘要累積全域清單；不寫來源。
 def check_refs(D):
     DI = dialogue_index(D)
     npcs = npc_ids(D)
 
+    # 呼叫：本檢查器；npc.node/診斷位置 → None，格式或索引缺少就記 errors，無來源修改。
     def has_node(ref, where):
         if "." not in ref:
             err("%s: 對話引用格式應為 npc.node：%s" % (where, ref))
@@ -278,9 +294,11 @@ def check_refs(D):
 FLAG_RE = re.compile(r"flag\.[A-Za-z0-9_]+(?:\.[A-Za-z0-9_]+)*")
 
 
+# 呼叫：main/demo 驗證；資料索引 → (使用旗標,設定旗標)，未定義記 errors，僅設定的列入 notes。
 def check_flags(D):
     used, setf = set(), set()
 
+    # 呼叫：check_flags/自身；巢狀值/上下文 → None，更新局部 used/setf；in_set 保留參數目前未參與判定。
     def scan(o, in_set=False):
         if isinstance(o, dict):
             for k, v in o.items():
@@ -335,6 +353,7 @@ SPOILER_SKIP_KEYS = {"note", "notes", "secrets", "authoring_notes", "rules_notes
                      "world_link", "consequence", "foreshadow", "summary", "details", "lin_touches_article_7"}
 
 
+# 呼叫：main；資料索引 → None，讀玩家可見文字/對話/提示掃禁詞，累積錯誤，不掃來源註解。
 def check_spoilers(D):
     n = 0
     # 純文字
@@ -364,6 +383,7 @@ def check_spoilers(D):
 
 
 # --------------------------------------------------------------------------- 碎片、憲章
+# 呼叫：main；資料索引 → None，核對碎片/損毀版/憲章與手冊關鍵字，讀文字且累積診斷，不修資料。
 def check_fragments_charter(D):
     ch0 = open(P("text/ch0/draft.txt"), encoding="utf-8").read()
     rest = open(P("text/ch1/letter3141_restored.txt"), encoding="utf-8").read()
@@ -406,15 +426,19 @@ def check_fragments_charter(D):
 
 
 # --------------------------------------------------------------------------- 虛擬檔案系統與快題
+# 呼叫：快題/一致性工具；設定文字/manifest → 替換答案佔位符的值，非字串原樣回傳，無副作用。
 def fsub(s, man):
     return re.sub(r"\{manifest\.(\w+)\}", lambda m: str(man[m.group(1)]), s) if isinstance(s, str) else s
 
 
+# 呼叫：materialize；受信任規格條件/flags dict → boolean；使用 Python 求值，絕不可用於玩家輸入。
 def cond(expr, flags):
     e = re.sub(r"flag\.([A-Za-z0-9_.]+)", lambda m: "F.get('%s', False)" % m.group(1), expr)
     return bool(eval(e, {"F": flags}))
 
 
+# 呼叫：check_quests/demo 模擬與一致性工具；章節/暫存根/生成目錄/flags → None，實體寫出章節檔案。
+# 變體依第一個符合條件選來源；只供可信資料，root 不是系統級 chroot；產物由上層 finally 清理。
 def materialize(ch, root, gen_dir, flags):
     for f in ch.get("files", []):
         path = f["path"]
@@ -444,11 +468,13 @@ def materialize(ch, root, gen_dir, flags):
         os.makedirs(os.path.join(root, d.lstrip("/")), exist_ok=True)
 
 
+# 呼叫：快題驗證；可信 cmd/cwd/home/root → CompletedProcess，真 Bash 限 30 秒；root 目前未作隔離使用。
 def run(cmd, cwd, home, root):
     env = dict(os.environ, HOME=home, LC_ALL="C.UTF-8")
-    return subprocess.run(["bash", "-c", cmd], cwd=cwd, env=env, capture_output=True, text=True, timeout=30)
+    return subprocess.run(["bash", "-c", cmd], cwd=cwd, env=env, capture_output=True, text=True, encoding="utf-8", timeout=30)
 
 
+# 呼叫：快題/flow_sim/一致性；check/指令/stdout/manifest/新檔行 → boolean，未知型別另記 errors；不寫狀態。
 def eval_check(chk, cmd, out, man, newfile_lines=None):
     t = chk["type"]
     cr = chk.get("cmd_regex")
@@ -474,6 +500,7 @@ def eval_check(chk, cmd, out, man, newfile_lines=None):
     return False
 
 
+# 呼叫：main；資料索引/是否保留 → None，生成日誌/實體檔案並以真 Bash 驗正反例，finally 清暫存或印保留路徑。
 def check_quests(D, keep):
     tmp = tempfile.mkdtemp(prefix="ra01_")
     try:
@@ -547,7 +574,10 @@ def check_quests(D, keep):
         if q15["restored_text_contains"] not in rest or q15["damaged_text_not_contains"] in dmg:
             err("Q1-5 verify_by 失敗")
         # 光是 grep 不該直接找到 F2（需要 fsck）
-        r = run("grep -r KEY-FRAG %s/srv/harbor" % os.path.join(tmp, "fs_ch1"), tmp, tmp, tmp)
+        # 從暫存世界內用相對路徑，避免 Windows 反斜線被 Bash 當成跳脫字元。
+        r = run("grep -r KEY-FRAG srv/harbor", os.path.join(tmp, "fs_ch1"), tmp, tmp)
+        if r.returncode not in (0, 1):
+            err("F2 搜尋指令失敗 rc=%d %s" % (r.returncode, r.stderr[:200]))
         if "KEY-FRAG" in r.stdout:
             err("在 fsck 之前，grep -r KEY-FRAG /srv/harbor 就找得到 F2")
         # 第二層：「grep appeal」彩蛋、rotated 彩蛋
@@ -566,12 +596,16 @@ def check_quests(D, keep):
 
 
 # --------------------------------------------------------------------------- 工單
+# 呼叫：check_tickets；可信解答檔/輸入/時限 → (stdout,耗秒,rc)，啟動隔離模式 Python；超時拋錯，上層彙報。
 def run_sol(sol, inp, timeout=10):
     t = time.time()
-    r = subprocess.run([sys.executable, "-I", sol], input=inp, capture_output=True, text=True, timeout=timeout)
+    # -I 會忽略 PYTHONUTF8/PYTHONIOENCODING；明示子程序與管線均用 UTF-8，避免 Windows CP950 混碼。
+    r = subprocess.run([sys.executable, "-I", "-X", "utf8", sol], input=inp, capture_output=True,
+                       text=True, encoding="utf-8", timeout=timeout)
     return r.stdout, time.time() - t, r.returncode
 
 
+# 呼叫：main；資料索引 → None，跑參考/錯解/大案例並用獨立 Shell 答案對照；累積診斷，不改測資。
 def check_tickets(D):
     for tid, t in D["tickets"].items():
         td = P(t["judge"]["local"]["tests_dir"])
@@ -620,6 +654,7 @@ def check_tickets(D):
     ok("工單：參考解答 AC，已知錯解被指定測資擋下")
 
 
+# 呼叫：CLI；argv → 程序退出，先載入/靜態檢查再跑動態驗證，中斷也轉 errors；不部署或改來源。
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--keep", action="store_true")
@@ -641,6 +676,7 @@ def main():
     sys.exit(1 if errors else 0)
 
 
+# 呼叫：main；無參數 → None，輸出目前全域 notes/warnings/errors 與計數，不清空清單。
 def report():
     for m in notes:
         print("  ok   " + m)

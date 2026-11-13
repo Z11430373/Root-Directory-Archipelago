@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# 文件建置工具：從章節/對話/快題/工單/卡片/分支/world YAML 與 text 產生完整劇本。
+# 依賴 PyYAML；本模組 import 時即讀來源建立索引，main 只寫 stdout，重導向才會覆寫 SCRIPT.md。
+# 不修改來源資料；改排版須比對產生結果，避免把維護者註解混入玩家劇本文字。
 """把 chapters/*.yaml 的 scenes 展開成可閱讀的 SCRIPT.md（劇本全文）。
 用法：python3 tools/build_script_md.py > SCRIPT.md
 """
@@ -11,22 +14,27 @@ import yaml
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+# 呼叫：本模組載入與 text；路徑片段 → 資料包絕對路徑，無 I/O。
 def P(*a):
     return os.path.join(ROOT, *a)
 
 
+# 呼叫：模組載入；檔名 → YAML 物件，讀 UTF-8，不寫來源；讀檔錯誤直接向上傳遞。
 def Y(path):
     return yaml.safe_load(open(path, encoding="utf-8"))
 
 
+# 呼叫：lines_of/beat；相對引用 → 去尾換行文字，僅讀來源檔，不負責修改內容。
 def text(ref):
     return open(P(ref), encoding="utf-8").read().rstrip("\n")
 
 
+# 呼叫：節拍/對話格式化；文字/語言 → Markdown 程式區塊字串，無副作用。
 def fence(s, lang=""):
     return "```%s\n%s\n```\n" % (lang, s)
 
 
+# 載入區：以 ID 建唯讀索引並補 NPC alias；beat 的各類引用共用，避免人讀版本與引擎來源分岔。
 W = Y(P("world", "world.yaml"))
 CH = {d["id"]: d for d in (Y(f) for f in sorted(glob.glob(P("chapters", "*.yaml"))))}
 DLG = {}
@@ -46,6 +54,7 @@ B = {d["id"]: d for d in (Y(f) for f in sorted(glob.glob(P("branches", "*.yaml")
 CHARTER = Y(P("world", "charter.yaml"))
 
 
+# 呼叫：beat 的 say；節點 → Markdown 字串，展開條件/變體/旗標說明，不真的求值或設定旗標。
 def lines_of(node):
     out = []
     note = node.get("when")
@@ -73,6 +82,7 @@ def lines_of(node):
     return "\n".join(out)
 
 
+# 呼叫：main；單節拍/章節 → Markdown 片段，依種類讀索引與文字，不推進任何遊戲狀態。
 def beat(b, ch):
     if "stage" in b:
         return "*（%s）*\n" % b["stage"]
@@ -133,6 +143,7 @@ def beat(b, ch):
     return ""
 
 
+# 呼叫：CLI；無參數 → None，依章節/場景順序組裝全文與憲章附錄後寫 stdout；不自行開輸出檔。
 def main():
     out = []
     out.append("# 《根目錄群島》Ch0–Ch1 完整劇本\n")

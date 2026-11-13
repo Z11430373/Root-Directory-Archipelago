@@ -1,0 +1,26 @@
+✔ Bash islands: a fresh normal game retains variables, functions, aliases and redirects through reload (11021.2543ms)
+✔ Bash islands: keyboard continuation, heredoc, completion and Ctrl+C at 320px (5261.0745ms)
+✔ Bash islands: keyboard continuation, heredoc, completion and Ctrl+C at 768px (4988.4272ms)
+✔ Bash islands: keyboard continuation, heredoc, completion and Ctrl+C at 1280px (3221.6056ms)
+✔ Bash islands: surface changes preserve the same session; greater-than is only PS2 (6208.6483ms)
+✔ Bash islands: imported event saves also accept Bash without visiting terminal mode (2956.9095ms)
+✔ Bash replay browser: M1 feed waiting in idle commit, F2 preserves legacy replay and upgrades the next input (5588.0418ms)
+✔ Bash replay browser: M1 feed waiting in idle commit, F2 then back to islands preserves legacy replay and upgrades the next input (3967.5258ms)
+✔ Bash replay browser: M5 baseSave waiting in verifyChain, F2 preserves legacy replay and upgrades the next input (4599.7214ms)
+✔ Bash replay browser: M5 baseSave waiting in verifyChain, F2 then back to islands preserves legacy replay and upgrades the next input (2786.3907ms)
+✔ Bash replay browser: feed stays in normal style, replays legacy and uses Bash for new inputs (3150.7934ms)
+✔ Bash replay browser: baseSave stays in normal style, replays legacy and uses Bash for new inputs (2563.188ms)
+✔ Bash replay browser: untagged old journal stays legacy, then normal input uses Bash (2285.5033ms)
+✔ Bash replay browser: M3 islands to terminal, Ctrl+C before Worker preserves exact storage (2264.1981ms)
+✔ Bash replay browser: M3 stays in islands, Ctrl+C before Worker preserves exact storage (1550.9507ms)
+✔ Bash replay browser: M3 console resume to islands, Ctrl+C before Worker preserves exact storage (2111.6723ms)
+✔ Bash replay browser: M5 early baseSave F2, Ctrl+C before Worker preserves exact storage (2407.5485ms)
+✔ Bash replay browser: M5 early baseSave roundtrip, Ctrl+C before Worker preserves exact storage (2056.8961ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 37867.3527

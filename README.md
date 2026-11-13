@@ -3,6 +3,20 @@
 燈塔島〈值班第一天〉與日誌港〈日誌港〉的完整劇本資料：檔案系統內容、lin 的信與 `.bash_history`、十個快題、兩張 OJ 工單、兩條分支與兩張知識卡、日誌產生器與驗證器。
 文字給人讀的版本在 **SCRIPT.md**；給引擎讀的版本是各 YAML。
 
+程式維護入口見 [SOURCE_GUIDE.md](SOURCE_GUIDE.md)：系統依賴、呼叫／資料流、存檔差異與資源清理責任。
+
+## 完整專案與遊玩入口
+
+此資料夾包含劇本資料、可遊玩的瀏覽器程式、建置工具、測試與文件。Bash 終端模式已整合在 `demo-app/`：
+
+1. 開啟 `demo-app/dist/index.html`，可直接離線遊玩。
+2. 在「模式」選擇 **Bash 終端**，輸入 `game start`；F2 返回群島模式。
+3. 修改程式與重新建置請看 [demo-app/README.md](demo-app/README.md)；操作與整合紀錄請看 [Bash 終端驗收](demo-app/notes/BASH_TERMINAL.md)。
+
+一般群島與終端風格皆採 just-bash，支援跨提交變數／函式、多行控制流程與重導向；終端風格另以真 xterm 呈現 ANSI。兩者均定位為 **Bash 相容模擬**，切換只改介面。驗收結果與歷史紀錄見 [Bash 終端驗收](demo-app/notes/BASH_TERMINAL.md)。
+
+`demo-app/build.mjs` 會讀取上層劇本資料；開發與驗證時請保留目前完整目錄結構。原始碼、資料、測試、文件與建置產物均整合在這個專案資料夾內。
+
 ## 目錄
 
 | 路徑 | 內容 |
@@ -23,6 +37,8 @@
 | `branches/` | `B0`（alt/sandbox，平行）、`B1`（whatif/block-gc，假設） |
 | `text/` | 所有較長的文字內容（`content_ref` 指向這裡） |
 | `tools/` | `gen_logs.py`（日誌產生器）、`make_tests.py`、`validate.py`、`build_script_md.py` |
+| `demo-app/` | 群島／Bash 終端應用程式、原始碼、完整測試、建置工具與離線產物 |
+| `references/` | Bash 對照探針、開源原始碼研究、整合建議與研究副本清理紀錄 |
 
 ## 一鍵檢查
 ```

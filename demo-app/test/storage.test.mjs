@@ -1,3 +1,8 @@
+/**
+ * 本機工具 QA：依賴 storage.js，驗禁用/損毀/過大儲存與 journal 合併，不碰真實使用者 localStorage。
+ * 案例 callback 回傳 void；第一案暫換 global descriptor 並在 finally 還原，第二案只改局部 journal。
+ * 這裡不驗跨分頁所有權，相關契約在 round3-state-hardening.test.mjs。
+ */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readLocal,writeLocal,clearLocal,checkJournal,appendAdvance} from '../src/storage.js';
@@ -26,5 +31,7 @@ test('M1 adapter: journal keeps raw input and safely coalesces clock ticks', () 
   appendAdvance(journal,1);
   assert.deepEqual(journal,[{type:'advance',dt:1},{type:'input',raw:'echo hello > note.txt',dt:0},{type:'advance',dt:1}]);
   assert.ok(checkJournal(journal));
+  assert.ok(checkJournal([{type:'input',raw:'A=1',dt:0,shell:'bash'},{type:'input',raw:'pwd',dt:0,shell:'legacy'}]));
+  assert.equal(checkJournal([{type:'input',raw:'pwd',dt:0,shell:'future'}]),false);
   for(const invalid of [null,[{type:'input',raw:'x',dt:NaN}],[{type:'advance',dt:-1}],[{type:'script',dt:0}],[{type:'input',raw:'x'.repeat(4097),dt:0}]]) assert.equal(checkJournal(invalid),false);
 });

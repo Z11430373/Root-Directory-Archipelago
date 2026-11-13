@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# 工單資料工具：依固定案例與 gen_logs.py 產生兩題測資；依賴 Bash/coreutils 與 Python 標準庫。
+# CLI 或 import 後呼叫 ticket_* 都可能覆寫 tests/*.in/out；只應在明示重新產生測資時執行。
+# TemporaryDirectory 管理日誌暫存；不是瀏覽器執行期的一部分。
 """重新產生 tickets/T0100 與 tickets/T0427 的 tests/*.in / *.out。
 標準輸出由「獨立的 shell 管線」算出（不是參考解），避免參考解與測資一起錯。
 用法：python3 tools/make_tests.py [pack_root]
@@ -11,16 +14,19 @@ import tempfile
 ROOT = sys.argv[1] if len(sys.argv) > 1 else os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+# 呼叫：兩個 ticket 產生器；路徑/文字 → None，建立父目錄並覆寫檔案，with 負責關閉。
 def w(path, text):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
         f.write(text)
 
 
+# 呼叫：ticket_0427；IP/序號 → 固定格式訪問行，不帶換行，無 RNG/I/O。
 def line(ip, k=0):
     return '%s - - [06/Dec/2031:10:%02d:%02d +0000] "GET /ship/ferry HTTP/1.1" 200 512' % (ip, k // 60 % 60, k % 60)
 
 
+# 呼叫：ticket_0427；行陣列 → 前三 IP 預期 stdout；執行可信的固定 Bash 管線，不修改輸入檔。
 def shell_expected(lines):
     """awk | sort | uniq -c | 排序（次數降冪、IP 版本序升冪）| head -3"""
     text = "\n".join(lines) + "\n"
@@ -30,6 +36,7 @@ def shell_expected(lines):
     return r.stdout
 
 
+# 呼叫：CLI；無參數 → None，建平手/數值 IP/單 IP/生成日誌案例並覆寫 T0427 tests；暫存自動清理。
 def ticket_0427():
     tests = {}
     # 01 範例（彩蛋：前三名有 GC）
@@ -57,6 +64,7 @@ def ticket_0427():
     print("T0427:", sorted(tests))
 
 
+# 呼叫：CLI；無參數 → None，覆寫 T0100 的五組簽到輸入/答案並印數量，保留名字內部空白。
 def ticket_0100():
     names = ["lin", "op-ada", "Zien", "op zien 07", "x" * 30]
     d = os.path.join(ROOT, "tickets", "T0100", "tests")

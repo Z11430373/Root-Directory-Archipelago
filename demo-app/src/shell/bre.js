@@ -1,5 +1,10 @@
+/**
+ * 模擬 Shell 的 grep 正規表示式轉換層，無檔案依賴；由 commands.js 呼叫。
+ * 將支援的 BRE/ERE/固定文字轉成帶 test 的比對器，不執行文字；超長或危險重複分組拒絕。
+ */
 // GNU grep defaults to BRE: unescaped (), +, ?, {}, | are literal.
 // Translate only the supported regular-expression syntax, never executable JS.
+/** pattern 與模式選項 → RegExp 或固定文字比對器；不改來源、不保留資源，語法不符拋錯交 grep 處理。 */
 export function compileBRE(pattern, { ignoreCase = false, extended = false, fixed = false } = {}) {
   if (pattern.length > 1024) throw new Error('grep: pattern too long');
   if (fixed) return { test: line => ignoreCase ? line.toLowerCase().includes(pattern.toLowerCase()) : line.includes(pattern) };

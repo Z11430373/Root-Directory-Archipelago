@@ -1,3 +1,8 @@
+/**
+ * Engine 交易/時鐘與 session guard 的確定性 QA；依賴 Engine/save/createSessionStorage，不需瀏覽器。
+ * callback 回傳 void/Promise；注入 action/VFS/儲存故障驗完整回復，所有替身只屬本案，不改來源存檔。
+ * faultAfter 回傳修復閉包；Web Locks 替身只序列化記憶體工作，不能據此宣稱所有瀏覽器競態皆解決。
+ */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {performance} from 'node:perf_hooks';
@@ -8,6 +13,7 @@ import {createSessionStorage} from '../src/ui/session-storage.js';
 
 if (!globalThis.crypto) globalThis.crypto = webcrypto;
 
+/** 案例呼叫；可選 observer → 已開始 Engine，onOutput 收集成功提交文字，僅建立記憶體資源。 */
 async function started(onOutput) {
   const engine = new Engine({onOutput});
   await engine.start();
@@ -16,11 +22,14 @@ async function started(onOutput) {
 }
 const ch0 = ['ls','cat handbook.md','ls -a notes','grep lamp logs/lamp.log','grep -r KEY-FRAG ~',
   'systemctl start lamp','lamp-before-sudo'];
+/** 案例呼叫；引擎 → Promise<void>，順序完成 Ch0 五題與點燈，改傳入實例狀態。 */
 async function lamp(engine) { for (const raw of ch0) await engine.feed(raw); }
+/** runtime 呼叫；VFS 或 null → 可比較欄位投影，唯讀；由外層 JSON snapshot 脫離參照。 */
 function worldState(vfs) {
   return vfs && {cwd:vfs.cwd,home:vfs.home,chapter:vfs.chapter,nextInode:vfs.nextInode,
     nodes:[...vfs.nodes],inodes:[...vfs.inodes],manifest:vfs.manifest};
 }
+/** 回復斷言呼叫；引擎 → JSON 安全的完整 runtime 快照，Set 展開/兩個世界投影，不寫狀態。 */
 function runtime(engine) {
   const fields = ['flags','done','skipped','items','cards','finds','history','ladders','once','quest_idx',
     'active','mode','tries','skip_pending','delayed','nick','t0','now','last_input','idle_fired',
@@ -31,6 +40,7 @@ function runtime(engine) {
     vfs:worldState(engine.vfs),main_snapshot:worldState(engine.main_snapshot),
   }));
 }
+/** 故障案例呼叫；引擎/動作種類 → 修復閉包，暫換該實例 action，原動作完成後故意 throw。 */
 function faultAfter(engine, kind) {
   const original = engine.action;
   engine.action = async function(action,payload) {
@@ -227,10 +237,12 @@ test('R3 fix: large prior stdout and file strings are not reserialized on every 
     t.diagnostic(`4 MB prior stdout + file; 100 transactions: ${ms.toFixed(2)}ms`);
 });
 
+/** guard 案例呼叫；初始原字串 → 最小 storage 替身，方法讀/改閉包 text，不碰真實 localStorage。 */
 function memoryStorage(initial=null) {
   let text=initial;
   return {getItem:() => text,setItem:(_key,value) => {text=value;},removeItem:() => {text=null;}};
 }
+/** guard 案例呼叫；輸入字串 → 固定同 head/不同 journal 的 envelope，證明所有權不能只看鏈尾。 */
 const envelope = raw => ({version:1,save:{head:'samehead'},journal:[{type:'input',raw,dt:0}]});
 
 test('R3 storage: writes and clears require an explicit successful load baseline', {timeout:5_000}, async () => {

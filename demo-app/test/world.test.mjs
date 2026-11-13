@@ -1,3 +1,8 @@
+/**
+ * 世界 QA（T6–T9）：依賴 vfs/loggen/shell/quests、conformance.json 與標準庫 SHA-256。
+ * 以 Python/真 Bash 固定答案逐字比對，命名案例 callback 回傳 void，各自建立 VFS，不改資料包。
+ * 硬連結/惰性來源/安全刪除皆只作用記憶體，iterator 的關閉由 Shell 驗證；無宿主檔案刪除。
+ */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -8,6 +13,7 @@ import { execute } from '../src/shell/exec.js';
 import { checkQuest } from '../src/quests.js';
 
 const vectors = JSON.parse(readFileSync(new URL('../../demo/testvectors/conformance.json', import.meta.url), 'utf8'));
+/** 檔案/日誌案例呼叫；UTF-8 文字 → SHA-256 hex，純計算，不依賴被測的存檔雜湊函式。 */
 const sha = text => createHash('sha256').update(text, 'utf8').digest('hex');
 
 for (const [chapter, expected] of Object.entries(vectors.vfs)) {

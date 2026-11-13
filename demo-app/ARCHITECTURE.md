@@ -1,6 +1,6 @@
 # 第一夜：整合契約
 
-資料包為唯讀來源；不修改任何現有 YAML、text、測資或 Python 工具。
+劇本資料包為唯讀來源，不修改現有 YAML、text 或黃金測資。整合驗證曾修正 `tools/validate.py` 的 Windows 子程序編碼與路徑處理，範圍與結果記於 `notes/test-results-project-data.txt`。
 
 ## 分工
 - 主架構師：package.json、build.mjs、src/data.js（產生）、src/main.js、src/ui/、整合與 REPORT.md / FINDINGS.md。
@@ -36,6 +36,18 @@ build.mjs 從資料包根目錄讀取並產生此檔；測試前先 `npm run dat
 - `onOutput(text,kind='dialogue')` 供介面；trace 含 ['say',ref]；async summary() 供 T10
 - start／feed／advance是序列化的交易入口，成功後才發布onOutput；失敗回復完整runtime／VFS／flags／save。內部step方法不是並行API；UI自己的journal也要成功才發布。observer錯誤記在outputError，不把已提交操作假裝成失敗。
 - 流程以 Python 行為與 walk 測資為準；超出測資但規格要求的顯示、延遲對話等也要實作。衝突記入個人 notes，不改來源。
+
+## Bash 終端操作模式
+- `main.js` 選擇群島表單或 `XtermConsoleView`；切換沿用 Engine、歷史、輸出與一般草稿。口令草稿清空；Engine 尚未建立的 replay 準備階段也保留 renderer。
+- `XtermConsoleView` 用真字元格／ANSI／游標呈現；`ConsoleLineEditor` 管理草稿、PS2、history 與 onData。原始 `{text,kind}` transcript 作 renderer handoff，不把 xterm textarea 當完整草稿。
+- `game …` 是介面層的工作階段命令，不屬於 Bash 模擬器。既有劇本指令仍交給 Engine；本機 journal 記錄可重播的 Engine 輸入。
+- 群島／終端新 session、事件匯入與續玩後的新輸入一律使用固定 just-bash 3.6.0 與隔離 Worker；呈現風格不決定 Shell 語意。每筆歷史 journal 固定 runtime/Engine dispatch；缺 tag 仍以 legacy 重播，不改舊檔。`feed` 在任何 await 前固定 executor/dialect/signal，切畫面不能改正在執行的歷史步驟。headless Engine 保留 legacy 預設供歷史參考，瀏覽器明確注入 Bash runner。
+- 主命令提示符採 `$`；遊戲問答採冒號，`>` 僅作 Bash PS2。一般風格的 Enter 與終端共用 `needsContinuation`，未完整的控制結構不提前提交；補全亦包含 Bash 指令。兩者保留各自的 DOM／xterm 呈現器。
+- Worker 使用 structured clone 的 VFS（Map／inode 關係保留）；結果成功才套回原 VFS，保留原 flags 身份。Ctrl+C 終止 Worker、拒絕目前 feed，Engine 回復整次交易，UI 不記錄失敗 journal。
+- 這是遊戲的原子取消語意；真 Bash 的中斷不會自動撤回先前檔案寫入。
+- `vfs.shellState` 保存可 structuredClone 的 interpreter state／PRNG；不靠重跑副作用恢復。渡海 reconcile 新 cwd；branch exit 同時回復檔案與 shell 狀態。時鐘／隨機值使用決定性遊戲資料。
+- replay operation 的 AbortController 覆蓋 baseSave 驗鏈、Engine 建立、feed 與 Worker 等階段；取消回入口且原 envelope 不變。
+- Worker／xterm／CSS／授權由 build 嵌入同一 HTML。CSP 授權 `worker-src blob:` 與 scoped style nonce；固定 Bash source hook、xterm CSSOM hook 都採唯一 marker 驗證。兩個 clipboard feature probes 各加局部 try/catch，封鎖 getter 時回 false；不開放網路、unsafe-inline 或 unsafe-eval。Node loader 與 browser 共用相同 Bash hook。
 
 ## 驗收
 先寫測試；T1–T4 / T5–T9 / T10 依序作為整合閘門。代理不要 commit；主架構師統一里程碑提交。不得測試通過就誇大成完整驗收。

@@ -1,0 +1,36 @@
+✔ T12: offline file + HTTPS, safety, keyboard, mobile, resume, kiosk, exports and themes (32015.6396ms)
+✖ Console browser: line editing, completion, reverse search, draft history, IME guard and multiline paste (25913.1581ms)
+✔ Console browser: reading the latest printed save restores bottom and mid-scrollback positions (13332.7792ms)
+✔ Console browser: golden edge path preserves every commit ID through worker execution (55011.4792ms)
+✔ R3 session control: same-head file-only changes are protected from an older tab and its export (2567.3487ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 4
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 95444.2772
+
+✖ failing tests:
+
+test at test\console.test.mjs:72:1
+✖ Console browser: line editing, completion, reverse search, draft history, IME guard and multiline paste (25913.1581ms)
+  AssertionError [ERR_ASSERTION]: Reading scrollback must restore the reader's exact position
+  
+  1 !== 15
+  
+      at restoreHistory (file:///C:/Users/user/Documents/%E3%80%8A%E6%A0%B9%E7%9B%AE%E9%8C%84%E7%BE%A4%E5%B3%B6%E3%80%8B/demo-app/test/helpers/xterm.mjs:168:10)
+      at async terminalText (file:///C:/Users/user/Documents/%E3%80%8A%E6%A0%B9%E7%9B%AE%E9%8C%84%E7%BE%A4%E5%B3%B6%E3%80%8B/demo-app/test/helpers/xterm.mjs:179:3)
+      at async transcriptOutput (file:///C:/Users/user/Documents/%E3%80%8A%E6%A0%B9%E7%9B%AE%E9%8C%84%E7%BE%A4%E5%B3%B6%E3%80%8B/demo-app/test/helpers/xterm.mjs:211:14)
+      at async eventually (file:///C:/Users/user/Documents/%E3%80%8A%E6%A0%B9%E7%9B%AE%E9%8C%84%E7%BE%A4%E5%B3%B6%E3%80%8B/demo-app/test/helpers/xterm.mjs:24:11)
+      at async TestContext.<anonymous> (file:///C:/Users/user/Documents/%E3%80%8A%E6%A0%B9%E7%9B%AE%E9%8C%84%E7%BE%A4%E5%B3%B6%E3%80%8B/demo-app/test/console.test.mjs:99:67)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 15,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

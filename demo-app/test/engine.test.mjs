@@ -1,3 +1,8 @@
+/**
+ * 流程/互通 QA（T5/T10/T11）：依賴 Engine/expr/save/data 與 walkthrough.json、Python check_codes.py。
+ * 命名案例描述輸入/預期，callback 回傳 void/Promise；所有引擎操作依序 await，不使用真實等待。
+ * T11 會重寫 notes/codes.txt 再啟動 Python（30 秒限制）；其餘只改各案例記憶體，不改測資。
+ */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
@@ -22,6 +27,7 @@ test('T5: expression cases and errors match the Python reference', async () => {
 });
 
 const runs = new Map();
+/** T10/T11 呼叫；走法物件 → Promise<{engine,output}>，每條只重播一次並快取 Promise，後續應只讀結果。 */
 async function replay(walk) {
   if (!runs.has(walk.name)) runs.set(walk.name, (async () => {
     const { Engine } = await import('../src/engine/index.js');

@@ -76,7 +76,7 @@
 ## F-08：驗收環境邊界
 - 實跑：Windows、Node 24.19.0、Python 3.12.10／PyYAML 6.0.3、Chrome 156.0.8078.74；file:// 與隔離 localhost 自簽 HTTPS。
 - 未實跑：Safari／iOS、Firefox、Edge、各瀏覽器前一版本、Node 18 實機及輔助科技／真實軟鍵盤。這些不得由 Chrome 測試推稱通過。
-- 原始 tools/validate.py 在 Windows 有混合子程序編碼問題：UTF-8 執行時快題通過、工單解碼失敗；系統編碼時工單通過、快題解碼失敗。這是來源工具跨平台問題，未修改工具，也不以它取代 T1–T12 的 JS 驗收。
+- 原始 tools/validate.py 在 Windows 的混合子程序編碼問題，已於完整專案整合時以明示 UTF-8 修正，另修復 F2 搜尋的 Bash 路徑與退出碼檢查；root validator 最終 0 錯誤／0 警告。demo validator 仍有 8 項跨平台路徑／換行／對照資料問題，未重建黃金測資掩蓋失敗；詳見 `notes/test-results-project-data.txt`。兩者均不取代 app 的 JS／瀏覽器驗收。
 
 ## F-09：新增 Server 終端風格
 - 使用者要求保留原風格並新增更接近 Ubuntu Server 主控台的外觀。新增獨立 `data-style`（islands／server），不把風格與可及性主題混成同一個選項。
