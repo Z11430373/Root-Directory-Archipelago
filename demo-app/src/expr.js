@@ -1,7 +1,21 @@
 /**
- * 流程系統的受限運算式解析器，對應 demo/tools/flowexpr.py；不依賴其他檔案。
- * Engine.ev 傳入 flags/vars/funcs，輸出布林供規則、對話與引導條件使用。
- * 只允許環境明示函式；本模組不改環境，但呼叫端提供的 funcs 必須自行保證無副作用。
+ * ============================================================================
+ * 模組：expr.js — 流程系統的受限運算式解析器
+ * 所屬系統：流程系統 (Engine / Flow System)
+ * 模組關聯：
+ *   - 無檔案依賴（純本地計算）
+ *   - 被：engine/index.js（Engine.ev 傳入 flags/vars/funcs）
+ *   - 對應：demo/tools/flowexpr.py（Python 參考實作）
+ * 職責：
+ *   1. ExprError：剖析錯誤類別。
+ *   2. tokenize()：來源文字 → token 陣列，非法位置拋 ExprError。
+ *   3. parse()：token 陣列 → AST。
+ *   4. evaluate()：AST + env → 布林值。
+ * 設計原則：
+ *   - 只允許環境明示函式；本模組不改環境。
+ *   - 呼叫端提供的 funcs 必須自行保證無副作用。
+ *   - 輸出布林供規則、對話與引導條件使用。
+ * ============================================================================
  */
 /** The side-effect-free expression language from demo/tools/flowexpr.py. */
 export class ExprError extends Error {

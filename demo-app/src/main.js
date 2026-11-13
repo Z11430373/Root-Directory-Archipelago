@@ -1,8 +1,20 @@
 /**
- * 瀏覽器介面整合入口：組裝歡迎/終端機/任務/匯出畫面，協調 Engine 與本機操作紀錄。
- * 依賴 data.js、engine/index.js、save/index.js、storage.js 與 ui/{dom,terminal,preferences,session-storage}.js。
- * 輸入與 250ms 時鐘共用 enqueue 序列；成功操作才加入 journal，之後 persist 保存完整 envelope。
- * 此模組載入即綁定頁面級事件/timer，生命週期為整頁；Terminal、dialog、Blob URL 則在各自流程清理。
+ * ============================================================================
+ * 模組：main.js — 瀏覽器介面整合入口
+ * 所屬系統：UI (User Interface)
+ * 模組關聯：
+ *   - 依賴：data.js（DATA）、engine/index.js（Engine）、save/index.js（存檔）、storage.js（本機儲存）、ui/{dom,terminal,preferences,session-storage,console-view,console-line-editor,script-submissions,xterm-console,shell-job}.js
+ *   - 被：index.html（script type=module）、測試
+ * 職責：
+ *   1. 組裝歡迎/終端機/任務/匯出畫面，協調 Engine 與本機操作紀錄。
+ *   2. 輸入與 250ms 時鐘共用 enqueue 序列。
+ *   3. 成功操作才加入 journal，之後 persist 保存完整 envelope。
+ *   4. 匯出/救援/續玩流程、偏好設定、主題切換。
+ * 設計原則：
+ *   - 此模組載入即綁定頁面級事件/timer，生命週期為整頁。
+ *   - Terminal、dialog、Blob URL 則在各自流程清理。
+ *   - 無跨分頁互斥，主檔寫刪走 ui/session-storage.js。
+ * ============================================================================
  */
 import {DATA} from './data.js';
 import {Engine} from './engine/index.js';

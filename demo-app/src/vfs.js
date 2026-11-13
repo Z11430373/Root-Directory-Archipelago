@@ -1,7 +1,21 @@
 /**
- * 世界系統的記憶體檔案系統：pathname 指向 node，file node 再指向可共享的 inode 內容。
- * 依賴 data.js 的章節/text 與 loggen.js；供 Engine、shell/*、quests.js 與 UI 補全使用。
- * 分支複製隔離 nodes/inodes，刻意共用 flags；不接觸宿主磁碟，丟棄 VFS 參照即可釋放。
+ * ============================================================================
+ * 模組：vfs.js — 世界系統的記憶體檔案系統
+ * 所屬系統：世界系統 (World / VFS Subsystem)
+ * 模組關聯：
+ *   - 依賴：data.js（章節/text/yaml）、loggen.js（generateLogs）
+ *   - 被：Engine（createWorld/clone）、shell/*（execute）、quests.js（checkQuest）、UI 補全
+ * 職責：
+ *   1. VFS 類別：pathname → node，file node → inode（可共享內容）。
+ *   2. resolve/exists/isDirectory/isFile/empty：路徑查詢（唯讀）。
+ *   3. mkdir/writeFile/readFile/iterChunks/iterTailLines/list/filePaths/dirPaths/walkFiles/stat/sameInodePaths/link/remove：檔案操作。
+ *   4. clone()：分支隔離（nodes/inodes/manifest 隔離，flags 共享）。
+ *   5. createWorld()：依章節/種子/flags 建立已載入內容與日誌的 VFS。
+ * 設計原則：
+ *   - 分支複製隔離 nodes/inodes，刻意共用 flags；不接觸宿主磁碟。
+ *   - 丟棄 VFS 參照即可釋放（無外部資源）。
+ *   - hard link 共享 inode，remove 回收無連結 inode。
+ * ============================================================================
  */
 import { DATA } from './data.js';
 import { generateLogs } from './loggen.js';

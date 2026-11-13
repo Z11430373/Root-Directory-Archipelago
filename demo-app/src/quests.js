@@ -1,6 +1,18 @@
 /**
- * 世界/流程之間的快題判定層，無 import；由 Engine 與一致性測試傳入 check、manifest、VFS。
- * 只讀指令/輸出/新檔案，不發獎勵、不寫 commit；Engine.finishQuest 負責套用完成副作用。
+ * ============================================================================
+ * 模組：quests.js — 世界/流程之間的快題判定層
+ * 所屬系統：流程系統 (Engine / Flow System)
+ * 模組關聯：
+ *   - 無 import（純本地計算）
+ *   - 被：engine/index.js（Engine.questCheck/finishQuest）、一致性測試
+ * 職責：
+ *   1. substituteManifest()：設定值/manifest → 已替換佔位符的字串。
+ *   2. checkQuest()：check、原始指令、stdout、manifest、可選 VFS → boolean。
+ * 設計原則：
+ *   - 只讀指令/輸出/新檔案，不發獎勵、不寫 commit。
+ *   - file_matches 只查 cwd 玩家新建檔，錯誤規則/路徑一律 false。
+ *   - 不改資料、不需清理；Engine.finishQuest 負責套用完成副作用。
+ * ============================================================================
  */
 /** 由 checkQuest 呼叫；設定值/manifest → 已替換佔位符的字串，無外部副作用。 */
 export function substituteManifest(value, manifest = {}) {

@@ -1,8 +1,25 @@
 /**
- * 本機儲存/重播資料層，無檔案依賴；main.js 使用，session-storage.js 共用 SAVE_KEY。
- * portable RA1 不含任意指令/cwd；journal 額外保留輸入與時間，本機 envelope 才能完整重播。
- * read/write/clear 是低階容錯工具，不提供所有權；遊戲主檔寫刪必須走 ui/session-storage.js。
+ * ============================================================================
+ * 模組：storage.js — 本機儲存/重播資料層
+ * 所屬系統：UI/本機儲存 (UI / Local Storage Subsystem)
+ * 模組關聯：
+ *   - 無檔案依賴（純本地計算 + localStorage）
+ *   - 被：main.js（readLocal/writeLocal/clearLocal/checkJournal/appendAdvance）、ui/session-storage.js（SAVE_KEY 共用）
+ * 職責：
+ *   1. SAVE_KEY/PREFS_KEY/RECOVERY_KEY：本機儲存鍵名。
+ *   2. readLocal()：key → JSON 值|null（容錯讀取，失敗回 null）。
+ *   3. writeLocal()：值/key → 是否寫入成功（先序列化/限大小）。
+ *   4. clearLocal()：key → 是否刪除成功（無所有權保護）。
+ *   5. checkJournal()：journal → boolean，檢查步數、有限時間與輸入長度（唯讀）。
+ *   6. appendAdvance()：journal/dt → undefined，安全時原地合併最後 advance 或追加新項。
+ * 設計原則：
+ *   - portable RA1 不含任意指令/cwd；journal 額外保留輸入與時間。
+ *   - 本機 envelope 才能完整重播。
+ *   - read/write/clear 是低階容錯工具，不提供所有權；遊戲主檔寫刪必須走 ui/session-storage.js。
+ *   - 無跨分頁互斥，勿用於主檔所有權。
+ * ============================================================================
  */
+
 // Local replay metadata is deliberately separate from the portable RA1 schema.
 export const SAVE_KEY = 'ra.demo.save.v1';
 export const PREFS_KEY = 'ra.demo.preferences.v1';

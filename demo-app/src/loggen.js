@@ -1,7 +1,20 @@
 /**
- * 世界系統的決定性日誌產生器，對應 tools/gen_logs.py；依賴 data.js 的 error.log 文字。
- * createWorld/Engine 使用輸出與 manifest；PRNG 呼叫次序、UTC 日期與同秒排序會影響 SHA 對照。
- * 試玩版先實體化字串再供 VFS 串流，並非正式版百萬行惰性產生器；最多快取四組參數。
+ * ============================================================================
+ * 模組：loggen.js — 世界系統的決定性日誌產生器
+ * 所屬系統：世界系統 (World / VFS Subsystem)
+ * 模組關聯：
+ *   - 依賴：data.js（error.log 文字、manifest）
+ *   - 被：vfs.js（createWorld）、engine/index.js（Engine.manifest）
+ *   - 對應：tools/gen_logs.py（Python 參考實作）
+ * 職責：
+ *   1. Mulberry32：32-bit PRNG（nextU32/next_u32/below/pick）。
+ *   2. generateLogs()：決定性日誌產生器，輸出日誌文字與 manifest。
+ *   3. PRNG 呼叫次序、UTC 日期與同秒排序會影響 SHA 對照。
+ * 設計原則：
+ *   - 試玩版先實體化字串再供 VFS 串流，並非正式版百萬行惰性產生器。
+ *   - 最多快取四組參數。
+ *   - 整數 PRNG（無浮點），與 Python 參考實作逐位元組一致。
+ * ============================================================================
  */
 import { DATA } from './data.js';
 
