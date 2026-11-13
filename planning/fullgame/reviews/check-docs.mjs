@@ -90,18 +90,20 @@ for (const path of files) {
 
 const definitions = (file, expression) => [...readFileSync(resolve(root, file), 'utf8').matchAll(expression)].map(match => match[1]);
 const sequence = (prefix, count, pad = 0, start = 1) => Array.from({ length: count }, (_, i) => `${prefix}${String(i + start).padStart(pad, '0')}`);
+// 基線數量只寫這一處；比對用的序列與輸出的 expectedBaselineIDs 都由它產生，避免顯示值與實際檢查脫節。
+const BASELINE = { decisions: 26, authorQuestions: 8, acceptanceCases: 25, workPackages: 13 };
 for (const [file, expression, expected] of [
-  ['DECISIONS.md', /^\| (D\d+) \|/gm, sequence('D', 25, 2)],
-  ['DECISIONS.md', /^\| (O-N\d+) \|/gm, sequence('O-N', 8, 2)],
-  ['delivery/ACCEPTANCE_MATRIX.md', /^\| (ACC-\d+) \|/gm, sequence('ACC-', 25, 2)],
-  ['delivery/WORK_PACKAGES.md', /^\| (WP\d+) /gm, sequence('WP', 13, 0, 0)],
+  ['DECISIONS.md', /^\| (D\d+) \|/gm, sequence('D', BASELINE.decisions, 2)],
+  ['DECISIONS.md', /^\| (O-N\d+) \|/gm, sequence('O-N', BASELINE.authorQuestions, 2)],
+  ['delivery/ACCEPTANCE_MATRIX.md', /^\| (ACC-\d+) \|/gm, sequence('ACC-', BASELINE.acceptanceCases, 2)],
+  ['delivery/WORK_PACKAGES.md', /^\| (WP\d+) /gm, sequence('WP', BASELINE.workPackages, 0, 0)],
 ]) {
   const actual = definitions(file, expression);
   if (JSON.stringify(actual) !== JSON.stringify(expected)) issues.push({ file, kind: 'ids', message: { expected, actual } });
 }
 const knownIDs = new Set([
-  ...sequence('D', 25, 2), ...sequence('O-N', 8, 2),
-  ...sequence('ACC-', 25, 2), ...sequence('WP', 13, 0, 0),
+  ...sequence('D', BASELINE.decisions, 2), ...sequence('O-N', BASELINE.authorQuestions, 2),
+  ...sequence('ACC-', BASELINE.acceptanceCases, 2), ...sequence('WP', BASELINE.workPackages, 0, 0),
 ]);
 for (const [path, prose] of documents) {
   if (display(path).startsWith('source/')) continue;
@@ -123,7 +125,7 @@ if (attachment) {
 }
 console.log(JSON.stringify({
   markdownFiles: files.length, localLinks, anchorLinks, jsonExamples,
-  expectedBaselineIDs: { decisions: 25, authorQuestions: 8, acceptanceCases: 25, workPackages: 13 },
+  expectedBaselineIDs: BASELINE,
   archiveSHA256: sourceHash, attachmentMatches,
   scope: 'Local inline links, ATX heading anchors, code fences, JSON syntax, index coverage, baseline IDs and optional archive hash. Not semantic, game or human verification.',
   issues,

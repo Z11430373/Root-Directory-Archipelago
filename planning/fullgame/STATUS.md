@@ -56,3 +56,4 @@
 - 核心四檔已交付，file.edit／六欄EvidenceRecord／typed入口及閉包已固定；[WORK_PACKAGES](delivery/WORK_PACKAGES.md)列出尚需補齊的封閉子schema，並具名WP1-A/B/C共用核心／確定性執行／保存責任。
 - 跨域0.4曾為10已解／3已處理待重核／7待修；採D21–D25後，同審查者0.5關閉八項，再由0.6 §10關閉04容量逐維預留與09跨lineage writer順序。**現行20項規劃反例全部已解**，原反例與各輪判定保留；全部實作仍未實作待測。
 - 本輪文件交付完成：35份Markdown、25項決策、8項作者事項、13個工作包、25項跨域ACC。最終檢查結果在VERIFICATION；O-N01–O-N08與具名子schema未解除，不以規劃審查代替發布驗收。
+- 2026-11-13：D26（提示即檔案）登記為提案；作者裁定候選與兩處對照修正見 [DECISIONS](DECISIONS.md)；WP-S1–S4 見 [WORK_PACKAGES](delivery/WORK_PACKAGES.md) §3.5。以上待作者確認，不增加正史或實作宣稱。

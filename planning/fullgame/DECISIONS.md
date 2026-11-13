@@ -47,6 +47,12 @@
 | D24 | `$?` 是 branch-local `runtime.shellStatus`（0..255），納入 stateHash／snapshot；genesis／legacy 初始化0，成功 shell 交易更新，query／typed非shell保持，取消與提交失敗回滾。OutputRecord 比各stream完整bytes及各陣列內序，不比較跨stream／presentation交錯。 | 回答 INTREV-20/10；compact不依journal猜上一rc；輸出比較不宣稱未編碼的合流總序。 |
 | D25 | `seasonTimeMs` 是 UTC epoch 整數毫秒；`seasonElapsedMs=seasonTimeMs-seasonStartEpochMs` 只供turn／季內週序。M7賽季結果是獨立服務讀模型，不進EngineState／system.fact。compatibility可驗未簽合法baseline之後的tail，season仍需grant綁定可信起點。 | 回答 INTREV-16/09/14；保留來源未證與精確coverage，不把相容重放升成競技授權。 |
 
+### 規劃師增補：提示稽核（待作者確認）
+
+| ID | 採用的規劃基線 | 理由／驗證責任 |
+| --- | --- | --- |
+| D26 | 第 2、3 級提示放在 VFS 檔案（`/usr/share/hints/<ticket>/2.txt`、`3.txt`；Ch2 結束後 `0640 root:hints`），玩家以 `sudo cat` 讀取；第 1 級 `man <ticket>` 永遠世界可讀，Ch0–Ch1 的提示檔也世界可讀。sudo 只支援 sudoers 子集（`op ALL=(root) NOPASSWD: /bin/cat /usr/share/hints/*`），`sudo bash`、`sudo -i`、`su` 以真實格式拒絕。每次 sudo 以虛擬時鐘附加 `/var/log/auth.log`；每章 3 次免記額度，超過只記稽核事項，只影響「清白值班」類稱號與活動排行，不扣幣、不鎖、不阻擋故事。「顯示提示」按鈕等於在終端機明確執行同一條 `sudo cat`（D12），一樣寫 auth.log。 | **提案（預設），待作者確認**（[解除兩大阻塞](source/解除兩大阻塞.md) §5 第 2 項）。不改 D06：主線提示仍免費、有完整出口；聖經「提示越深越貴」只加修訂註記，不刪舊文。引擎需求（指令層實際檢查 uid／gid／mode、`id`／`groups`／`sudo`、auth.log、sudo 事件種類）由 WP-S2 併入 WP1-A／C。與現文衝突待 WP-S2 修：COMMAND_COMPATIBILITY 的 `sudo` 列（現為「原故事拒絕」）與 `hint` 列。 |
+
 ## 未能代替作者決定的敘事事項
 
 | ID | 缺口 | 可繼續的工作 | 解除條件 |
@@ -60,6 +66,18 @@
 | O-N07 | T0100 選修登記簿與 INIT 已登記點燈之間的關係 | 保留原題，列功能／敘事修訂選項，不捏造另一冊簿的正史 | 作者裁定敘事意義與對應原題／台詞修訂 |
 | O-N08 | Ch2 草案全文含八片／k-of-8，但角色設定將八片揭露放 Ch3；Ch0 已提 CI 被擋而 Ch6 才完整揭露 | 聖經§3：Ch2 在 `/etc/charter.d/` 有 `amend-10.draft`（第十條，k-of-8）與 `amend-7.draft`；Ch3 在郵局揭露四位 Admin 身分；Ch6 用 git blame/log 才完整揭露 amend-10。兩種揭露層次（檔案可讀 vs 全文理解）已分開 | 基本解除：揭露層次已知；具體 UI 遮蔽策略仍由作者裁定 |
 
+### 作者裁定候選（待確認，不是正史）
+
+來源：[解除兩大阻塞](source/解除兩大阻塞.md) §2。下表是對照聖經與設計包後的結果：與聖經衝突的地方已列出修正，作者確認前一律當提案。
+
+| 項目 | 裁定候選 | 對照後的修正 | 狀態 |
+| --- | --- | --- | --- |
+| 裁 O-N02 | 無八格介面；`ls -ltr` 後手打 `cat … > root.key`、`unlock root.key`；回 `quorum k/8`，k＝正確前綴長度 | ①「八空格」不在聖經，只在原規劃書 Ch7 列出現一次「8 空格」；REVEALS_AND_ENDINGS §5 的「八個 U+0020」是設計包的假設，改以聖經的 `root.key` 拼接流程取代並關閉。②k＝前綴長度與聖經「錯序只會回 `quorum 0/8`」衝突，且讓謎題退化：8 片 40320 種順序窮舉，用簡單逐格試法最壞 36 次、平均約 22 次就能試出，聖經版盲猜期望約 2 萬次。預設改回聖經：錯序一律 `quorum 0/8`，順序只能來自 `ls -ltr`。 | 待作者確認 |
+| 裁 O-N03 | 條件維持聖經（8 片＋K0–K8）；觸發 `git checkout -b v5.1-fork`；K8 卡末句「不開門，也是一種結案。」 | 觸發與條件聖經結局表已有；`git checkout -b` 在 COMMAND_COMPATIBILITY／MINIGIT_SPEC 已列為遊戲擴充，無衝突。末句是新增文案。 | 待作者確認（末句） |
+| 裁 O-N04 | 結局充分／排除矩陣：merge 缺卡退回選擇畫面、fork 缺卡不給結局 | 必要條件與聖經一致（merge＝8 片＋K4＋K6；fork＝8 片＋K0–K8），不改既有。 | 待作者確認 |
+| 裁 O-N07 | TICKET-0001 與 T0100 兩本帳分開；INIT 代簽加註「（代簽）」 | 與 D05 的 `skip` 代辦同一機制，無衝突。 | 待作者確認 |
+| 裁 O-N08 | 不遮蔽 `amend-10.draft`；Ch7 前任何輸出不出現碼片總數 | 兩句互相矛盾：聖經 Ch2 的 `amend-10.draft` 本身寫「八位守鑰者各持一片」。改為「除 `amend-10.draft` 外，Ch7 前任何輸出不得出現碼片總數」；防劇透驗證器要白名單該遺物，否則合法內容會被擋。 | 待作者確認 |
+
 ## 本輪變更紀錄
 
 | 版本 | 修改 | 狀態 |
@@ -69,5 +87,6 @@
 | 0.3-integration | 依獨立跨域 §8 反例新增 D21–D25，補主線獎勵域、按章水合、必要快照、volatile終章／重開、shell rc、輸出／重放／時間邊界；WP1具名核心基礎 | 規劃裁決，待同一審查者有限重核；不增加正史批准或實作通過宣稱 |
 | 0.3-handoff | 同審查者0.5重核八項；再補容量逐維預留／跨lineage writer因果順序，0.6 §10關閉最後兩項。敘事R3七處局部修稿亦已關閉 | 20項跨域規劃反例已解；敘事4／6／3，O-N01–O-N08、子schema與實作／真人關卡保留 |
 | 0.3-story-bible | 聖經取得並封存（source/《根目錄群島》故事聖經.md, SHA-256 5F5886C1…）；O-N01 解除取得阻塞，O-N02/03/04/05/06/08 基本解除，O-N07 部分更新 | 聖經為正文權威；仍須與SCRIPT.md/world YAML/規劃書做一致性核對，衝突列SOURCE_MAP |
+| 0.4-planner | 登記 D26（提示即檔案，提案）；整理作者裁定候選並標出兩處與聖經／自身矛盾的修正；WP-S1–S4 派工見 WORK_PACKAGES | 待作者確認；不增加正史批准或實作通過宣稱 |
 
 責任欄使用工作角色，不表示已聘任真人團隊。所有數字目標都需保留「提案／待量測」標籤。
