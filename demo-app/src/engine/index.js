@@ -1,8 +1,22 @@
 /**
- * 流程系統主控：依 demo/flow.yaml 將輸入、虛擬時鐘、讀檔事件轉為對話、進度與存檔事件。
- * 依賴 data.js、expr.js、save/index.js、vfs.js、shell/exec.js、loggen.js、quests.js。
- * main.js 與 headless 測試須依序 await start/feed/advance；內部方法不是可並行的公開操作。
- * 記憶體狀態由 transaction 回復，輸出成功提交後才通知 UI；無瀏覽器 timer/磁碟資源需清理。
+ * ============================================================================
+ * 模組：engine/index.js — 流程系統主控（Engine）
+ * 所屬系統：流程系統 (Engine / Flow System)
+ * 模組關聯：
+ *   - 依賴：data.js（flow.yaml/dialogue/quests/text）、expr.js（evaluate）、save/index.js（存檔事件）、vfs.js（createWorld）、shell/exec.js（execute）、loggen.js（generateLogs）、quests.js（checkQuest）
+ *   - 被：main.js（UI 整合）、headless 測試、fromSave/restore
+ * 職責：
+ *   1. Engine 類別：將輸入、虛擬時鐘、讀檔事件轉為對話、進度與存檔事件。
+ *   2. transaction/snapshotTransaction：記憶體狀態回復機制，輸出成功提交後才通知 UI。
+ *   3. start/feed/advance：公開交易入口，須依序 await。
+ *   4. commit/action/setFlag/say/fire/drain：事件處理與流程驅動。
+ *   5. restore/fromSave：從存檔恢復 durable 狀態。
+ * 設計原則：
+ *   - 內部方法不是可並行的公開操作，呼叫端必須序列化。
+ *   - 記憶體狀態由 transaction 回復，輸出成功提交後才通知 UI。
+ *   - 無瀏覽器 timer/磁碟資源需清理（所有時間為虛擬時鐘）。
+ *   - durable 投影（flags/獎勵）與 transient 狀態（mode/queue/history/時鐘）分開；RA1 只保留事件。
+ * ============================================================================
  */
 import { DATA } from '../data.js';
 import { evaluate } from '../expr.js';
