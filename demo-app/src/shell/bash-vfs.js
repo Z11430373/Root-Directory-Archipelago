@@ -1,4 +1,21 @@
-/** Async just-bash IFileSystem adapter; every operation stays in the game VFS. */
+/**
+ * ============================================================================
+ * 模組：shell/bash-vfs.js — just-bash IFileSystem 非同步適配器
+ * 所屬系統：Shell 子系統 (Shell Subsystem)
+ * 模組關聯：
+ *   - 依賴：../vfs.js（記憶體 VFS）
+ *   - 被：bash-runtime.js（executeBash 建立 BashVFS 實例）
+ * 職責：
+ *   1. BashVFSError：自訂錯誤類別，用於 VFS 操作失敗。
+ *   2. bytesToText()：Uint8Array → 文字解碼。
+ *   3. BashVFS：實作 just-bash 的 IFileSystem 介面，所有操作委託給 game VFS。
+ *   4. 路徑解析、讀寫、stat、mkdir、rm、cp、mv、link、chmod、utimes 等檔案系統操作。
+ * 設計原則：
+ *   - 所有操作停留在 game VFS（記憶體），不接觸宿主磁碟。
+ *   - 路徑解析不二次展開引號字面值（tilde/variables 已由 just-bash 展開）。
+ *   - /dev/null 視為空檔案，所有讀寫皆成功。
+ * ============================================================================
+ */
 const encoder = new TextEncoder(), decoder = new TextDecoder();
 const parent = path => path.slice(0, path.lastIndexOf('/')) || '/';
 export class BashVFSError extends Error {

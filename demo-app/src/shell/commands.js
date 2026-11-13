@@ -1,7 +1,21 @@
 /**
- * 模擬 Shell 的文字/檔案指令層；依賴 ../data.js、bre.js、stream.js，供 exec.js 派送。
- * ctx 提供 VFS、flags、branch、read/error 與 rc/stderr；所有輸出皆為文字塊 iterator。
- * 讀檔需經 ctx.read 記錄；cd/ln/rm 改記憶體世界，外層 Engine 管回復，exec 管串流關閉。
+ * ============================================================================
+ * 模組：shell/commands.js — 模擬 Shell 的文字/檔案指令層
+ * 所屬系統：Shell 子系統 (Shell Subsystem)
+ * 模組關聯：
+ *   - 依賴：../data.js（text/man_fsck）、bre.js（compileBRE）、stream.js（lines/withoutNewline）
+ *   - 被：exec.js（execute 派送）、測試
+ * 職責：
+ *   1. ls/grep/head/tail/sort/uniq/cut/wc/rm/ln/cd/pwd/echo/cat/mail/systemctl/man 等指令實作。
+ *   2. sources/joinedSources/sourceLines：讀檔 iterator 與登記 ctx.read。
+ *   3. splitOptions/countOptions：CLI 選項解析。
+ *   4. runCommand()：名稱/args/stdin/ctx → 惰性 iterator，消費時才執行，例外轉 ctx.error。
+ * 設計原則：
+ *   - ctx 提供 VFS、flags、branch、read/error 與 rc/stderr；所有輸出皆為文字塊 iterator。
+ *   - 讀檔需經 ctx.read 記錄；cd/ln/rm 改記憶體世界，外層 Engine 管回復，exec 管串流關閉。
+ *   - 故事指令（git/ssh/ask/finger/close/sudo/hint/skip/save/help/merge）多留空交 Engine 規則。
+ *   - 真正的 cd/ln/rm 只改 VFS，無宿主磁碟或程序副作用。
+ * ============================================================================
  */
 import { DATA } from '../data.js';
 import { compileBRE } from './bre.js';

@@ -1,7 +1,21 @@
 /**
- * just-bash 3.6.0 parser/interpreter + game VFS and read-time inode events.
- * State is data, never an interpreter/Worker instance and never command history.
- * See references/ENGINE_IMPLEMENTATION.md for the one pinned upstream hook.
+ * ============================================================================
+ * 模組：shell/bash-runtime.js — just-bash 3.6.0 parser/interpreter + game VFS
+ * 所屬系統：Shell 子系統 (Shell Subsystem)
+ * 模組關聯：
+ *   - 依賴：just-bash/browser（Bash/defineCommand）、bash-vfs.js（BashVFS/BashVFSError/bytesToText）、commands.js（runCommand）、stream.js（fromText/collect）
+ *   - 被：worker.js（Worker 執行）、ui/shell-job.js（__SHELL_WORKER_SOURCE__）、測試
+ * 職責：
+ *   1. patchBashBrowserSource()：對 just-bash 3.6.0 瀏覽器原始碼套用確定性 Hook（Date/Math/crypto）。
+ *   2. executeBash()：在 BashVFS 上執行指令，回傳 { stdout, stderr, rc, reads, readEvents }。
+ *   3. GAME_COMMANDS：遊戲指令白名單，透過 defineCommand 橋接至 runCommand。
+ *   4. 讀取時 inode 事件記錄、管線變數隔離、cwd 還原、shellState 快照。
+ * 設計原則：
+ *   - State 是資料，不是 interpreter/Worker 實例，不是命令歷史。
+ *   - 模組私有執行佇列（executionQueue）避免重疊執行。
+ *   - 模組私有 Date/Math/crypto Hook，不修改宿主全域。
+ *   - 參考 references/ENGINE_IMPLEMENTATION.md 的單一 pinned upstream hook。
+ * ============================================================================
  */
 import { Bash, defineCommand } from 'just-bash/browser';
 import { BashVFS, BashVFSError, bytesToText } from './bash-vfs.js';

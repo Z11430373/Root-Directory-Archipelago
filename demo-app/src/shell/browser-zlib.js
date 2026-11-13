@@ -1,4 +1,21 @@
-/** Browser equivalents for just-bash 3.6.0's rg/gzip Node zlib imports. */
+/**
+ * ============================================================================
+ * 模組：shell/browser-zlib.js — 瀏覽器等效的 zlib 實作
+ * 所屬系統：Shell 子系統 (Shell Subsystem)
+ * 模組關聯：
+ *   - 依賴：vendor/pako（Inflate/Deflate）
+ *   - 被：just-bash 3.6.0 的 rg/gzip Node zlib 匯入（瀏覽器端替換）
+ * 職責：
+ *   1. constants：Z_BEST_COMPRESSION/Z_BEST_SPEED/Z_DEFAULT_COMPRESSION 常數。
+ *   2. gunzipSync()：gzip 解壓（RFC 1952，windowBits=31）。
+ *   3. gzipSync()：gzip 壓縮（level 可選，預設 -1）。
+ *   4. transform()：共用的 pako inflate/deflate 轉換函式，有輸出大小上限。
+ * 設計原則：
+ *   - 瀏覽器端等效 Node.js zlib，提供 gzip/gunzip 同步操作。
+ *   - maxOutputLength 預設 8MB，防止記憶體爆炸。
+ * ============================================================================
+ */
+
 import {Inflate,Deflate} from '../../vendor/pako.esm.mjs';
 
 export const constants=Object.freeze({Z_BEST_COMPRESSION:9,Z_BEST_SPEED:1,Z_DEFAULT_COMPRESSION:-1});

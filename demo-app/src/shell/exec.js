@@ -1,14 +1,37 @@
 /**
- * 模擬 Shell 執行器；依賴 ../data.js 白名單及 parse/commands/stream.js，不啟動宿主程序。
- * Engine.execute 呼叫後取得 stdout/stderr/rc 與讀取時 inode 快照，再轉成故事事件。
- * 指令可改記憶體 VFS；Engine 的外層交易負責回復，這裡的 finally 負責關閉所有管線 iterator。
+ * ============================================================================
+ * 模組：shell/exec.js — 模擬 Shell 執行器
+ * 所屬系統：Shell 子系統 (Shell Subsystem)
+ * 模組關聯：
+ *   - 依賴：../data.js（command_whitelist）、parse.js（parse/expandWord）、commands.js（runCommand）、stream.js（fromText/collect/startable）
+ *   - 被：engine/index.js（Engine.execute 呼叫）、shell-job.js（Worker 執行）、測試
+ * 職責：
+ *   1. expandGlob()：引號感知的 glob 展開（* ? []），未匹配保留字面值。
+ *   2. shellView()：建立 VFS Proxy 檢視，隔離 cwd 而不複製檔案。
+ *   3. execute()：同步執行原始指令字串，回傳 { stdout, stderr, rc, reads, readEvents }。
+ *   4. 管線（pipeline）、&& 連接器、重導向、白名單檢查、glob 防護。
+ * 設計原則：
+ *   - 不啟動宿主程序，所有指令在記憶體 VFS 中執行。
+ *   - 指令可改記憶體 VFS；Engine 的外層交易負責回復，finally 關閉所有管線 iterator。
+ *   - 讀取時記錄 inode 快照（readEvents），供 Engine 轉成故事事件。
+ * ============================================================================
  */
+
 import { DATA } from '../data.js';
 import { parse, expandWord } from './parse.js';
 import { runCommand } from './commands.js';
 import { fromText, collect, startable } from './stream.js';
 
-/** 由 execute 展開參數/目的檔呼叫；文字/VFS/引號感知 pattern → 路徑字串陣列，未匹配保留字面值。 */
+/**
+ * 引號感知的 glob 展開器。
+ * 將 pattern 中的 * ? [] 轉換為正規表示式，遞迴匹配 VFS 目錄。
+ * 未匹配時保留原始字面值，避免 Bash 式錯誤。
+ *
+ * @param {string} value - 原始文字值
+ * @param {Object} vfs - 虛擬檔案系統
+ * @param {string} [globPattern=value] - glob 模式（引號感知後）
+ * @returns {string[]} 匹配的路徑陣列，未匹配則 [value]
+ */
 function expandGlob(value, vfs, globPattern = value) {
   if (!/[*?[]/.test(globPattern)) return [value];
   const absolute = vfs.resolve(globPattern);
@@ -47,8 +70,13 @@ function expandGlob(value, vfs, globPattern = value) {
 }
 
 /**
- * 由 execute 呼叫；VFS/是否隔離 cwd → Proxy 檢視，不複製檔案。
- * 防止已處理的引號再做家目錄展開；管線各站的 cd 留在本地，寫檔/解鏈仍共用同一世界。
+ * 建立 VFS Proxy 檢視，不複製檔案。
+ * 防止已處理的引號再做家目錄展開；管線各站的 cd 留在本地，
+ * 寫檔/解鏈仍共用同一世界。
+ *
+ * @param {Object} vfs - 虛擬檔案系統
+ * @param {boolean} [localCwd=false] - 是否隔離 cwd（管線內建 cd）
+ * @returns {Proxy} VFS 檢視代理
  */
 function shellView(vfs, localCwd = false) {
   // VFS's public API deliberately accepts ~/$HOME for flow expressions. The
@@ -74,8 +102,14 @@ function shellView(vfs, localCwd = false) {
 }
 
 /**
- * 由 Engine/世界測試呼叫；原始指令、VFS、flags/branch 選項 → 同步執行結果物件。
- * parse 失敗回 rc=2；各站錯誤累積 stderr，管線 rc 採末站；VFS 改動不在此自行撤銷。
+ * 同步執行原始指令字串，回傳執行結果物件。
+ * 由 Engine/世界測試呼叫，parse 失敗回 rc=2。
+ * 各站錯誤累積 stderr，管線 rc 採末站；VFS 改動不在此自行撤銷。
+ *
+ * @param {string} raw - 原始指令字串
+ * @param {Object} vfs - 虛擬檔案系統
+ * @param {Object} [options={}] - 選項 { flags, branch }
+ * @returns {Object} { stdout, stderr, rc, reads, readEvents }
  */
 export function execute(raw, vfs, options = {}) {
   vfs = shellView(vfs);

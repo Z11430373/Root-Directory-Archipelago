@@ -1,10 +1,31 @@
 /**
- * 模擬 Shell 的詞法/文法與變數展開層，無檔案依賴；由 exec.js 使用。
- * 保留每個字片段的引號/展開/glob 資訊；只產生資料，不接宿主 Shell，也不改 VFS。
- * 改引號規則會連動 glob、安全刪除與重導向，須跑 round3-shell* 與 T7。
+ * ============================================================================
+ * 模組：shell/parse.js — 模擬 Shell 的詞法/文法與變數展開層
+ * 所屬系統：Shell 子系統 (Shell Subsystem)
+ * 模組關聯：
+ *   - 無檔案依賴（純本地計算）
+ *   - 被：exec.js（execute 呼叫 parse/expandWord）、測試
+ * 職責：
+ *   1. tokenize()：原始字串 → word/op tokens，拒絕不支援的運算子與命令替換。
+ *   2. parse()：token 陣列 → 帶 connector 的 pipeline 陣列，保留重導向順序。
+ *   3. expandWord()：word、VFS、前一 rc、是否供 glob → 展開後字串（HOME/?/~）。
+ * 設計原則：
+ *   - 保留每個字片段的引號/展開/glob 資訊，只產生資料，不接宿主 Shell，不改 VFS。
+ *   - 改引號規則會連動 glob、安全刪除與重導向，須跑 round3-shell* 與 T7 測試。
+ *   - Bash 空白為 ASCII，不使用 JavaScript 的 Unicode 空白類別。
+ * ============================================================================
  */
+
 // This is a parser for the game's shell language, never a host-shell bridge.
-/** 由 parse 呼叫；原始字串 → word/op tokens，拒絕不支援運算子與命令替換；語法錯誤拋 SyntaxError。 */
+/**
+ * 將原始字串分解為 word/op tokens。
+ * 拒絕不支援的運算子（||、;;、()、<、&）與命令替換（`、$()）。
+ * 語法錯誤拋 SyntaxError。
+ *
+ * @param {string} raw - 原始指令字串
+ * @returns {Array} token 陣列（{ type: 'word', parts, tilde, glob } 或 { type: 'op', value }）
+ * @throws {SyntaxError} 當遇到不支援的運算子、命令替換或未終止引號時
+ */
 export function tokenize(raw) {
   const tokens = [];
   let parts = [], text = '', started = false, quote = null;
@@ -72,7 +93,14 @@ export function tokenize(raw) {
   return tokens;
 }
 
-/** 由 execute 呼叫；輸入文字 → 帶 connector 的 pipeline 陣列，重導向保留順序，不執行指令。 */
+/**
+ * 將 token 陣列解析為帶 connector 的 pipeline 陣列。
+ * 由 execute 呼叫，重導向保留順序，不執行指令。
+ *
+ * @param {string} raw - 原始指令字串
+ * @returns {Array} pipeline 陣列，每筆 { connector, commands: [{ words, redirects }] }
+ * @throws {SyntaxError} 當語法錯誤時
+ */
 export function parse(raw) {
   const tokens = tokenize(String(raw));
   if (!tokens.length) return [];
@@ -108,7 +136,16 @@ export function parse(raw) {
   return result;
 }
 
-/** 由 exec 展開參數/重導向呼叫；word、VFS、前一 rc、是否供 glob → 字串，僅展開允許的 HOME/?/~。 */
+/**
+ * 展開 word 為字串。
+ * 由 exec 展開參數/重導向呼叫，僅展開允許的 HOME/?/~，不改 VFS。
+ *
+ * @param {Object} word - token 中的 word 物件（parts/tilde/glob）
+ * @param {Object} vfs - 虛擬檔案系統
+ * @param {number} [rc=0] - 前一管線的 rc（用於 $?）
+ * @param {boolean} [globPattern=false] - 是否為 glob 模式（會轉義非 glob 字元）
+ * @returns {string} 展開後的字串
+ */
 export function expandWord(word, vfs, rc = 0, globPattern = false) {
   let value = word.parts.map(part => {
     const expanded = part.expand ? part.text.replace(/\$(\?|HOME\b|\{HOME\})/g, (_, name) => name === '?' ? String(rc) : vfs.home) : part.text;
