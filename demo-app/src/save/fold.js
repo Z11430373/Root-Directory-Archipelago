@@ -1,16 +1,53 @@
 /**
- * 存檔事件投影層，無檔案依賴；供 score/integrity/import/card 與 Engine.restore 使用。
- * 將 durable commits 折成新狀態，不重播對話、不恢復任意 Shell 檔案，也不修改來源。
+ * ============================================================================
+ * 模組：save/fold.js — 存檔事件投影層
+ * 所屬系統：存檔系統 (Save Subsystem)
+ * 模組關聯：
+ *   - 無檔案依賴（純本地計算）
+ *   - 被：score.js、integrity.js、import.js、card.js、Engine.restore 使用
+ * 職責：
+ *   1. roundMilliseconds()：將整數毫秒轉換為最接近的秒，半秒採偶數捨入（與 Python 一致）。
+ *   2. fold()：將存檔的 durable commits 折疊成新的狀態物件（flags/tasks/finds/items/cards/checkpoints/skipped/vote/hints/branches/seconds/ended）。
+ *   3. 不重播對話、不恢復任意 Shell 檔案，也不修改來源存檔。
+ * 設計原則：
+ *   - 同類獎勵只計一次，保留首次取得順序，避免重複事件灌高分數或改變稱號。
+ *   - 不驗證雜湊鏈，必須先由邊界（validate/codec）驗證後再使用。
+ *   - Python round() 使用 ties-to-even，Math.round() 不同，故自行實作。
+ * ============================================================================
  */
-// Python round() uses ties-to-even; Math.round() does not.
-/** 由 fold 呼叫；整數毫秒 → 最接近的秒，半秒採偶數捨入以符合 Python；無副作用。 */
+
+/**
+ * 將整數毫秒轉換為最接近的秒，半秒採偶數捨入（與 Python round() 一致）。
+ * 由 fold 呼叫，計算存檔總耗時時使用，確保與 Python 參考實作相同的捨入行為。
+ *
+ * @param {number} ms - 整數毫秒數
+ * @returns {number} 最接近的秒數，半秒情況下採偶數捨入
+ */
 export function roundMilliseconds(ms) {
   const whole = Math.floor(ms / 1000);
   const remainder = ms - whole * 1000;
   return remainder < 500 ? whole : remainder > 500 ? whole + 1 : whole + whole % 2;
 }
 
-/** 由存檔各投影讀者呼叫；save → 含 Set 旗標與去重進度的新物件；不驗鏈，須先由邊界驗證。 */
+/**
+ * 將存檔的 durable commits 折疊成新的狀態物件。
+ * 由存檔各投影讀者（score/integrity/import/card/Engine.restore）呼叫。
+ *
+ * @param {Object} save - 存檔物件
+ * @returns {Object} 新狀態物件，包含：
+ *   - flags: Set，所有設定的旗標
+ *   - tasks: 陣列，去重後的完成題目 ID（保留首次順序）
+ *   - finds: 陣列，去重後的發現物品 ID
+ *   - items: 陣列，去重後的獲得物品 ID
+ *   - cards: 陣列，去重後的獲得卡片 ID
+ *   - checkpoints: 陣列，所有檢查點 ID
+ *   - skipped: 陣列，去重後的跳過題目 ID
+ *   - vote: 'block' | 'pass' | null，02:00 的訪客選擇
+ *   - hints: number，提示次數總和
+ *   - branches: 陣列，分支進入/退出/合併記錄
+ *   - seconds: number，總耗時（秒）
+ *   - ended: boolean，是否已結束
+ */
 export function fold(save) {
   const st = { flags: new Set(), tasks: [], finds: [], items: [], cards: [], checkpoints: [],
     skipped: [], vote: null, hints: 0, branches: [], seconds: 0, ended: false };

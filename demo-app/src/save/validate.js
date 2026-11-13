@@ -1,35 +1,100 @@
 /**
- * 存檔硬規則驗證層；依賴 config/errors/json.js，供 codec/state/import 與 Engine 邊界使用。
- * 只檢查結構、白名單與時間順序，不驗雜湊、可玩性或事件預算；失敗拋 CodeError。
- * 不修改輸入、不取得外部資源；新增種類需同步 demo/integrity.yaml 與 Python 參考工具。
+ * ============================================================================
+ * 模組：save/validate.js — 存檔硬規則驗證層
+ * 所屬系統：存檔系統 (Save Subsystem)
+ * 模組關聯：
+ *   - 依賴：config.js（demoConfig/integrityConfig/LIMITS）、errors.js（CodeError/codeError/requireThat）、json.js（isRecord/checkJSONTree）
+ *   - 被：codec.js（import/export 自檢）、state.js（unpack 段落驗證）、import.js（importFile 準入）、Engine（檢查存檔形狀）
+ * 職責：
+ *   1. exactKeys()：檢查物件是否僅包含允許的鍵（必要 + 選用）。
+ *   2. checkShape()：全面驗證存檔物件的結構、欄位白名單、時間順序、事件種類與 data 欄位。
+ *   3. 內部判斷器（flag/ckpt/branch/hash/integer/fullMatch）：各自驗證特定欄位格式。
+ * 設計原則：
+ *   - 只檢查結構、白名單與時間順序，不驗證雜湊鏈、可玩性或事件預算。
+ *   - 失敗拋 CodeError，不修改輸入、不取得外部資源。
+ *   - 新增事件種類需同步 demo/integrity.yaml 與 Python 參考工具。
+ * ============================================================================
  */
+
 import { demoConfig, integrityConfig, LIMITS } from './config.js';
 import { CodeError, codeError, requireThat as need } from './errors.js';
 import { isRecord, checkJSONTree } from './json.js';
 
 // 以下純判斷器只供 checkShape 使用；輸入欄位值，輸出是否合法，不改資料。
 // fullMatch 額外拒絕換行，避免 JavaScript 的 $ 在最後換行前也算匹配。
+/**
+ * 嚴格全字匹配：值必須是字串，完全符合正規表示式，且不含換行。
+ * 避免 JavaScript 的 $ 在最後換行前也算匹配的問題。
+ *
+ * @param {string} pattern - 正規表示式模式（不含 ^$）
+ * @param {any} value - 要檢查的值
+ * @returns {boolean} 是否完全匹配且不含換行
+ */
 const fullMatch = (pattern, value) => typeof value === 'string' && new RegExp('^(?:' + pattern + ')$').test(value)
   && !/[\r\n]/.test(value);
-/** checkShape 呼叫；值 → 是否為合法旗標名，無副作用。 */
+/**
+ * 驗證旗標名格式：flag. 開頭，後接 1-40 個小寫字母、數字、底線或點。
+ *
+ * @param {any} value - 要檢查的值
+ * @returns {boolean} 是否為合法旗標名
+ */
 const flag = value => fullMatch('flag\\.[a-z0-9_.]{1,40}', value);
-/** checkShape 呼叫；值 → 是否為合法 ckpt/ 名稱，無副作用。 */
+/**
+ * 驗證檢查點名稱格式：ckpt/ 開頭，後接 1-24 個小寫字母、數字或連字號。
+ *
+ * @param {any} value - 要檢查的值
+ * @returns {boolean} 是否為合法 ckpt/ 名稱
+ */
 const ckpt = value => fullMatch('ckpt/[a-z0-9-]{1,24}', value);
-/** checkShape 呼叫；值 → 是否為非 main 分支名稱格式，無副作用。 */
+/**
+ * 驗證非 main 分支名稱格式：1-8 個小寫字母，接 /，再接 1-16 個小寫字母、數字或連字號。
+ *
+ * @param {any} value - 要檢查的值
+ * @returns {boolean} 是否為合法分支名
+ */
 const branch = value => fullMatch('[a-z]{1,8}/[a-z0-9-]{1,16}', value);
-/** checkShape 呼叫；值 → 是否為八碼小寫雜湊，僅驗格式、不驗內容，無副作用。 */
+/**
+ * 驗證八碼小寫雜湊格式，僅驗證格式不驗證內容。
+ *
+ * @param {any} value - 要檢查的值
+ * @returns {boolean} 是否為八碼小寫十六進位雜湊
+ */
 const hash = value => fullMatch('[0-9a-f]{8}', value);
-/** checkShape 呼叫；值/上下界 → 是否為範圍內 safe integer，排除布林，無副作用。 */
+/**
+ * 驗證值為範圍內的安全整數，排除布林值。
+ *
+ * @param {any} value - 要檢查的值
+ * @param {number} min - 最小值（含）
+ * @param {number} max - 最大值（含）
+ * @returns {boolean} 是否為範圍內 safe integer
+ */
 const integer = (value, min, max) => Number.isSafeInteger(value) && value >= min && value <= max;
 
-/** 由 checkShape/unpack 呼叫；物件與必要/選用鍵 → undefined；少鍵、多鍵或非普通物件即拋錯。 */
+/**
+ * 檢查物件是否僅包含允許的鍵（必要 + 選用），少鍵或多鍵皆拋錯。
+ * 由 checkShape/unpack 呼叫。
+ *
+ * @param {Object} object - 要檢查的物件
+ * @param {string[]} required - 必要鍵名陣列
+ * @param {string[]} [optional=[]] - 選用鍵名陣列
+ * @param {string} [message='存檔欄位不符'] - 錯誤訊息
+ * @returns {undefined} 檢查通過時回傳 undefined
+ */
 export function exactKeys(object, required, optional = [], message = '存檔欄位不符') {
   need(isRecord(object), message);
   const allowed = new Set([...required, ...optional]);
   need(required.every(k => Object.hasOwn(object, k)) && Object.keys(object).every(k => allowed.has(k)), message);
 }
 
-/** 由存檔入口與本機保存呼叫；save → true，非法輸入拋 CodeError；不保證雜湊鏈或續玩安全。 */
+/**
+ * 全面驗證存檔物件的結構與內容合法性。
+ * 由存檔入口與本機保存呼叫，非法輸入拋 CodeError。
+ * 不保證雜湊鏈或續玩安全（需另外呼叫 verifyChain）。
+ *
+ * @param {Object} save - 存檔物件
+ * @returns {boolean} 驗證通過時回傳 true
+ * @throws {CodeError} 當存檔格式、欄位、時間順序或事件內容不合規則時
+ */
 export function checkShape(save) {
   try {
     need(isRecord(save), '存檔格式錯誤（不是物件）');

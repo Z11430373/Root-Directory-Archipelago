@@ -1,19 +1,49 @@
 /**
- * 不可信存檔 JSON 的詞法與物件樹安全層；依賴 config.js、errors.js。
- * codec/import 先用 parseSaveJSON 保留數字/重複鍵資訊；validate/state 再檢查記憶體物件。
- * 不執行輸入內容，不修改來源；錯誤皆轉 CodeError，暫存集合隨呼叫釋放。
+ * ============================================================================
+ * 模組：save/json.js — 不可信存檔 JSON 的詞法與物件樹安全層
+ * 所屬系統：存檔系統 (Save Subsystem)
+ * 模組關聯：
+ *   - 依賴：config.js（LIMITS）、errors.js（CodeError/codeError）
+ *   - 被：codec.js（importCode 解壓後解析）、import.js（importFile 準入）、validate.js（checkShape）、state.js（unpack 檢查物件樹）
+ * 職責：
+ *   1. isRecord()：判斷值是否為普通物件或 null-prototype 非陣列物件。
+ *   2. parseSaveJSON()：Token 感知的 JSON 解析器，保留數字精度、拒絕浮點詞法、重複鍵與污染鍵。
+ *   3. checkJSONTree()：遞迴檢查記憶體 JSON 值，拒絕循環引用、getter、symbol 與污染鍵。
+ * 設計原則：
+ *   - 不執行輸入內容（不使用 eval/new Function），不修改來源。
+ *   - 錯誤皆轉為 CodeError，暫存集合隨呼叫釋放。
+ *   - JSON.parse 單獨使用會丟失 1.0、1e0、重複鍵與精度，故自行實作解析器。
+ * ============================================================================
  */
+
 import { LIMITS } from './config.js';
 import { CodeError, codeError } from './errors.js';
 
+/**
+ * 污染鍵集合，拒絕原型污染攻擊（__proto__、constructor、prototype）。
+ * @type {Set<string>}
+ */
 const dangerousKeys = new Set(['__proto__', 'constructor', 'prototype']);
-/** 供 validate/state 呼叫；任意值 → 是否為普通或 null-prototype 非陣列物件；無副作用。 */
+
+/**
+ * 判斷值是否為普通物件或 null-prototype 非陣列物件。
+ * 供 validate/state 呼叫，用於確認物件安全性。
+ *
+ * @param {any} o - 要檢查的值
+ * @returns {boolean} 是否為普通或 null-prototype 非陣列物件
+ */
 export const isRecord = o => o !== null && typeof o === 'object' && !Array.isArray(o)
   && (Object.getPrototypeOf(o) === Object.prototype || Object.getPrototypeOf(o) === null);
 
-// A token-aware parser: JSON.parse alone loses 1.0, 1e0, duplicate keys and
-// precision before a reviver can check them. Never evaluates input as code.
-/** 由代碼/JSON 檔匯入呼叫；受限 ASCII/整數 JSON 文字 → 新值；拒絕浮點詞法、重複鍵與污染鍵。 */
+/**
+ * Token 感知的受限 JSON 解析器。
+ * 由代碼/JSON 檔匯入呼叫，將受限 ASCII/整數 JSON 文字轉換為新值。
+ * 拒絕浮點詞法、重複鍵與污染鍵，不將輸入評估為程式碼。
+ *
+ * @param {string} text - JSON 文字
+ * @returns {any} 解析後的新值
+ * @throws {CodeError} 當文字不是合法 JSON、過大、含浮點數、重複鍵或污染鍵時
+ */
 export function parseSaveJSON(text) {
   try {
     if (typeof text !== 'string' || text.length > LIMITS.max_inflated_bytes
@@ -22,10 +52,13 @@ export function parseSaveJSON(text) {
     }
     let pos = 0;
     let nodes = 0;
-    // fail/whitespace 只操作本次剖析游標；前者統一拒絕，後者僅跳過 JSON 定義的四種空白。
+    // fail/whitespace 只操作本次剖析游標；前者統一拒絕，後者僅跳過 JSON 定義的四種空白（空格、Tab、換行、回車）。
     const fail = () => { throw new CodeError('存檔檔案不是合法的 JSON'); };
     const whitespace = () => { while (pos < text.length && /[\x20\x09\x0a\x0d]/.test(text[pos])) pos++; };
-    /** 由 value 及物件鍵解析呼叫；從引號處前進 pos，回傳解碼後的受限字串或拋錯。 */
+    /**
+     * 由 value 及物件鍵解析呼叫；從引號處前進 pos，回傳解碼後的受限字串或拋錯。
+     * 字串長度不得超過 max_string_len，且只接受 ASCII 字元（U+0000-U+007F）。
+     */
     function string() {
       const start = pos++;
       while (pos < text.length) {
@@ -45,12 +78,17 @@ export function parseSaveJSON(text) {
             pos += 4;
           } else if (!escape || !'"\\/bfnrt'.includes(escape)) fail();
         }
-        // At most six source characters per decoded ASCII character.
+        // 最多六個來源字元對應一個解碼後的 ASCII 字元。
         if (pos - start > LIMITS.max_string_len * 6 + 2) throw new CodeError('存檔字串過長');
       }
       fail();
     }
-    /** 遞迴讀取指定深度的值；回傳新物件/陣列/純量，累計節點數並拒絕深度與數值越界。 */
+    /**
+     * 遞迴讀取指定深度的值；回傳新物件/陣列/純量，累計節點數並拒絕深度與數值越界。
+     *
+     * @param {number} depth - 目前巢狀深度
+     * @returns {any} 解析後的值
+     */
     function value(depth) {
       if (++nodes > 16000 || depth > LIMITS.max_depth) throw new CodeError('存檔巢狀過深或內容過多');
       whitespace();
@@ -105,11 +143,24 @@ export function parseSaveJSON(text) {
   } catch (error) { throw codeError(error, '存檔檔案不是合法的 JSON'); }
 }
 
-/** 由 checkShape/unpack 呼叫；記憶體 JSON 值 → undefined，拒絕循環、getter、symbol 與污染鍵。 */
+/**
+ * 遞迴檢查記憶體 JSON 值，拒絕循環引用、getter、symbol 與污染鍵。
+ * 由 checkShape/unpack 呼叫，用於確認記憶體中的 JSON 物件安全。
+ *
+ * @param {any} value - 要檢查的 JSON 值
+ * @returns {undefined} 檢查通過時回傳 undefined
+ * @throws {CodeError} 當檢測到循環引用、巢狀過深、非安全整數、污染鍵或 symbol 時
+ */
 export function checkJSONTree(value) {
   const ancestors = new Set();
   let nodes = 0;
-  /** 遞迴檢查值與深度；以 descriptor 讀取子值而不執行 getter，離開時清除祖先標記。 */
+  /**
+   * 遞迴檢查值與深度；以 property descriptor 讀取子值而不執行 getter，離開時清除祖先標記。
+   *
+   * @param {any} o - 目前要檢查的值
+   * @param {number} depth - 目前巢狀深度
+   * @returns {void}
+   */
   function visit(o, depth) {
     if (++nodes > 16000 || depth > LIMITS.max_depth) throw new CodeError('存檔巢狀過深或內容過多');
     if (typeof o === 'string') {
