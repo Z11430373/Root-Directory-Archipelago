@@ -1,7 +1,20 @@
 /**
- * Bash 終端操作介面：輸出紀錄與目前提示符共用一個可捲動視窗。
- * 管理行編輯／歷史搜尋／焦點監聽；main.js 負責派送遊戲與工作階段命令。
- * 使用原生 textarea 保留中文組字、選取、剪貼簿與軟鍵盤；destroy 解除觀察器和全頁監聽。
+ * ============================================================================
+ * 模組：ui/console-view.js — Bash 終端操作介面
+ * 所屬系統：UI (User Interface)
+ * 模組關聯：
+ *   - 依賴：ui/dom.js（el）、ui/terminal.js（Terminal）
+ *   - 被：main.js（CONSOLE_COMMANDS/completionWord/completedWord/completionEnd）、ui/script-submissions.js
+ * 職責：
+ *   1. Bash 終端操作介面：輸出紀錄與目前提示符共用一個可捲動視窗。
+ *   2. 管理行編輯、歷史搜尋、焦點監聽。
+ *   3. completionWord/completedWord/completionEnd：Bash 風格字詞補全。
+ *   4. commandLines：將多行文字拆分為命令行。
+ * 設計原則：
+ *   - 使用原生 textarea 保留中文組字、選取、剪貼簿與軟鍵盤。
+ *   - destroy 解除觀察器和全頁監聽。
+ *   - main.js 負責派送遊戲與工作階段命令。
+ * ============================================================================
  */
 import {el} from './dom.js';
 import {Terminal} from './terminal.js';

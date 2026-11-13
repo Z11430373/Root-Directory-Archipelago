@@ -1,4 +1,19 @@
-/** Readline-like editing over xterm onData; no DOM or shell execution lives here. */
+/**
+ * ============================================================================
+ * 模組：ui/console-line-editor.js — Readline-like 編輯器（xterm onData）
+ * 所屬系統：UI (User Interface)
+ * 模組關聯：
+ *   - 無檔案依賴（純本地計算）
+ *   - 被：ui/xterm-console.js（ConsoleLineEditor）、ui/script-submissions.js（needsContinuation）
+ * 職責：
+ *   1. graphemeOffsets()：文字 → grapheme 偏移陣列（Intl.Segmenter 或 fallback）。
+ *   2. ConsoleLineEditor：Readline-like 編輯（移動/刪除/歷史/搜尋）。
+ *   3. needsContinuation()：判斷是否需要續行（未閉合引號/括號/管線）。
+ * 設計原則：
+ *   - 無 DOM 或 shell 執行；純編輯邏輯。
+ *   - 使用 Intl.Segmenter 處理 grapheme cluster（中文/emoji）。
+ * ============================================================================
+ */
 const segmenter=typeof Intl.Segmenter==='function'?new Intl.Segmenter(undefined,{granularity:'grapheme'}):null;
 const ESC='\x1b';
 const noop=()=>{};

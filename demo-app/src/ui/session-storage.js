@@ -1,7 +1,20 @@
 /**
- * 本機工作階段所有權子系統；依賴 ../storage.js 的鍵名，供 main.js 主檔/救援副本各建一個 guard。
- * 比對完整原始字串而非 head，保護沒有 commit 的檔案變更；不更改 RA1 schema。
- * Web Lock 只涵蓋同鍵且合作的寫入者；無鎖時僅 best-effort，跨鍵刪除不是原子交易。
+ * ============================================================================
+ * 模組：ui/session-storage.js — 本機工作階段所有權子系統
+ * 所屬系統：UI / 本機儲存 (UI / Local Storage Subsystem)
+ * 模組關聯：
+ *   - 依賴：../storage.js（SAVE_KEY）
+ *   - 被：main.js（主檔/救援副本各建一個 guard）
+ * 職責：
+ *   1. createSessionStorage()：鍵/可注入 storage/locks/上限 → guard API。
+ *   2. load()：同步採納基準字串，回傳 {ok,value,text}。
+ *   3. check()/observe()/write()/clear()：所有權保護的讀寫操作。
+ * 設計原則：
+ *   - 比對完整原始字串而非 head，保護沒有 commit 的檔案變更。
+ *   - Web Lock 只涵蓋同鍵且合作的寫入者；無鎖時僅 best-effort。
+ *   - 跨鍵刪除不是原子交易，precondition 僅在鎖內再檢查。
+ *   - 不更改 RA1 schema。
+ * ============================================================================
  */
 import {SAVE_KEY} from '../storage.js';
 

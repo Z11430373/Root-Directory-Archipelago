@@ -1,4 +1,19 @@
-/** Real VT terminal + a separate readline-like editor. Controller owns command echo/history. */
+/**
+ * ============================================================================
+ * 模組：ui/xterm-console.js — Real VT 終端 + Readline-like 編輯器
+ * 所屬系統：UI (User Interface)
+ * 模組關聯：
+ *   - 依賴：@xterm/xterm、@xterm/addon-fit、ui/dom.js（el）、ui/console-line-editor.js（ConsoleLineEditor/graphemeOffsets）
+ *   - 被：main.js（XtermConsoleView as ConsoleView）
+ * 職責：
+ *   1. XtermConsoleView：Real VT 終端（xterm.js）與獨立 readline-like 編輯器。
+ *   2. 管理主題、焦點、輸入歷史、貼上、補全。
+ *   3. Controller 擁有命令 echo/歷史。
+ * 設計原則：
+ *   - 終端輸出與輸入編輯分離。
+ *   - 使用 xterm.js 提供 VT 相容的終端模擬。
+ * ============================================================================
+ */
 import {Terminal as Xterm} from '@xterm/xterm';
 import {FitAddon} from '@xterm/addon-fit';
 import {el} from './dom.js';
