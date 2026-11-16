@@ -91,7 +91,7 @@ for (const path of files) {
 const definitions = (file, expression) => [...readFileSync(resolve(root, file), 'utf8').matchAll(expression)].map(match => match[1]);
 const sequence = (prefix, count, pad = 0, start = 1) => Array.from({ length: count }, (_, i) => `${prefix}${String(i + start).padStart(pad, '0')}`);
 // 基線數量只寫這一處；比對用的序列與輸出的 expectedBaselineIDs 都由它產生，避免顯示值與實際檢查脫節。
-const BASELINE = { decisions: 26, authorQuestions: 8, acceptanceCases: 25, workPackages: 13 };
+const BASELINE = { decisions: 26, authorQuestions: 8, acceptanceCases: 26, workPackages: 13 };
 for (const [file, expression, expected] of [
   ['DECISIONS.md', /^\| (D\d+) \|/gm, sequence('D', BASELINE.decisions, 2)],
   ['DECISIONS.md', /^\| (O-N\d+) \|/gm, sequence('O-N', BASELINE.authorQuestions, 2)],

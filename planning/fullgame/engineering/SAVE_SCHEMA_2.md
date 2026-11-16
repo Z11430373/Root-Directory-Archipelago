@@ -49,9 +49,17 @@ Baseline 為 `{seq,commitId,stateHash,state}`。`state.seq === seq`；`state` �
 
 Journal 的非決定性輸入必須顯式資料化：外部 receipt、匯入證據、活動 fixture 均以完整 hash 指向保存的 bytes；執行不能依現在時間重新下載「相同 URL 最新版本」。只有使用者許可的獨立 replay 工作可使用網路取得缺少的固定 artifact。
 
-### 2.1 D26 sudo 事件（WP-S2）
+### 2.1 D26 sudo 與提示稽核（WP-S2）
 
-D26 提示即檔案的 sudo 事件種類，記入 EngineState.externalFacts，auth.log 本身仍是 VFS 資料不重複存。sudo 事件 kind：`sudo.exec {command,args,chapter,quotaExceeded,timestamp}`；auth.log 附加寫入以虛擬時鐘為準。sudo 事件不進存檔事件鏈的 commit body，只作為 externalFacts 引用。每章 3 次免記額度，超額時 `quotaExceeded=true`，記稽核事項。faillock 鎖定狀態不進存檔（VFS 資料）。auth.log 位元相同性由 VFS inode mtimeMs 與虛擬時鐘保證。
+D26 提示即檔案：第 2、3 級提示的 `sudo cat` 就是一般 `command.execute` 加 auth.log 的 `vfs.changed`，不另造 `sudo.exec` 事件 kind（ENGINE_CONTRACT L298 registry 未登記，拒執行）。auth.log 本身仍是 VFS 資料，不重複存入 journal。
+
+提示事件統一用 registry 已有的 `hint.viewed {branchId,guideId,level}`（level 1..3）。超額稽核若需新 kind，先進 registry 並給封閉 schema，目前不新增。
+
+額度計數：以 journal 的 `command.execute`（sudo cat 提示）為權威來源，或放進 EngineState 明確欄位並進 stateHash，二選一。目前採 EngineState 欄位：`state.profile.hintQuotaUsed[chapter]`（整數，每章獨立），進 stateHash。auth.log 的行數可交叉驗證，但不作為唯一權威（auth.log 可被玩家編輯）。
+
+faillock 鎖定狀態：D26 設定 `NOPASSWD`，沒有密碼提示，「三次密碼錯誤鎖定」的觸發路徑未定義。預設處理：faillock 標「未定義、不實作」，不進存檔、不進 VFS。若未來加入密碼驗證，faillock 狀態放 `/var/lib/faillock/`（VFS 檔案，進 snapshot），並記錄進 stateHash。
+
+auth.log 位元相同性由 VFS inode mtimeMs 與虛擬時鐘保證（同 commit 鏈重放得到相同 bytes）。externalFacts 不用於 sudo 事件（既有條目 `{factId,factHash}` 指向 SAVE.blobs，內容放 blobs；sudo 事件以 journal + VFS 為權威）。
 
 ## 3. Portable VFS inode 圖
 
