@@ -273,6 +273,12 @@ program-online：QUEUED → AWAITING_OJ → RESULT（再由伺服器獨立結算
 
 shell 判題為純評估；成功結果、能力證據、故事處理與一次性獎勵由引擎在同一交易提交。依 D17，durable 模式持久化成功才發布候選世界／結果；失敗保留目前世界，volatile 必須玩家明選。有成本操作沿用「准入與固定成本→故事鐘／排程→重查→行動」；編輯／閱讀／免費提示成本為零。結果到達時檢查 expectedStateHash、attempt 狀態及取消 token；過期回覆無法復活已取消工作。
 
+## 5.5 D26 提示等級與稽核（WP-S2）
+
+D26 提示即檔案：第 1 級 `man <ticket>` 世界可讀永遠免費；第 2／3 級提示放在 `/usr/share/hints/<ticket>/2.txt`、`3.txt`，模式 `0640 root:hints`，玩家 `op` 不在 `hints` 群組，須 `sudo cat` 讀取。sudo 子集：`op ALL=(root) NOPASSWD: /bin/cat /usr/share/hints/*`。`sudo bash`／`sudo -i`／`su` 真實格式拒絕。每次 sudo 以虛擬時鐘附加 `/var/log/auth.log`。每章 3 次免記額度，超過記稽核事項，只影響「清白值班」稱號與活動排行，不扣幣、不鎖、不阻擋故事。「顯示提示」按鈕等於明確執行同一條 `sudo cat`，一樣寫 auth.log。Ch0–Ch1 提示檔全部世界可讀；Ch2 結束後 sentry 宣告「查閱封存指引要留紀錄」，權限切換為 `0640 root:hints`。
+
+稽核事件 kinds：`hint.level1`（免費，不寫 auth.log）、`hint.level2`／`hint.level3`（sudo cat，寫 auth.log）、`hint.quota-exceeded`（超額稽核事項）。稽核只影響稱號與排行，不影響故事進度或獎勵。
+
 ## 6. 真正 Python local 的啟用關卡
 
 候選可研究封裝的離線 Python/WASM 等 runtime；**尚未選定或安裝**。工作標籤固定「待做：runtime spike」，通過以下全部關卡才可排開放版本：

@@ -49,6 +49,10 @@ Baseline 為 `{seq,commitId,stateHash,state}`。`state.seq === seq`；`state` �
 
 Journal 的非決定性輸入必須顯式資料化：外部 receipt、匯入證據、活動 fixture 均以完整 hash 指向保存的 bytes；執行不能依現在時間重新下載「相同 URL 最新版本」。只有使用者許可的獨立 replay 工作可使用網路取得缺少的固定 artifact。
 
+### 2.1 D26 sudo 事件（WP-S2）
+
+D26 提示即檔案的 sudo 事件種類，記入 EngineState.externalFacts，auth.log 本身仍是 VFS 資料不重複存。sudo 事件 kind：`sudo.exec {command,args,chapter,quotaExceeded,timestamp}`；auth.log 附加寫入以虛擬時鐘為準。sudo 事件不進存檔事件鏈的 commit body，只作為 externalFacts 引用。每章 3 次免記額度，超額時 `quotaExceeded=true`，記稽核事項。faillock 鎖定狀態不進存檔（VFS 資料）。auth.log 位元相同性由 VFS inode mtimeMs 與虛擬時鐘保證。
+
 ## 3. Portable VFS inode 圖
 
 ### 3.1 圖格式

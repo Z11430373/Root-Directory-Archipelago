@@ -149,9 +149,9 @@ BRE 基線：`^ $ . * [...] [^...]`、escaped literal、已登錄 POSIX C classe
 | `systemctl start lamp`／`status lamp` | 固定故事服務與口令流程；status 時間0 | 不是主機 systemd，不接受任意 service。 |
 | `ssh <island>` | 版本化渡海動作，成本讀 pack | 不執行 host SSH、不接受任意 URL／port。 |
 | `fsck [-y] <root>` | 指定關卡的診斷／修復 reducer；-y 才改世界 | 不執行 OS fsck；F2 修復 mtime／inode 要有 fixture。 |
-| `sudo`、`close TICKET-0001` | 原故事拒絕／對白，應保留原內容來源 | 不提升宿主權限；close 的故事權限失敗不是程式 judge verdict。 |
+| `sudo`、`id`、`groups` | D26 提示即檔案：sudo 子集 `op ALL=(root) NOPASSWD: /bin/cat /usr/share/hints/*`；`sudo -l` 顯示規則；`sudo bash`／`sudo -i`／`su` 真實格式拒絕；uid／gid／mode 實際檢查 | 不提升宿主權限；auth.log 以虛擬時鐘附加；每章 3 次免記額度，超額記稽核事項；faillock 三次密碼錯誤鎖定；萬用字元停在 VFS 內。close 的故事權限失敗不是程式 judge verdict。 |
 | `submit <path>` | TICKET_JUDGE 按已選 route 處理 | 無 Python runtime 回不可用；不能以程式碼字串比對假 AC。 |
-| `hint`、`skip` | 免費引導／主動代辦 preview；skip 綁 ticket/邀請與 state revision | 不用十秒閱讀期限；代辦／略過不能造親自驗證、K0/K1 或 AC。 |
+| `hint`、`skip` | D26 提示等級：第 1 級 `man <ticket>` 世界可讀永遠免費；第 2／3 級 `/usr/share/hints/<ticket>/2.txt`、`3.txt` 模式 `0640 root:hints`，`sudo cat` 讀取；skip 綁 ticket/邀請與 state revision | 免記額度 3 次／章；「顯示提示」按鈕等於明確執行同一條 `sudo cat`，一樣寫 auth.log；不偷偷免費；代辦／略過不能造親自驗證、K0/K1 或 AC。 |
 | `git checkout -b <name> [ckpt/…]`、`git merge --knowledge`、`merge --knowledge`、`git abandon`、故事 `git tag`／`reflog` | 遊戲時間分支服務 | 非真 Git checkout/merge；只帶合格知識，缺 snapshot 不假還原。 |
 | `iptables`／`fw` | B1 受控 firewall reducer；CIDR 必須以32-bit正確比對 | 僅在宣告分支作用；不能改真防火牆，/24 不能只比 IP 字串前綴。 |
 | `edit <path>` | 遊戲編輯器入口；開啟是 query，套用只送 `file.edit {islandId,path,expectedContentHash,content}` | inline UTF-8≤64 KiB、時間0；覆寫驗state／content hash及inode權限，工單工作檔產literal→write trace與ticket.provenance.recorded，不產計數證據。 |

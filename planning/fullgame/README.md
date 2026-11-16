@@ -46,6 +46,7 @@
 | [ROADMAP](delivery/ROADMAP.md) | M0–M7／C1 依賴、發布與可縮範圍 | 整合 |
 | [WORK_PACKAGES](delivery/WORK_PACKAGES.md) | 可派工交付物、讀入範圍、介面與驗收 | 整合 |
 | [ACCEPTANCE_MATRIX](delivery/ACCEPTANCE_MATRIX.md) | 風險到案例、測試層次與證據要求 | 品質整合 |
+| [WP-S3-S02-REPORT](delivery/WP-S3-S02-REPORT.md) | S-02 Python runtime 量測報告（未量） | WP-S3 |
 | [NARRATIVE_DEBATE](reviews/NARRATIVE_DEBATE.md) | 真實跨代理議題、主筆答覆、反方結論 | 敘事反方 |
 | [INTEGRATION_REVIEW](reviews/INTEGRATION_REVIEW.md) | 跨領域一致性審查與修訂去向 | 獨立審查 |
 | [STORY_BIBLE_RECONCILIATION](reviews/STORY_BIBLE_RECONCILIATION.md) | 聖經取得後的 O-N 對照與後續工作 | 整合 |
