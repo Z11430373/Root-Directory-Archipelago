@@ -43,12 +43,16 @@ def normalize_mtime(value):
     if isinstance(value, int):
         return value
     if isinstance(value, str):
-        # Try parsing as time string
         parts = value.strip().split(":")
-        total = 0
-        for p in parts:
-            total = total * 60 + int(p)
-        return total
+        if len(parts) == 2:
+            # HH:MM
+            return int(parts[0]) * 3600 + int(parts[1]) * 60
+        elif len(parts) == 3:
+            # HH:MM:SS
+            return int(parts[0]) * 3600 + int(parts[1]) * 60 + int(parts[2])
+        else:
+            # fallback: treat as seconds
+            return int(value)
     return int(value)
 
 
