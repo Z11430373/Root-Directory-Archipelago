@@ -52,7 +52,7 @@
 | [STORY_BIBLE_RECONCILIATION](reviews/STORY_BIBLE_RECONCILIATION.md) | 聖經取得後的 O-N 對照與後續工作 | 整合 |
 | [ISSUE_REGISTER](reviews/ISSUE_REGISTER.md) | 上輪 R01–R12 的單一問題登錄與處理狀態 | 整合 |
 | [VERIFICATION](reviews/VERIFICATION.md) | 實際文件檢查結果、原稿雜湊與剩餘限制 | 整合 |
-| [原稿](source/《根目錄群島》完整版規劃書.original.md)／[故事聖經](source/《根目錄群島》故事聖經.md)／[來源說明](source/README.md) | 原附件與聖經封存 | 唯讀來源 |
+| [原稿](source/《根目錄群島》完整版規劃書.original.md)／[故事聖經](source/《根目錄群島》故事聖經.md)／[故事聖經附錄 Rev 6](source/《根目錄群島》故事聖經-附錄-Rev6.md)／[來源說明](source/README.md) | 原附件與聖經封存；Rev 6 為作者裁定草稿，純新增 | 唯讀來源 |
 | [規劃書＋附錄 A](source/《根目錄群島》完整版規劃書.with-appendix-A.md)／[解除兩大阻塞](source/解除兩大阻塞.md) | 作者後續稿；D26 已登記為提案，其餘裁定待確認（見 DECISIONS） | 待整併來源 |
 
 ## 使用規則

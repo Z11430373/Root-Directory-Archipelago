@@ -97,13 +97,13 @@
 | 共享未知 | 敘事負責文件／解除者 |
 | --- | --- |
 | O-N01 外部正文版本 | 本文 §1–3、STORY_ARC §3；Zien／指定故事作者提供可讀版本 |
-| O-N02 八空格 | REVEALS_AND_ENDINGS §5、NAR-310；作者定謎題，工程／互動驗呈現 |
-| O-N03 隱藏結局 | REVEALS_AND_ENDINGS §5、NAR-305；作者給名稱／正文／條件後驗可達 |
+| O-N02 八空格 | REVEALS_AND_ENDINGS §5、NAR-310；作者裁定，狀態：已裁定（2026-11-12 Zien 照預設），詳《根目錄群島》故事聖經-附錄-Rev6.md §1 |
+| O-N03 隱藏結局 | REVEALS_AND_ENDINGS §5、NAR-305；作者裁定，狀態：已裁定（2026-11-12 Zien 照預設），詳《根目錄群島》故事聖經-附錄-Rev6.md §2 |
 | O-N04 後半 F/K／結局條件 | CHAPTER_BEATS §4–10、REVEALS_AND_ENDINGS §5–7；作者＋內容資料包 |
 | O-N05 CI／貓／拆片時序 | NAR-C10、REVEALS_AND_ENDINGS §7.2、AUTHOR_RESPONSE §7；作者補證／修訂 |
 | O-N06 授權模型 | NAR-C11、REVEALS_AND_ENDINGS §3、AUTHOR_RESPONSE §2；作者定制度 |
-| O-N07 T0100 登記意義 | NAR-C09、VOICE_AND_COPY §4.3、AUTHOR_RESPONSE §5；作者批准背景與觸發修訂 |
-| O-N08 Ch2 草案揭露 | NAR-C01、REVEALS_AND_ENDINGS §2、AUTHOR_RESPONSE §10；作者裁定全文範圍／時點 |
+| O-N07 T0100 登記意義 | NAR-C09、VOICE_AND_COPY §4.3、AUTHOR_RESPONSE §5；作者裁定，狀態：已裁定（2026-11-12 Zien 照預設），詳《根目錄群島》故事聖經-附錄-Rev6.md §3 |
+| O-N08 Ch2 草案揭露 | NAR-C01、REVEALS_AND_ENDINGS §2、AUTHOR_RESPONSE §10；作者裁定，狀態：已裁定（2026-11-12 Zien 照預設），詳《根目錄群島》故事聖經-附錄-Rev6.md §4 |
 
 ## 5. 驗收與未知責任
 
